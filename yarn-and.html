@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YARN&</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&family=DM+Serif+Display&display=swap');
+  :root {
+    --bg: #F2E8EC; --surface: #FDF5F7; --border: #DCCDD4; --border-light: #EDE0E5;
+    --text-primary: #3A2D32; --text-secondary: #7A6369; --text-tertiary: #B09AA2;
+    --accent: #8C6272; --accent-light: #F0E4EA; --accent-mid: #C4A0AE;
+    --tag-bg: #EDE0E5; --tag-text: #7A5562;
+    --tag-shop-bg: #E6EDE4; --tag-shop-text: #4A6245;
+    --tag-color-bg: #EAE2F0; --tag-color-text: #5C4A72;
+    --tag-work-bg: #E4EDF0; --tag-work-text: #2A5462;
+    --danger: #9B3A3A; --danger-light: #FDF0F0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+
+  .app-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-icon { width: 32px; height: 32px; }
+  .app-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); letter-spacing: 0.03em; }
+  .header-btns { display: flex; gap: 8px; }
+
+  .tab-bar { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; padding: 0 20px; }
+  .tab-btn { font-family: inherit; font-size: 13px; padding: 10px 20px; border: none; background: none; color: var(--text-tertiary); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; letter-spacing: 0.03em; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+
+  .btn { font-family: inherit; font-size: 13px; padding: 7px 16px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
+  .btn:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent-mid); }
+  .btn.primary { background: var(--accent); color: #FDF5F7; border-color: var(--accent); }
+  .btn.primary:hover { background: #7A5364; }
+  .btn.danger { color: var(--danger); border-color: #E8C4C4; background: var(--danger-light); }
+  .btn.ai { background: #EAE2F0; color: #5C4A72; border-color: #C8BCE0; font-size: 12px; padding: 6px 12px; }
+  .btn.ai:hover { background: #DDD4F0; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .main { max-width: 680px; margin: 0 auto; padding: 16px 16px 40px; }
+  .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 9px 16px; background: var(--surface); border-radius: 99px; border: 1px solid var(--border-light); }
+  .toolbar label { font-size: 12px; color: var(--text-tertiary); white-space: nowrap; }
+  .toolbar select { font-family: inherit; font-size: 13px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 99px; background: var(--bg); color: var(--text-secondary); cursor: pointer; outline: none; }
+  .count-badge { margin-left: auto; font-size: 12px; color: var(--accent); background: var(--accent-light); padding: 3px 12px; border-radius: 99px; }
+
+  .list { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+  .yarn-row { display: flex; align-items: center; gap: 14px; padding: 13px 16px; cursor: pointer; transition: background 0.12s; border-bottom: 1px solid var(--border-light); }
+  .yarn-row:last-child { border-bottom: none; }
+  .yarn-row:hover { background: var(--accent-light); }
+
+  .yarn-thumb { width: 54px; height: 54px; border-radius: 12px; overflow: hidden; background: var(--bg); flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-light); position: relative; }
+  .yarn-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .yarn-thumb svg { width: 30px; height: 30px; }
+  .thumb-dot { position: absolute; bottom: 4px; right: 4px; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.9); }
+
+  .yarn-info { flex: 1; min-width: 0; }
+  .yarn-name { font-size: 14px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
+  .yarn-tags { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+  .tag { font-size: 11px; padding: 2px 9px; border-radius: 99px; background: var(--tag-bg); color: var(--tag-text); white-space: nowrap; }
+  .tag.shop { background: var(--tag-shop-bg); color: var(--tag-shop-text); }
+  .tag.color-name { background: var(--tag-color-bg); color: var(--tag-color-text); }
+  .tag.work { background: var(--tag-work-bg); color: var(--tag-work-text); }
+  .color-swatch { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; display: inline-block; }
+  .meta-text { font-size: 11px; color: var(--text-tertiary); }
+
+  .yarn-count { text-align: right; flex-shrink: 0; }
+  .count-num { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--accent); line-height: 1; display: block; }
+  .count-unit { font-size: 11px; color: var(--text-tertiary); }
+
+  .empty { text-align: center; padding: 48px 20px; color: var(--text-tertiary); font-size: 14px; line-height: 2.2; }
+  .empty svg { display: block; margin: 0 auto 16px; }
+
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(58,45,50,0.4); z-index: 100; align-items: flex-end; justify-content: center; }
+  .overlay.active { display: flex; }
+  .modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 20px 32px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.22s ease; }
+  @media (min-width: 520px) { .overlay { align-items: center; padding: 20px; } .modal { border-radius: 16px; max-height: 88vh; } }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0.5; } to { transform: translateY(0); opacity: 1; } }
+
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 99px; margin: 0 auto 16px; }
+  .modal-title { font-size: 15px; font-weight: 500; color: var(--text-primary); margin-bottom: 16px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { font-size: 11px; color: var(--text-tertiary); display: block; margin-bottom: 5px; letter-spacing: 0.06em; }
+  .field input[type=text], .field input[type=number], .field select, .field textarea { width: 100%; font-family: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text-primary); outline: none; transition: border-color 0.15s; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); background: var(--surface); }
+  .field textarea { resize: vertical; min-height: 60px; line-height: 1.6; }
+  .field select { padding: 9px 12px; }
+
+  .color-row { display: flex; gap: 8px; align-items: center; }
+  .color-row input[type=text] { flex: 1; }
+  .color-row input[type=color] { width: 42px; height: 38px; padding: 3px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; background: var(--bg); flex-shrink: 0; }
+
+  .img-preview { width: 100%; height: 120px; border-radius: 10px; border: 1.5px dashed var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 14px; overflow: hidden; background: var(--bg); transition: border-color 0.15s; }
+  .img-preview:hover { border-color: var(--accent); }
+  .img-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .img-placeholder-text { font-size: 12px; color: var(--text-tertiary); text-align: center; }
+
+  .ai-btn-row { margin-bottom: 14px; }
+  .ai-reading { font-size: 12px; color: #5C4A72; background: #EAE2F0; padding: 8px 12px; border-radius: 8px; margin-bottom: 14px; display: none; }
+
+  .shops-check { display: flex; flex-wrap: wrap; gap: 8px; }
+  .shop-label { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-secondary); cursor: pointer; padding: 5px 10px; border-radius: 99px; border: 1px solid var(--border); background: var(--bg); transition: all 0.12s; user-select: none; }
+  .shop-label:has(input:checked) { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+  .shop-label input { display: none; }
+
+  .yarn-select-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+  .yarn-select-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; transition: all 0.12s; font-size: 13px; color: var(--text-secondary); }
+  .yarn-select-item.selected { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+  .yarn-select-thumb { width: 32px; height: 32px; border-radius: 6px; overflow: hidden; background: var(--surface); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .yarn-select-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+  .modal-actions .btn { flex: 1; text-align: center; }
+
+  .detail-thumb { width: 100%; height: 160px; border-radius: 10px; background: var(--bg); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border-light); }
+  .detail-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .detail-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; gap: 12px; }
+  .dl { color: var(--text-tertiary); white-space: nowrap; }
+  .dv { color: var(--text-primary); font-weight: 500; text-align: right; word-break: break-word; display: flex; align-items: center; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+
+  .linked-section { margin-top: 14px; }
+  .linked-title { font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.06em; margin-bottom: 8px; }
+  .linked-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; background: var(--bg); margin-bottom: 6px; cursor: pointer; }
+  .linked-thumb { width: 36px; height: 36px; border-radius: 6px; overflow: hidden; background: var(--surface); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .linked-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .linked-thumb svg { width: 22px; height: 22px; }
+  .linked-name { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+  .linked-sub { font-size: 11px; color: var(--text-tertiary); }
+
+  .shop-list-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+  .shop-list-item:last-child { border-bottom: none; }
+  .shop-del-btn { background: none; border: none; color: var(--danger); font-size: 18px; cursor: pointer; padding: 0 4px; opacity: 0.7; }
+  .shop-del-btn:hover { opacity: 1; }
+  .add-shop-row { display: flex; gap: 8px; margin-top: 14px; }
+  .add-shop-row input { flex: 1; }
+  .settings-note { font-size: 11px; color: var(--text-tertiary); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-left">
+    <svg class="header-icon" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="9" stroke="#C4A0AE" stroke-width="1.5" fill="#F0E4EA"/>
+      <path d="M10 16 Q13 10 16 16 Q19 22 22 16" stroke="#8C6272" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M7 13 Q10 8 16 9" stroke="#C4A0AE" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <path d="M25 19 Q22 24 16 23" stroke="#C4A0AE" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <circle cx="16" cy="16" r="2.5" fill="#8C6272" opacity="0.5"/>
+    </svg>
+    <div class="app-title">YARN&</div>
+  </div>
+  <div class="header-btns">
+    <button class="btn" onclick="openSettings()">お店設定</button>
+    <button class="btn primary" id="addBtn" onclick="handleAdd()">＋ 追加</button>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('yarn')">毛糸</button>
+  <button class="tab-btn" onclick="switchTab('tools')">道具</button>
+  <button class="tab-btn" onclick="switchTab('works')">作品</button>
+</div>
+
+<main class="main">
+  <div class="toolbar" id="yarnToolbar">
+    <label>並び替え</label>
+    <select onchange="setSort(this.value)">
+      <option value="default">登録順</option>
+      <option value="count-desc">在庫多い順</option>
+      <option value="count-asc">在庫少ない順</option>
+      <option value="color">色順</option>
+      <option value="material">素材順</option>
+      <option value="shop">お店順</option>
+      <option value="name">名前順</option>
+    </select>
+    <span class="count-badge" id="yarnBadge">0点</span>
+    <button class="btn ai" onclick="openLabelSearch()" style="white-space:nowrap;font-size:11px;padding:5px 10px;">✦ 検索</button>
+  </div>
+  <div class="toolbar" id="worksToolbar" style="display:none;">
+    <label>並び替え</label>
+    <select onchange="setWorksSort(this.value)">
+      <option value="default">登録順</option>
+      <option value="name">名前順</option>
+      <option value="yarn">YARN順</option>
+    </select>
+    <select onchange="setNeedleFilter(this.value)" id="needleFilter" style="font-family:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--border);border-radius:99px;background:var(--bg);color:var(--text-secondary);cursor:pointer;outline:none;">
+      <option value="">すべて</option>
+      <option value="かぎ針">かぎ針</option>
+      <option value="棒針">棒針</option>
+      <option value="輪針">輪針</option>
+      <option value="その他">その他</option>
+    </select>
+    <span class="count-badge" id="worksBadge">0点</span>
+    <div style="display:flex;gap:4px;margin-left:4px;">
+      <button id="viewList" onclick="setWorksView('list')" title="リスト" style="padding:5px 8px;border-radius:6px;border:1px solid #DCCDD4;background:#8C6272;color:#FDF5F7;cursor:pointer;font-size:13px;line-height:1;">☰</button>
+      <button id="viewGrid" onclick="setWorksView('grid')" title="グリッド" style="padding:5px 8px;border-radius:6px;border:1px solid #DCCDD4;background:#FDF5F7;color:#7A6369;cursor:pointer;font-size:13px;line-height:1;">⊞</button>
+    </div>
+  </div>
+  <div class="toolbar" id="toolsToolbar" style="display:none;">
+    <label>並び替え</label>
+    <select onchange="setToolsSort(this.value)">
+      <option value="default">登録順</option>
+      <option value="name">名前順</option>
+    </select>
+    <span class="count-badge" id="toolsBadge">0点</span>
+  </div>
+  <div id="listEl"></div>
+</main>
+
+<!-- 毛糸フォーム -->
+<div class="overlay" id="formOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="formTitle">毛糸を追加</div>
+    <div class="img-preview" id="imgPreview" onclick="document.getElementById('imgInput').click()">
+      <div class="img-placeholder-text">タップして写真を選択</div>
+    </div>
+    <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="previewImg(this)">
+    <div class="ai-btn-row">
+      <button class="btn ai" onclick="openLabelReader()">✦ ラベル写真から自動入力</button>
+    </div>
+    <div class="ai-reading" id="aiReading">AIが読み取り中... ✦</div>
+    <div class="field"><label>名前・品番</label><input type="text" id="f-name" placeholder="例：ハマナカ ボニー" oninput="checkSimilar()"></div>
+    <div class="field"><label>色番号</label><input type="text" id="f-color" placeholder="例：602" oninput="checkSimilar()"></div>
+    <div id="similarBox" style="display:none;margin-bottom:12px;padding:10px 12px;background:#F0E4EA;border-radius:10px;border:1px solid #C4A0AE;">
+      <div style="font-size:11px;color:#8C6272;margin-bottom:8px;letter-spacing:0.04em;">似てる毛糸が登録済みだよ！</div>
+      <div id="similarList"></div>
+    </div>
+    <div class="field"><label>色</label><input type="text" id="f-colorname" placeholder="例：ネイビー、ミントグリーン"></div>
+    <div class="field"><label>素材</label><input type="text" id="f-material" placeholder="例：ウール50% コットン50%"></div>
+    <div class="field"><label>ロット番号</label><input type="text" id="f-lot" placeholder="例：L204"></div>
+    <div class="field"><label>本数</label><input type="number" id="f-count" placeholder="例：5" min="0"></div>
+    <div class="field"><label>定価</label><input type="text" id="f-price" placeholder="例：550円"></div>
+    <div class="field"><textarea id="f-memo" placeholder="店名・URL・メモなど"></textarea></div>
+    <div class="field">
+      <label>購入したお店</label>
+      <div class="shops-check" id="shopsCheck"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeForm()">キャンセル</button>
+      <button class="btn primary" onclick="saveItem()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ラベル読み取り -->
+<div class="overlay" id="labelOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">ラベルを読み取る</div>
+    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:12px;">表・裏・複数枚OK！まとめて読み取るよ✦</p>
+    <div id="labelPreviews" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
+    <button class="btn ai" onclick="document.getElementById('labelInput').click()" style="width:100%;margin-bottom:4px;">＋ 写真を追加</button>
+    <input type="file" id="labelInput" accept="image/*" style="display:none" onchange="addLabelImg(this)">
+    <div class="modal-actions">
+      <button class="btn" onclick="closeLabelReader()">キャンセル</button>
+      <button class="btn primary" id="readLabelBtn" onclick="readLabel()" disabled>読み取る</button>
+    </div>
+  </div>
+</div>
+
+<!-- 作品フォーム -->
+<div class="overlay" id="workFormOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="workFormTitle">作品を追加</div>
+    <div class="img-preview" id="workImgPreview" onclick="document.getElementById('workImgInput').click()">
+      <div class="img-placeholder-text">タップして写真を選択</div>
+    </div>
+    <input type="file" id="workImgInput" accept="image/*" style="display:none" onchange="previewWorkImg(this)">
+    <div class="field"><label>作品名</label><input type="text" id="wf-name" placeholder="例：フリルスカート、帽子など"></div>
+    <div class="field">
+      <label>編み方</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;" id="needleTypes">
+        <label class="shop-label"><input type="radio" name="needle" value="かぎ針" style="display:none;" onchange="updateNeedle()"> かぎ針</label>
+        <label class="shop-label"><input type="radio" name="needle" value="棒針" style="display:none;" onchange="updateNeedle()"> 棒針</label>
+        <label class="shop-label"><input type="radio" name="needle" value="輪針" style="display:none;" onchange="updateNeedle()"> 輪針</label>
+        <label class="shop-label"><input type="radio" name="needle" value="その他" style="display:none;" onchange="updateNeedle()"> その他</label>
+      </div>
+    </div>
+    <div class="field"><label>メモ</label><textarea id="wf-memo" placeholder="使用針・サイズ・感想など"></textarea></div>
+    <div class="field"><textarea id="wf-ref" placeholder="編み図・作り方参考URL"></textarea></div>
+    <div class="field">
+      <label>使った毛糸</label>
+      <div class="yarn-select-list" id="yarnSelectList"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeWorkForm()">キャンセル</button>
+      <button class="btn primary" onclick="saveWork()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 毛糸詳細 -->
+<div class="overlay" id="detailOverlay">
+  <div class="modal" id="detailContent"></div>
+</div>
+
+<!-- 作品詳細 -->
+<div class="overlay" id="workDetailOverlay">
+  <div class="modal" id="workDetailContent"></div>
+</div>
+
+<!-- ラベル検索 -->
+<div class="overlay" id="labelSearchOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">ラベルで検索</div>
+    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:12px;">持ってるかな？ラベルを撮って確認しよう✦</p>
+    <div id="searchPreviews" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
+    <button class="btn ai" onclick="document.getElementById('searchInput').click()" style="width:100%;margin-bottom:4px;">＋ 写真を追加</button>
+    <input type="file" id="searchInput" accept="image/*" style="display:none" onchange="addSearchImg(this)">
+    <div class="ai-reading" id="searchReading" style="display:none;">AIが照合中... ✦</div>
+    <div id="searchResults" style="display:none;margin-top:12px;"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeLabelSearch()">閉じる</button>
+      <button class="btn primary" id="doSearchBtn" onclick="doLabelSearch()" disabled>検索する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 道具フォーム -->
+<div class="overlay" id="toolFormOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="toolFormTitle">道具を追加</div>
+    <div class="img-preview" id="toolImgPreview" onclick="document.getElementById('toolImgInput').click()">
+      <div class="img-placeholder-text">タップして写真を選択</div>
+    </div>
+    <input type="file" id="toolImgInput" accept="image/*" style="display:none" onchange="previewToolImg(this)">
+    <div class="field"><label>名前・メーカー</label><input type="text" id="tf-name" placeholder="例：クロバー かぎ針 3号"></div>
+    <div class="field">
+      <label>種類</label>
+      <select id="tf-type">
+        <option value="">選択してね</option>
+        <option>かぎ針</option><option>棒針</option><option>輪針</option>
+        <option>とじ針</option><option>段数マーカー</option><option>その他</option>
+      </select>
+    </div>
+    <div class="field"><label>サイズ・号数</label><input type="text" id="tf-size" placeholder="例：3号 / 2.3mm"></div>
+    <div class="field"><textarea id="tf-memo" placeholder="メモなど"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeToolForm()">キャンセル</button>
+      <button class="btn primary" onclick="saveTool()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 道具詳細 -->
+<div class="overlay" id="toolDetailOverlay">
+  <div class="modal" id="toolDetailContent"></div>
+</div>
+
+<!-- お店設定 -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">お店を管理</div>
+    <div id="shopListEl"></div>
+    <div class="add-shop-row">
+      <input type="text" id="newShopInput" placeholder="例：オカダヤ">
+      <button class="btn primary" onclick="addShop()">追加</button>
+    </div>
+    <p class="settings-note">※「その他」は常に表示されます</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeSettings()">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let items = JSON.parse(localStorage.getItem('yarn_items') || '[]');
+let shops = JSON.parse(localStorage.getItem('yarn_shops') || '["ユザワヤ","楽天","Amazon"]');
+let works = JSON.parse(localStorage.getItem('yarn_works') || '[]');
+let currentImg = null, currentWorkImg = null, labelImgData = null;
+let editingIndex = -1, editingWorkIndex = -1;
+let currentSort = 'default', currentWorksSort = 'default', currentWorksView = 'list';
+let currentTab = 'yarn';
+let selectedYarnIds = [];
+
+const yarnSvgSm = `<svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="9" stroke="#C4A0AE" stroke-width="1.2" fill="#EDE0E5"/><path d="M9 15 Q12 9 15 15 Q18 21 21 15" stroke="#8C6272" stroke-width="1.2" fill="none" stroke-linecap="round"/><circle cx="15" cy="15" r="2.5" fill="#8C6272" opacity="0.4"/></svg>`;
+const workSvgSm = `<svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="9" stroke="#7AAFC4" stroke-width="1.2" fill="#E4EDF0"/><path d="M10 15 L13 18 L20 12" stroke="#2A5462" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function saveData() {
+  try {
+    localStorage.setItem('yarn_items', JSON.stringify(items));
+    localStorage.setItem('yarn_shops', JSON.stringify(shops));
+    localStorage.setItem('yarn_works', JSON.stringify(works));
+  } catch(e) { alert('保存容量がいっぱいになったよ😢 写真のサイズを小さくしてみてね'); }
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (tab==='yarn'&&i===0)||(tab==='tools'&&i===1)||(tab==='works'&&i===2)));
+  document.getElementById('yarnToolbar').style.display = tab==='yarn' ? 'flex' : 'none';
+  document.getElementById('worksToolbar').style.display = tab==='works' ? 'flex' : 'none';
+  document.getElementById('toolsToolbar').style.display = tab==='tools' ? 'flex' : 'none';
+  document.getElementById('addBtn').textContent = tab==='yarn' ? '＋ 追加' : tab==='works' ? '＋ 作品追加' : '＋ 道具追加';
+  render();
+}
+
+function handleAdd() { currentTab==='yarn' ? openForm(-1) : currentTab==='works' ? openWorkForm(-1) : openToolForm(-1); }
+let currentNeedleFilter = '';
+
+let tools = JSON.parse(localStorage.getItem('yarn_tools') || '[]');
+let currentToolImg = null;
+let editingToolIndex = -1;
+let currentToolsSort = 'default';
+
+const toolSvgSm = `<svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="9" stroke="#C4A0AE" stroke-width="1.2" fill="#EDE0E5"/><path d="M10 12 L15 20 L20 12" stroke="#8C6272" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function setToolsSort(v) { currentToolsSort=v; render(); }
+
+function renderTools() {
+  const el = document.getElementById('listEl');
+  document.getElementById('toolsBadge').textContent = tools.length+'点';
+  if (!tools.length) {
+    el.innerHTML = `<div class="empty"><svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="26" fill="#EDE0E5"/><circle cx="40" cy="40" r="18" stroke="#C4A0AE" stroke-width="1.5" fill="#F0E4EA"/><path d="M27 32 L40 52 L53 32" stroke="#8C6272" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>まだ道具が登録されていないよ<br>「＋ 追加」から登録してみてね</div>`;
+    return;
+  }
+  let list = tools.map((t,i) => ({...t,_idx:i}));
+  if (currentToolsSort==='name') list = list.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ja'));
+  el.innerHTML = `<div class="list">${list.map(tool => `
+    <div class="yarn-row" onclick="openToolDetail(${tool._idx})">
+      <div class="yarn-thumb">${tool.img?`<img src="${tool.img}">`:toolSvgSm}</div>
+      <div class="yarn-info">
+        <div class="yarn-name">${tool.name||'名前なし'}</div>
+        <div class="yarn-tags">
+          ${tool.type?`<span class="tag">${tool.type}</span>`:''}
+          ${tool.size?`<span class="meta-text">${tool.size}</span>`:''}
+        </div>
+        ${tool.memo?`<div class="meta-text" style="margin-top:3px;">${tool.memo.slice(0,30)}${tool.memo.length>30?'…':''}</div>`:''}
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function openToolForm(index) {
+  editingToolIndex = index;
+  const tool = index>=0 ? tools[index] : null;
+  document.getElementById('toolFormTitle').textContent = index>=0 ? '道具を編集' : '道具を追加';
+  currentToolImg = (tool&&tool.img) ? tool.img : null;
+  document.getElementById('tf-name').value = tool?.name||'';
+  document.getElementById('tf-type').value = tool?.type||'';
+  document.getElementById('tf-size').value = tool?.size||'';
+  document.getElementById('tf-memo').value = tool?.memo||'';
+  document.getElementById('toolImgPreview').innerHTML = currentToolImg ? `<img src="${currentToolImg}">` : '<div class="img-placeholder-text">タップして写真を選択</div>';
+  document.getElementById('toolImgInput').value = '';
+  document.getElementById('toolFormOverlay').classList.add('active');
+}
+function closeToolForm() { document.getElementById('toolFormOverlay').classList.remove('active'); }
+
+function previewToolImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => { currentToolImg=e.target.result; document.getElementById('toolImgPreview').innerHTML=`<img src="${currentToolImg}">`; };
+  r.readAsDataURL(file);
+}
+
+function saveTool() {
+  const data = { img:currentToolImg, name:document.getElementById('tf-name').value, type:document.getElementById('tf-type').value, size:document.getElementById('tf-size').value, memo:document.getElementById('tf-memo').value };
+  if (editingToolIndex>=0) { tools[editingToolIndex]=data; } else { tools.push(data); }
+  try { localStorage.setItem('yarn_tools', JSON.stringify(tools)); } catch(e) {}
+  render(); closeToolForm();
+}
+
+function openToolDetail(i) {
+  const tool = tools[i];
+  document.getElementById('toolDetailContent').innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="modal-title">${tool.name||'名前なし'}</div>
+    <div class="detail-thumb">${tool.img?`<img src="${tool.img}">`:toolSvgSm}</div>
+    ${tool.type?`<div class="detail-row"><span class="dl">種類</span><span class="dv">${tool.type}</span></div>`:''}
+    ${tool.size?`<div class="detail-row"><span class="dl">サイズ・号数</span><span class="dv">${tool.size}</span></div>`:''}
+    ${tool.memo?`<div class="detail-row" style="flex-direction:column;gap:4px;"><span class="dl">メモ</span><span style="font-size:13px;color:var(--text-primary);">${tool.memo}</span></div>`:''}
+    <div id="toolDeleteConfirm-${i}" style="display:none;background:#FDF0F0;border-radius:10px;padding:10px 12px;margin-top:12px;text-align:center;">
+      <div style="font-size:13px;color:#9B3A3A;margin-bottom:8px;">本当に削除する？</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.getElementById('toolDeleteConfirm-${i}').style.display='none'" style="flex:1;padding:8px;border-radius:99px;border:1px solid #DCCDD4;background:#FDF5F7;font-size:13px;cursor:pointer;">やっぱりやめる</button>
+        <button onclick="deleteTool(${i})" style="flex:1;padding:8px;border-radius:99px;border:1px solid #9B3A3A;background:#9B3A3A;color:#fff;font-size:13px;cursor:pointer;">削除する</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn danger" onclick="document.getElementById('toolDeleteConfirm-${i}').style.display='block'">削除</button>
+      <button class="btn" onclick="closeToolDetail();openToolForm(${i})">編集</button>
+      <button class="btn primary" onclick="closeToolDetail()">閉じる</button>
+    </div>`;
+  document.getElementById('toolDetailOverlay').classList.add('active');
+}
+function closeToolDetail() { document.getElementById('toolDetailOverlay').classList.remove('active'); }
+function deleteTool(i) { tools.splice(i,1); try { localStorage.setItem('yarn_tools', JSON.stringify(tools)); } catch(e) {} render(); closeToolDetail(); }
+
+function setNeedleFilter(v) { currentNeedleFilter=v; render(); }
+function setSort(v) { currentSort=v; render(); }
+function setWorksSort(v) { currentWorksSort=v; render(); }
+function setWorksView(v) {
+  currentWorksView = v;
+  document.getElementById('viewList').style.background = v==='list' ? '#8C6272' : '#FDF5F7';
+  document.getElementById('viewList').style.color = v==='list' ? '#FDF5F7' : '#7A6369';
+  document.getElementById('viewGrid').style.background = v==='grid' ? '#8C6272' : '#FDF5F7';
+  document.getElementById('viewGrid').style.color = v==='grid' ? '#FDF5F7' : '#7A6369';
+  render();
+}
+
+function getSorted() {
+  const list = items.map((item,i) => ({...item,_idx:i}));
+  if (currentSort==='count-desc') return list.sort((a,b)=>(Number(b.count)||0)-(Number(a.count)||0));
+  if (currentSort==='count-asc') return list.sort((a,b)=>(Number(a.count)||0)-(Number(b.count)||0));
+  if (currentSort==='color') return list.sort((a,b)=>(a.colorname||'').localeCompare(b.colorname||'','ja'));
+  if (currentSort==='material') return list.sort((a,b)=>(a.material||'').localeCompare(b.material||'','ja'));
+  if (currentSort==='shop') return list.sort((a,b)=>(a.shops?.[0]||'').localeCompare(b.shops?.[0]||'','ja'));
+  if (currentSort==='name') return list.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ja'));
+  return list;
+}
+function getWorksSorted() {
+  let list = works.map((w,i) => ({...w,_idx:i}));
+  if (currentNeedleFilter) list = list.filter(w => w.needle === currentNeedleFilter);
+  if (currentWorksSort==='name') return list.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ja'));
+  if (currentWorksSort==='yarn') return list.sort((a,b)=>(Number(b.yarns)||0)-(Number(a.yarns)||0));
+  return list;
+}
+
+function render() { currentTab==='yarn' ? renderYarns() : currentTab==='works' ? renderWorks() : renderTools(); }
+
+function renderYarns() {
+  const el = document.getElementById('listEl');
+  document.getElementById('yarnBadge').textContent = items.length+'点';
+  if (!items.length) {
+    el.innerHTML = `<div class="empty"><svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="26" fill="#EDE0E5"/><circle cx="40" cy="40" r="18" stroke="#C4A0AE" stroke-width="1.5" fill="#F0E4EA"/><path d="M28 40 Q33 28 40 40 Q47 52 52 40" stroke="#8C6272" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="40" cy="40" r="5" fill="#8C6272" opacity="0.35"/></svg>まだ毛糸が登録されていないよ<br>「＋ 追加」から登録してみてね</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="list">${getSorted().map(item => {
+    const swatch = '';
+    const dot = '';
+    const tags = [item.colorname?`<span class="tag color-name">${item.colorname}</span>`:'', item.material?`<span class="tag">${item.material}</span>`:'', item.color?`<span class="meta-text">No.${item.color}</span>`:'', item.lot?`<span class="meta-text">Lot.${item.lot}</span>`:''].filter(Boolean).join('');
+    const shopTags = (item.shops||[]).map(s=>`<span class="tag shop">${s}</span>`).join('');
+    const workTags = works.filter(w=>(w.yarnIds||[]).includes(item._idx)).map(w=>`<span class="tag work">✦ ${w.name||'作品'}</span>`).join('');
+    return `<div class="yarn-row" onclick="openDetail(${item._idx})">
+      <div class="yarn-thumb">${item.img?`<img src="${item.img}">`:yarnSvgSm}${dot}</div>
+      <div class="yarn-info">
+        <div class="yarn-name">${item.name||'名前なし'}</div>
+        <div class="yarn-tags">${swatch}${tags}</div>
+        <div class="yarn-tags" style="margin-top:4px;">${shopTags}${workTags}</div>
+      </div>
+      <div class="yarn-count"><span class="count-num">${item.count||0}</span><span class="count-unit">本</span></div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderWorks() {
+  const el = document.getElementById('listEl');
+  document.getElementById('worksBadge').textContent = works.length+'点';
+  if (!works.length) {
+    el.innerHTML = `<div class="empty"><svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="26" fill="#E4EDF0"/><circle cx="40" cy="40" r="18" stroke="#7AAFC4" stroke-width="1.5" fill="#EAF3F7"/><path d="M30 40 L36 46 L50 34" stroke="#2A5462" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>まだ作品が登録されていないよ<br>「＋ 作品追加」から登録してみてね</div>`;
+    return;
+  }
+  if (currentWorksView === 'grid') {
+    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;">${getWorksSorted().map(work => `
+      <div onclick="openWorkDetail(${work._idx})" style="aspect-ratio:1;overflow:hidden;background:#EDE0E5;cursor:pointer;position:relative;">
+        ${work.img
+          ? `<img src="${work.img}" style="width:100%;height:100%;object-fit:cover;">`
+          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 30 30" fill="none" width="32"><circle cx="15" cy="15" r="9" stroke="#7AAFC4" stroke-width="1.2" fill="#E4EDF0"/><path d="M10 15 L13 18 L20 12" stroke="#2A5462" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`
+        }
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(58,45,50,0.55));padding:16px 6px 5px;opacity:0;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+          <div style="font-size:10px;color:#FDF5F7;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${work.name||''}</div>
+        </div>
+      </div>`).join('')}</div>`;
+  } else {
+    el.innerHTML = `<div class="list">${getWorksSorted().map(work => {
+      const linkedYarns = (work.yarnIds||[]).map(id=>items[id]).filter(Boolean);
+      const yarnTags = linkedYarns.map(y=>`<span class="tag color-name">${y.name||'毛糸'}</span>`).join('') || '<span class="meta-text">毛糸未紐付け</span>';
+      return `<div class="yarn-row" onclick="openWorkDetail(${work._idx})">
+        <div class="yarn-thumb">${work.img?`<img src="${work.img}">`:workSvgSm}</div>
+        <div class="yarn-info">
+          <div class="yarn-name">${work.name||'名前なし'}</div>
+          <div class="yarn-tags">${yarnTags}${work.needle?`<span class="tag">${work.needle}</span>`:''}</div>
+          ${work.memo?`<div class="meta-text" style="margin-top:3px;">${work.memo.slice(0,30)}${work.memo.length>30?'…':''}</div>`:''}
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+}
+
+function renderShopsCheck() {
+  document.getElementById('shopsCheck').innerHTML = [...shops,'その他'].map(s=>
+    `<label class="shop-label"><input type="checkbox" value="${s}"> ${s}</label>`
+  ).join('');
+}
+function toggleOtherMemo() {}
+
+function openForm(index) {
+  editingIndex = index;
+  const item = index>=0 ? items[index] : null;
+  document.getElementById('formTitle').textContent = index>=0 ? '毛糸を編集' : '毛糸を追加';
+  currentImg = (item&&item.img) ? item.img : null;
+  document.getElementById('f-name').value = item?.name||'';
+  document.getElementById('f-color').value = item?.color||'';
+  document.getElementById('f-colorname').value = item?.colorname||'';
+  
+  document.getElementById('f-material').value = item?.material||'';
+  document.getElementById('f-lot').value = item?.lot||'';
+  document.getElementById('f-count').value = item?.count||'';
+  document.getElementById('f-price').value = item?.price||'';
+  document.getElementById('f-memo').value = item?.memo||'';
+  document.getElementById('aiReading').style.display = 'none';
+  document.getElementById('similarBox').style.display = 'none';
+  renderShopsCheck();
+  if (item) document.querySelectorAll('#shopsCheck input').forEach(c=>{ c.checked=(item.shops||[]).includes(c.value); });
+  document.getElementById('imgPreview').innerHTML = currentImg ? `<img src="${currentImg}">` : '<div class="img-placeholder-text">タップして写真を選択</div>';
+  document.getElementById('imgInput').value = '';
+  document.getElementById('formOverlay').classList.add('active');
+}
+function closeForm() { document.getElementById('formOverlay').classList.remove('active'); }
+
+function previewImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => { currentImg=e.target.result; document.getElementById('imgPreview').innerHTML=`<img src="${currentImg}">`; };
+  r.readAsDataURL(file);
+}
+
+function saveItem() {
+  const sel = [...document.querySelectorAll('#shopsCheck input:checked')].map(c=>c.value);
+  const name = document.getElementById('f-name').value;
+  const color = document.getElementById('f-color').value;
+  const count = Number(document.getElementById('f-count').value) || 0;
+
+  const dupIdx = checkDuplicate(name, color);
+  if (dupIdx >= 0 && editingIndex < 0) {
+    const existing = items[dupIdx];
+    const existCount = Number(existing.count) || 0;
+    const newCount = existCount + count;
+    const choice = confirm('「' + (existing.name||'登録済み') + ' / 色番号:' + existing.color + '」がすでに' + existCount + '本登録されてるよ！\n' + count + '本追加して合計' + newCount + '本にする？\n\nOK → 在庫を追加\nキャンセル → 別々に登録');
+    if (choice) {
+      items[dupIdx].count = newCount;
+      saveData(); render(); closeForm(); return;
+    }
+  }
+
+  const data = { img:currentImg, name, color, colorname:document.getElementById('f-colorname').value, material:document.getElementById('f-material').value, lot:document.getElementById('f-lot').value, count:document.getElementById('f-count').value, price:document.getElementById('f-price').value, memo:document.getElementById('f-memo').value, shops:sel };
+  if (editingIndex>=0) { items[editingIndex]=data; } else { items.push(data); }
+  saveData(); render(); closeForm();
+}
+
+function openLabelReader() {
+  labelImgData = [];
+  document.getElementById('labelPreviews').innerHTML = '';
+  document.getElementById('labelInput').value = '';
+  document.getElementById('readLabelBtn').disabled = true;
+  document.getElementById('labelOverlay').classList.add('active');
+}
+function closeLabelReader() { document.getElementById('labelOverlay').classList.remove('active'); }
+
+function addLabelImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    labelImgData.push(e.target.result);
+    const idx = labelImgData.length - 1;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;';
+    wrap.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;"><button onclick="removeLabelImg(${idx},this.parentNode)" style="position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(58,45,50,0.7);color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>`;
+    document.getElementById('labelPreviews').appendChild(wrap);
+    document.getElementById('readLabelBtn').disabled = false;
+  };
+  r.readAsDataURL(file);
+  input.value = '';
+}
+
+function removeLabelImg(idx, el) {
+  labelImgData[idx] = null;
+  el.remove();
+  if (labelImgData.every(d => d === null)) document.getElementById('readLabelBtn').disabled = true;
+}
+
+async function readLabel() {
+  const validImgs = labelImgData.filter(Boolean);
+  if (!validImgs.length) return;
+  closeLabelReader();
+  document.getElementById('aiReading').style.display = 'block';
+  try {
+    const content = [
+      ...validImgs.map(img => ({
+        type: 'image',
+        source: { type: 'base64', media_type: img.split(';')[0].split(':')[1], data: img.split(',')[1] }
+      })),
+      { type: 'text', text: `これらは同じ毛糸のラベル画像です（複数枚）。全ての画像を合わせて情報を読み取りJSONのみ返してください。{"name":"メーカー名と品番","color":"色番号","colorname":"色名","material":"素材（例：ウール100%、ウール50%アクリル50%など正確に）","lot":"ロット番号","price":"定価（円表記で）"} 読み取れない項目は空文字。JSONのみ返してください。` }
+    ];
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 1000, messages: [{ role: 'user', content }] })
+    });
+    const data = await res.json();
+    const text = data.content.map(i=>i.text||'').join('');
+    const clean = text.replace(/```json|```/g,'').trim();
+    let parsed = {};
+    try { parsed = JSON.parse(clean); } catch(je) {
+      const m = clean.match(/\{[\s\S]*\}/);
+      if (m) parsed = JSON.parse(m[0]);
+    }
+    if (parsed.name) document.getElementById('f-name').value = parsed.name;
+    if (parsed.color) document.getElementById('f-color').value = parsed.color;
+    if (parsed.colorname) document.getElementById('f-colorname').value = parsed.colorname;
+    if (parsed.material) document.getElementById('f-material').value = parsed.material;
+    if (parsed.lot) document.getElementById('f-lot').value = parsed.lot;
+    if (parsed.price) document.getElementById('f-price').value = parsed.price;
+    checkSimilar();
+  } catch(e) {
+    alert('読み取りに失敗したよ😢 もう一度試してみてね');
+  } finally {
+    document.getElementById('aiReading').style.display = 'none';
+  }
+}
+
+function openDetail(i) {
+  const item = items[i];
+  const swatch = '';
+  const shopTags = (item.shops||[]).map(s=>`<span class="tag shop">${s}</span>`).join('') || '—';
+  const mainMemoText = item.memo || '';
+  const mainMemoHtml = mainMemoText ? '<div class="detail-row" style="flex-direction:column;gap:4px;"><span class="dl">メモ・URL</span><div style="font-size:13px;color:var(--text-primary);margin-top:2px;white-space:pre-wrap;word-break:break-all;">' +
+    mainMemoText.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#8C6272;text-decoration:underline;">$1</a>') +
+    '</div></div>' : '';
+  const memo = '';
+  const linkedWorks = works.filter(w=>(w.yarnIds||[]).includes(i));
+  const worksHtml = linkedWorks.length ? `<div class="linked-section"><div class="linked-title">この毛糸を使った作品</div>${linkedWorks.map(w=>`<div class="linked-item"><div class="linked-thumb">${w.img?`<img src="${w.img}">`:workSvgSm}</div><div><div class="linked-name">${w.name||'名前なし'}</div></div></div>`).join('')}</div>` : '';
+  const yarnSvgLg = `<svg width="56" height="56" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="17" stroke="#C4A0AE" stroke-width="1.5" fill="#EDE0E5"/><path d="M16 28 Q22 16 28 28 Q34 40 40 28" stroke="#8C6272" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="28" cy="28" r="4.5" fill="#8C6272" opacity="0.35"/></svg>`;
+  document.getElementById('detailContent').innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="modal-title">${item.name||'名前なし'}</div>
+    <div class="detail-thumb">${item.img?`<img src="${item.img}">`:yarnSvgLg}</div>
+    <div class="detail-row"><span class="dl">色番号</span><span class="dv">${item.color||'—'}</span></div>
+    <div class="detail-row"><span class="dl">色</span><span class="dv">${swatch}${item.colorname||'—'}</span></div>
+    <div class="detail-row"><span class="dl">素材</span><span class="dv">${item.material||'—'}</span></div>
+    <div class="detail-row"><span class="dl">ロット</span><span class="dv">${item.lot||'—'}</span></div>
+    ${item.price?`<div class="detail-row"><span class="dl">定価</span><span class="dv">${item.price}</span></div>`:''}
+    <div class="detail-row"><span class="dl">本数</span><span class="dv">${item.count||0} 本</span></div>
+    ${mainMemoHtml}
+    <div class="detail-row" style="flex-direction:column;gap:6px;"><span class="dl">お店</span><div style="display:flex;flex-wrap:wrap;gap:4px;">${shopTags}</div>${memo}</div>
+    ${worksHtml}
+    <div id="deleteConfirm-${i}" style="display:none;background:#FDF0F0;border-radius:10px;padding:10px 12px;margin-top:12px;text-align:center;">
+      <div style="font-size:13px;color:#9B3A3A;margin-bottom:8px;">本当に削除する？</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.getElementById('deleteConfirm-${i}').style.display='none'" style="flex:1;padding:8px;border-radius:99px;border:1px solid #DCCDD4;background:#FDF5F7;font-size:13px;cursor:pointer;">やっぱりやめる</button>
+        <button onclick="deleteItem(${i})" style="flex:1;padding:8px;border-radius:99px;border:1px solid #9B3A3A;background:#9B3A3A;color:#fff;font-size:13px;cursor:pointer;">削除する</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn danger" onclick="document.getElementById('deleteConfirm-${i}').style.display='block'">削除</button>
+      <button class="btn" onclick="closeDetail();openForm(${i})">編集</button>
+      <button class="btn primary" onclick="closeDetail()">閉じる</button>
+    </div>`;
+  document.getElementById('detailOverlay').classList.add('active');
+}
+function closeDetail() { document.getElementById('detailOverlay').classList.remove('active'); }
+function deleteItem(i) {
+  items.splice(i,1);
+  works.forEach(w=>{ w.yarnIds=(w.yarnIds||[]).filter(id=>id!==i).map(id=>id>i?id-1:id); });
+  saveData(); render(); closeDetail();
+}
+
+function openWorkForm(index) {
+  editingWorkIndex = index;
+  const work = index>=0 ? works[index] : null;
+  document.getElementById('workFormTitle').textContent = index>=0 ? '作品を編集' : '作品を追加';
+  currentWorkImg = (work&&work.img) ? work.img : null;
+  document.getElementById('wf-name').value = work?.name||'';
+  document.querySelectorAll('input[name=needle]').forEach(r => { r.checked = r.value === (work?.needle||''); updateNeedle(); });
+  document.getElementById('wf-memo').value = work?.memo||'';
+  document.getElementById('wf-ref').value = work?.ref||'';
+  selectedYarnIds = work ? [...(work.yarnIds||[])] : [];
+  document.getElementById('workImgPreview').innerHTML = currentWorkImg ? `<img src="${currentWorkImg}">` : '<div class="img-placeholder-text">タップして写真を選択</div>';
+  document.getElementById('workImgInput').value = '';
+  renderYarnSelectList();
+  document.getElementById('workFormOverlay').classList.add('active');
+}
+function closeWorkForm() { document.getElementById('workFormOverlay').classList.remove('active'); }
+
+function previewWorkImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => { currentWorkImg=e.target.result; document.getElementById('workImgPreview').innerHTML=`<img src="${currentWorkImg}">`; };
+  r.readAsDataURL(file);
+}
+
+function renderYarnSelectList() {
+  const el = document.getElementById('yarnSelectList');
+  if (!items.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);padding:8px;">先に毛糸を登録してね</div>'; return; }
+  el.innerHTML = items.map((item,i) => `
+    <div class="yarn-select-item ${selectedYarnIds.includes(i)?'selected':''}" onclick="toggleYarnSelect(${i},this)">
+      <div class="yarn-select-thumb">${item.img?`<img src="${item.img}">`:yarnSvgSm}</div>
+      <span>${item.name||'名前なし'}${item.colorname?' · '+item.colorname:''}</span>
+    </div>`).join('');
+}
+function toggleYarnSelect(i, el) {
+  if (selectedYarnIds.includes(i)) { selectedYarnIds=selectedYarnIds.filter(id=>id!==i); el.classList.remove('selected'); }
+  else { selectedYarnIds.push(i); el.classList.add('selected'); }
+}
+function saveWork() {
+  const needleEl = document.querySelector('input[name=needle]:checked'); const data = { img:currentWorkImg, name:document.getElementById('wf-name').value, needle:needleEl?needleEl.value:'', memo:document.getElementById('wf-memo').value, ref:document.getElementById('wf-ref').value, yarnIds:[...selectedYarnIds] };
+  if (editingWorkIndex>=0) { works[editingWorkIndex]=data; } else { works.push(data); }
+  saveData(); render(); closeWorkForm();
+}
+
+function openWorkDetail(i) {
+  const work = works[i];
+  const linkedYarns = (work.yarnIds||[]).map(id=>({yarn:items[id],id})).filter(x=>x.yarn);
+  const yarnsHtml = linkedYarns.length ? linkedYarns.map(({yarn,id})=>`<div class="linked-item" onclick="closeWorkDetail();openDetail(${id})"><div class="linked-thumb">${yarn.img?`<img src="${yarn.img}">`:yarnSvgSm}</div><div><div class="linked-name">${yarn.name||'名前なし'}</div><div class="linked-sub">${yarn.colorname||''}${yarn.material?' · '+yarn.material:''}</div></div></div>`).join('') : '<div style="font-size:13px;color:var(--text-tertiary);padding:4px 0;">毛糸未紐付け</div>';
+  document.getElementById('workDetailContent').innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="modal-title">${work.name||'名前なし'}</div>
+    <div class="detail-thumb">${work.img?`<img src="${work.img}">`:workSvgSm}</div>
+    ${work.memo?`<div class="detail-row" style="flex-direction:column;gap:4px;"><span class="dl">メモ</span><span style="font-size:13px;color:var(--text-primary);white-space:pre-wrap;">${work.memo}</span></div>`:''}
+    ${work.ref?`<div class="detail-row" style="flex-direction:column;gap:4px;"><span class="dl">編み図・参考URL</span><div style="font-size:13px;margin-top:2px;word-break:break-all;">${work.ref.replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank" style="color:#8C6272;text-decoration:underline;">$1</a>')}</div></div>`:''}
+    <div class="linked-section"><div class="linked-title">使った毛糸</div>${yarnsHtml}</div>
+    <div id="deleteWorkConfirm-${i}" style="display:none;background:#FDF0F0;border-radius:10px;padding:10px 12px;margin-top:12px;text-align:center;">
+      <div style="font-size:13px;color:#9B3A3A;margin-bottom:8px;">本当に削除する？</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.getElementById('deleteWorkConfirm-${i}').style.display='none'" style="flex:1;padding:8px;border-radius:99px;border:1px solid #DCCDD4;background:#FDF5F7;font-size:13px;cursor:pointer;">やっぱりやめる</button>
+        <button onclick="deleteWork(${i})" style="flex:1;padding:8px;border-radius:99px;border:1px solid #9B3A3A;background:#9B3A3A;color:#fff;font-size:13px;cursor:pointer;">削除する</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn danger" onclick="document.getElementById('deleteWorkConfirm-${i}').style.display='block'">削除</button>
+      <button class="btn" onclick="closeWorkDetail();openWorkForm(${i})">編集</button>
+      <button class="btn primary" onclick="closeWorkDetail()">閉じる</button>
+    </div>`;
+  document.getElementById('workDetailOverlay').classList.add('active');
+}
+function closeWorkDetail() { document.getElementById('workDetailOverlay').classList.remove('active'); }
+function deleteWork(i) {
+  works.splice(i,1); saveData(); render(); closeWorkDetail();
+}
+
+function renderShopList() {
+  const el = document.getElementById('shopListEl');
+  if (!shops.length) { el.innerHTML='<p style="font-size:12px;color:var(--text-tertiary);padding:8px 0;">まだ登録されていないよ</p>'; return; }
+  el.innerHTML = shops.map((s,i)=>`<div class="shop-list-item"><span>${s}</span><button class="shop-del-btn" onclick="deleteShop(${i})">×</button></div>`).join('');
+}
+function addShop() {
+  const input = document.getElementById('newShopInput');
+  const name = input.value.trim();
+  if (!name||shops.includes(name)||name==='その他') return;
+  shops.push(name); input.value=''; saveData(); renderShopList();
+}
+function deleteShop(i) { shops.splice(i,1); saveData(); renderShopList(); }
+function openSettings() { renderShopList(); document.getElementById('settingsOverlay').classList.add('active'); }
+function closeSettings() { document.getElementById('settingsOverlay').classList.remove('active'); }
+
+
+// ラベル検索
+let searchImgData = [];
+
+function openLabelSearch() {
+  searchImgData = [];
+  document.getElementById('searchPreviews').innerHTML = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('doSearchBtn').disabled = true;
+  document.getElementById('searchResults').style.display = 'none';
+  document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('searchReading').style.display = 'none';
+  document.getElementById('labelSearchOverlay').classList.add('active');
+}
+function closeLabelSearch() { document.getElementById('labelSearchOverlay').classList.remove('active'); }
+
+function addSearchImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    searchImgData.push(e.target.result);
+    const idx = searchImgData.length - 1;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;';
+    wrap.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;"><button onclick="removeSearchImg(${idx},this.parentNode)" style="position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(58,45,50,0.7);color:#fff;font-size:11px;cursor:pointer;line-height:1;">×</button>`;
+    document.getElementById('searchPreviews').appendChild(wrap);
+    document.getElementById('doSearchBtn').disabled = false;
+  };
+  r.readAsDataURL(file);
+  input.value = '';
+}
+
+function removeSearchImg(idx, el) {
+  searchImgData[idx] = null;
+  el.remove();
+  if (searchImgData.every(d=>d===null)) document.getElementById('doSearchBtn').disabled = true;
+}
+
+async function doLabelSearch() {
+  const validImgs = searchImgData.filter(Boolean);
+  if (!validImgs.length) return;
+  document.getElementById('searchReading').style.display = 'block';
+  document.getElementById('searchResults').style.display = 'none';
+  try {
+    const content = [
+      ...validImgs.map(img => ({ type:'image', source:{ type:'base64', media_type:img.split(';')[0].split(':')[1], data:img.split(',')[1] } })),
+      { type:'text', text:'この毛糸のラベル画像から情報を読み取りJSONのみ返してください。{"name":"メーカー名と品番","color":"色番号","colorname":"色名","material":"素材（例：ウール100%）","lot":"ロット番号","price":"定価"} JSONのみ。' }
+    ];
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:500, messages:[{role:'user',content}] })
+    });
+    const data = await res.json();
+    const parsed = JSON.parse(data.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());
+    
+    const results = items.filter((item,i) => {
+      const nameMatch = parsed.name && item.name && item.name.toLowerCase().includes(parsed.name.toLowerCase().split(' ')[0]);
+      const colorMatch = parsed.color && item.color && item.color === parsed.color;
+      return nameMatch || colorMatch;
+    }).map((item,_,arr) => ({...item, _idx: items.indexOf(item)}));
+
+    const el = document.getElementById('searchResults');
+    el.style.display = 'block';
+    if (!results.length) {
+      el.innerHTML = `<div style="font-size:13px;color:var(--text-tertiary);padding:12px;text-align:center;">在庫にないみたい！<br><span style="font-size:11px;">${parsed.name||''} ${parsed.color?'色番号:'+parsed.color:''}</span></div>`;
+    } else {
+      el.innerHTML = `<div style="font-size:11px;color:var(--text-tertiary);margin-bottom:8px;letter-spacing:0.04em;">見つかったよ！</div>` +
+        `<div class="list">${results.map(item => `
+        <div class="yarn-row" onclick="closeLabelSearch();openDetail(${item._idx})">
+          <div class="yarn-thumb">${item.img?`<img src="${item.img}">`:yarnSvgSm}</div>
+          <div class="yarn-info">
+            <div class="yarn-name">${item.name||'名前なし'}</div>
+            <div class="yarn-tags">${item.colorname?`<span class="tag color-name">${item.colorname}</span>`:''}${item.material?`<span class="tag">${item.material}</span>`:''}</div>
+          </div>
+          <div class="yarn-count"><span class="count-num">${item.count||0}</span><span class="count-unit">本</span></div>
+        </div>`).join('')}</div>`;
+    }
+  } catch(e) {
+    document.getElementById('searchResults').style.display = 'block';
+    document.getElementById('searchResults').innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);padding:12px;text-align:center;">読み取りに失敗したよ😢</div>';
+  } finally {
+    document.getElementById('searchReading').style.display = 'none';
+  }
+}
+
+// 重複チェック
+function addToExisting(idx) {
+  const input = document.getElementById('add-count-' + idx);
+  const add = Number(input.value) || 1;
+  const current = Number(items[idx].count) || 0;
+  items[idx].count = current + add;
+  saveData(); render(); closeForm();
+}
+
+function checkDuplicate(name, color) {
+  if (!color) return -1;
+  return items.findIndex((item, i) => {
+    if (i === editingIndex) return false;
+    return item.color && item.color.trim() === color.trim();
+  });
+}
+
+function updateNeedle() {
+  document.querySelectorAll('input[name=needle]').forEach(r => {
+    const label = r.parentNode;
+    if (r.checked) {
+      label.style.background = 'var(--accent-light)';
+      label.style.borderColor = 'var(--accent)';
+      label.style.color = 'var(--accent)';
+    } else {
+      label.style.background = 'var(--bg)';
+      label.style.borderColor = 'var(--border)';
+      label.style.color = 'var(--text-secondary)';
+    }
+  });
+}
+
+function checkSimilar() {
+  const name = document.getElementById('f-name').value.trim().toLowerCase();
+  const color = document.getElementById('f-color').value.trim().toLowerCase();
+  if (!name && !color) { document.getElementById('similarBox').style.display='none'; return; }
+
+  const similar = items.map((item,i) => ({...item,_idx:i})).filter((item,_,arr) => {
+    if (item._idx === editingIndex) return false;
+    const n = (item.name||'').toLowerCase();
+    const c = (item.color||'').toLowerCase();
+    const nameMatch = name.length >= 2 && n.includes(name.split(' ')[0]);
+    const colorMatch = color.length >= 1 && c.includes(color);
+    return nameMatch || colorMatch;
+  }).slice(0,3);
+
+  const box = document.getElementById('similarBox');
+  const list = document.getElementById('similarList');
+  if (!similar.length) { box.style.display='none'; return; }
+
+  box.style.display = 'block';
+  list.innerHTML = similar.map(item => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid #DCCDD4;">
+      <div style="width:32px;height:32px;border-radius:6px;overflow:hidden;background:#F2E8EC;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+        ${item.img ? `<img src="${item.img}" style="width:100%;height:100%;object-fit:cover;">` : '<svg viewBox="0 0 30 30" fill="none" width="20"><circle cx="15" cy="15" r="9" stroke="#C4A0AE" stroke-width="1.2" fill="#EDE0E5"/><path d="M9 15 Q12 9 15 15 Q18 21 21 15" stroke="#8C6272" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>'}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:500;color:#3A2D32;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name||'名前なし'}</div>
+        <div style="font-size:11px;color:#B09AA2;">色番号:${item.color||'—'} / 現在${item.count||0}本</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <input type="number" min="1" value="1" id="add-count-${item._idx}" style="width:44px;font-size:12px;padding:4px 6px;border:1px solid #DCCDD4;border-radius:6px;background:#FDF5F7;color:#3A2D32;text-align:center;">
+        <button onclick="addToExisting(${item._idx})" style="font-size:11px;padding:4px 8px;border-radius:99px;border:1px solid #8C6272;background:#8C6272;color:#FDF5F7;cursor:pointer;white-space:nowrap;">追加</button>
+      </div>
+    </div>`).join('');
+}
+
+document.querySelectorAll('.overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target===ov) ov.classList.remove('active'); });
+});
+
+render();
+</script>
+</body>
+</html>

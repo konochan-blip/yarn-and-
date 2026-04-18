@@ -1,0 +1,97 @@
+import { BookSvgSm } from '../lib/svgs'
+
+function ViewToggle({ view, onViewChange }) {
+  return (
+    <div style={{ display: 'flex', gap: '4px', marginLeft: '4px' }}>
+      <button onClick={() => onViewChange('list')} title="リスト"
+        style={{ padding: '5px 8px', borderRadius: '6px', border: '1px solid #DCCDD4', background: view === 'list' ? '#8C6272' : '#FDF5F7', color: view === 'list' ? '#FDF5F7' : '#7A6369', cursor: 'pointer', fontSize: '13px', lineHeight: 1 }}>☰</button>
+      <button onClick={() => onViewChange('grid')} title="グリッド"
+        style={{ padding: '5px 8px', borderRadius: '6px', border: '1px solid #DCCDD4', background: view === 'grid' ? '#8C6272' : '#FDF5F7', color: view === 'grid' ? '#FDF5F7' : '#7A6369', cursor: 'pointer', fontSize: '13px', lineHeight: 1 }}>⊞</button>
+    </div>
+  )
+}
+
+export default function BooksList({ books, works, sort, view, onSortChange, onViewChange, onOpenDetail }) {
+  const sorted = [...books]
+  if (sort === 'title') sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ja'))
+  else if (sort === 'author') sorted.sort((a, b) => (a.author || '').localeCompare(b.author || '', 'ja'))
+  else sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+
+  return (
+    <>
+      <div className="toolbar">
+        <label>並び替え</label>
+        <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+          <option value="default">登録順</option>
+          <option value="title">タイトル順</option>
+          <option value="author">著者順</option>
+        </select>
+        <span className="count-badge">{books.length}冊</span>
+        <ViewToggle view={view} onViewChange={onViewChange} />
+      </div>
+
+      {books.length === 0 ? (
+        <div className="empty">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="26" fill="#EDE0E5"/>
+            <rect x="24" y="22" width="26" height="36" rx="3" stroke="#C4A0AE" strokeWidth="1.5" fill="#F0E4EA"/>
+            <rect x="24" y="22" width="7" height="36" rx="3" fill="#C4A0AE" opacity="0.4"/>
+            <line x1="35" y1="33" x2="46" y2="33" stroke="#8C6272" strokeWidth="1.8" strokeLinecap="round"/>
+            <line x1="35" y1="39" x2="46" y2="39" stroke="#8C6272" strokeWidth="1.8" strokeLinecap="round"/>
+            <line x1="35" y1="45" x2="42" y2="45" stroke="#8C6272" strokeWidth="1.8" strokeLinecap="round"/>
+          </svg>
+          まだ書籍が登録されていないよ<br />「＋ 書籍追加」から登録してみてね
+        </div>
+      ) : view === 'grid' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+          {sorted.map((book) => (
+            <div key={book.id} onClick={() => onOpenDetail(book)}
+              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+              {book.img_url
+                ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
+              }
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
+                <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{book.title || '無題'}</div>
+                {book.author && <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{book.author}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="list">
+          {sorted.map((book) => {
+            const workCount = works.filter((w) => (w.book_ids || []).includes(book.id)).length
+            return (
+              <div key={book.id} className="yarn-row" onClick={() => onOpenDetail(book)}>
+                <div className="yarn-thumb">
+                  {book.img_url ? <img src={book.img_url} alt="" /> : <BookSvgSm />}
+                </div>
+                <div className="yarn-info">
+                  <div className="yarn-name">{book.title || '無題'}</div>
+                  <div className="yarn-tags">
+                    {book.author ? <span className="tag">{book.author}</span> : null}
+                    {book.publisher ? <span className="meta-text">{book.publisher}</span> : null}
+                  </div>
+                  {workCount > 0 && (
+                    <div className="yarn-tags" style={{ marginTop: '4px' }}>
+                      <span className="tag work">✦ {workCount}作品</span>
+                    </div>
+                  )}
+                </div>
+                {book.link && (
+                  <div style={{ flexShrink: 0, color: 'var(--text-tertiary)' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </>
+  )
+}
