@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=Shippori+Mincho:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
   /* Sugar palette ── くすみピンク */
@@ -74,14 +74,15 @@ body {
   color: var(--text-tertiary);
 }
 .app-title {
-  font-family: var(--font-serif);
-  font-weight: 600;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: 28px;
   color: var(--text-primary);
-  letter-spacing: 0.04em;
+  letter-spacing: -0.02em;
   line-height: 1;
 }
-.app-title b { font-weight: 400; color: var(--accent); }
+.app-title b { font-style: normal; font-weight: 300; color: var(--accent); }
 .header-icon { display: none; }
 .header-btns { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
 
