@@ -32,7 +32,7 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   )
 }
 
-export default function MyPage({ open, profile, yarns, tools, books, works, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile }) {
+export default function MyPage({ open, profile, yarns, tools, books, works, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword }) {
   const [sheet, setSheet] = useState(null)
   const [copied, setCopied] = useState(false)
 
@@ -169,11 +169,11 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
             </div>
           )}
 
-          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px' }}>
-            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '4px', letterSpacing: '0.06em' }}>登録情報</div>
-            <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-              プロフィール編集からユーザー名・自己紹介・アイコン画像を変更できます
-            </div>
+          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '4px 12px' }}>
+            <button onClick={onChangePassword} style={{ width: '100%', background: 'none', border: 'none', padding: '12px 0', fontSize: '14px', color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span>パスワードを変更する</span>
+              <span style={{ color: 'var(--text-tertiary)', fontSize: '16px' }}>›</span>
+            </button>
           </div>
         </div>
       </div>

@@ -22,19 +22,23 @@ import Dock from './components/Dock'
 import MyPage from './components/MyPage'
 import ProfileForm from './components/ProfileForm'
 import PublicProfile from './components/PublicProfile'
+import ChangePasswordModal from './components/ChangePasswordModal'
 
 export default function App() {
   // ────────── Auth ───────────────────────────────
   const [user, setUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
+  const [passwordRecovery, setPasswordRecovery] = useState(false)
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setAuthLoading(false)
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
+      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true)
       if (!session) {
         setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([])
         setFollows([]); setFollowersCount(0); setFeedWorks([]); setFeedProfiles([]); setFeedLoaded(false)
@@ -408,7 +412,9 @@ export default function App() {
         follows={follows} feedProfiles={feedProfiles}
         onClose={() => setMyPageOpen(false)}
         onEdit={() => { setMyPageOpen(false); setProfileFormOpen(true) }}
-        onOpenProfile={(p) => { setMyPageOpen(false); setViewingProfile(p) }} />
+        onOpenProfile={(p) => { setMyPageOpen(false); setViewingProfile(p) }}
+        onChangePassword={() => { setMyPageOpen(false); setChangePasswordOpen(true) }} />
+      <ChangePasswordModal open={changePasswordOpen || passwordRecovery} onClose={() => { setChangePasswordOpen(false); setPasswordRecovery(false) }} />
       <ProfileForm open={profileFormOpen} profile={profile}
         onSave={saveProfile} onClose={() => setProfileFormOpen(false)} />
       <PublicProfile

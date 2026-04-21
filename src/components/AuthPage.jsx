@@ -18,27 +18,32 @@ function translateError(msg) {
 }
 
 export default function AuthPage() {
-  const [mode, setMode] = useState('login') // 'login' | 'signup'
+  const [mode, setMode] = useState('login') // 'login' | 'signup' | 'forgot'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [signedUp, setSignedUp] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
     setError('')
-
     try {
       if (mode === 'login') {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
-        // ログイン成功 → App.jsx の onAuthStateChange が検知して自動遷移
-      } else {
+      } else if (mode === 'signup') {
         const { error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
         setSignedUp(true)
+      } else if (mode === 'forgot') {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: 'https://yarn-and.vercel.app/',
+        })
+        if (error) throw error
+        setResetSent(true)
       }
     } catch (err) {
       setError(translateError(err.message))
@@ -51,6 +56,7 @@ export default function AuthPage() {
     setMode(next)
     setError('')
     setSignedUp(false)
+    setResetSent(false)
   }
 
   return (
@@ -90,26 +96,47 @@ export default function AuthPage() {
         <div style={{ display: 'flex', marginBottom: '24px', borderBottom: '1px solid var(--border-light)' }}>
           {[['login', 'ログイン'], ['signup', '新規登録']].map(([key, label]) => (
             <button key={key} onClick={() => switchMode(key)} style={{
-              flex: 1,
-              padding: '8px',
-              border: 'none',
-              background: 'none',
-              fontFamily: 'inherit',
-              fontSize: '14px',
+              flex: 1, padding: '8px', border: 'none', background: 'none', fontFamily: 'inherit', fontSize: '14px',
               fontWeight: mode === key ? '500' : '400',
               color: mode === key ? 'var(--accent)' : 'var(--text-tertiary)',
               borderBottom: `2px solid ${mode === key ? 'var(--accent)' : 'transparent'}`,
-              cursor: 'pointer',
-              transition: 'all 0.15s',
-              marginBottom: '-1px',
+              cursor: 'pointer', transition: 'all 0.15s', marginBottom: '-1px',
             }}>
               {label}
             </button>
           ))}
         </div>
 
-        {/* 登録完了メッセージ */}
-        {signedUp ? (
+        {/* パスワードリセット画面 */}
+        {mode === 'forgot' ? (
+          resetSent ? (
+            <div style={{ background: 'var(--accent-light)', border: '1px solid var(--accent-mid)', borderRadius: '10px', padding: '16px', fontSize: '13px', color: 'var(--accent)', lineHeight: '1.7', textAlign: 'center' }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>✉️</div>
+              <strong>{email}</strong> にリセット用メールを送りました。<br />
+              メール内のリンクからパスワードを変更してください。
+              <button onClick={() => switchMode('login')} style={{ display: 'block', margin: '16px auto 0', padding: '8px 20px', borderRadius: '99px', border: '1px solid var(--accent)', background: 'var(--accent)', color: '#FDF5F7', fontFamily: 'inherit', fontSize: '13px', cursor: 'pointer' }}>
+                ログインへ
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '18px', lineHeight: 1.7 }}>
+                登録済みのメールアドレスを入力してください。パスワードリセット用のリンクを送ります。
+              </p>
+              <div className="field">
+                <label>メールアドレス</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" required autoComplete="email" />
+              </div>
+              {error && <div style={{ background: 'var(--danger-light)', border: '1px solid #E8C4C4', borderRadius: '8px', padding: '10px 12px', fontSize: '13px', color: 'var(--danger)', marginBottom: '14px' }}>{error}</div>}
+              <button type="submit" className="btn primary" disabled={loading} style={{ width: '100%', marginBottom: '12px' }}>
+                {loading ? '送信中…' : 'リセットメールを送る'}
+              </button>
+              <button type="button" onClick={() => switchMode('login')} style={{ width: '100%', background: 'none', border: 'none', fontSize: '13px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'inherit' }}>
+                ← ログインに戻る
+              </button>
+            </form>
+          )
+        ) : signedUp ? (
           <div style={{
             background: 'var(--accent-light)',
             border: '1px solid var(--accent-mid)',
@@ -178,9 +205,14 @@ export default function AuthPage() {
               </div>
             )}
 
-            <button type="submit" className="btn primary" disabled={loading} style={{ width: '100%', marginTop: '4px' }}>
+            <button type="submit" className="btn primary" disabled={loading} style={{ width: '100%', marginTop: '4px', marginBottom: mode === 'login' ? '10px' : '0' }}>
               {loading ? '処理中…' : mode === 'login' ? 'ログイン' : 'アカウントを作成'}
             </button>
+            {mode === 'login' && (
+              <button type="button" onClick={() => switchMode('forgot')} style={{ width: '100%', background: 'none', border: 'none', fontSize: '12px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'inherit', padding: '4px' }}>
+                パスワードをお忘れですか？
+              </button>
+            )}
           </form>
         )}
       </div>
