@@ -331,7 +331,6 @@ export default function App() {
     return (
       <>
         <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut} />
-        <TabBar tab={tab} onChange={setTab} />
         <main className="main"><div className="loading">読み込み中…</div></main>
         <Dock tab={tab} onChange={setTab} />
       </>
