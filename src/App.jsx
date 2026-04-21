@@ -23,6 +23,7 @@ import MyPage from './components/MyPage'
 import ProfileForm from './components/ProfileForm'
 import PublicProfile from './components/PublicProfile'
 import ChangePasswordModal from './components/ChangePasswordModal'
+import TermsPage from './components/TermsPage'
 
 export default function App() {
   // ────────── Auth ───────────────────────────────
@@ -30,6 +31,7 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(true)
   const [passwordRecovery, setPasswordRecovery] = useState(false)
   const [changePasswordOpen, setChangePasswordOpen] = useState(false)
+  const [termsOpen, setTermsOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -440,8 +442,10 @@ export default function App() {
       <footer className="app-footer">
         <div className="footer-divider" />
         <span className="footer-logo">YARN&amp;</span>
+        <button onClick={() => setTermsOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>利用規約</button>
         <span className="footer-copy">© 2026 YARN&amp; All rights reserved.</span>
       </footer>
+      {termsOpen && <TermsPage onClose={() => setTermsOpen(false)} />}
     </>
   )
 }
