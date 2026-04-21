@@ -18,6 +18,7 @@ import BookDetail from './components/BookDetail'
 import WorkDetail from './components/WorkDetail'
 import LabelSearch from './components/LabelSearch'
 import ShopSettings from './components/ShopSettings'
+import Dock from './components/Dock'
 import MyPage from './components/MyPage'
 import ProfileForm from './components/ProfileForm'
 import PublicProfile from './components/PublicProfile'
@@ -122,7 +123,18 @@ export default function App() {
       setTools(t || [])
       setBooks(b || [])
       setWorks(w || [])
-      setShops((s || []).map((row) => row.name))
+      const shopNames = (s || []).map((row) => row.name)
+      if (shopNames.length === 0) {
+        const defaults = ['ユザワヤ', '楽天', 'Amazon']
+        try {
+          await Promise.all(
+            defaults.map((n) => supabase.from('shops').upsert({ user_id: user.id, name: n }, { onConflict: 'user_id,name' }))
+          )
+        } catch { /* seeding failure is non-fatal */ }
+        setShops(defaults)
+      } else {
+        setShops(shopNames)
+      }
       setProfile(p || null)
       setFollows(f || [])
       setFollowersCount(fc ?? 0)
@@ -164,7 +176,8 @@ export default function App() {
   async function saveProfile(data, imgFile) {
     const avatar_url = await resolveImgUrl({ img_url: data.avatar_url }, imgFile)
     const record = { user_id: user.id, username: data.username, bio: data.bio, is_public: data.is_public, avatar_url }
-    const { data: upserted } = await supabase.from('profiles').upsert(record, { onConflict: 'user_id' }).select().single()
+    const { data: upserted, error } = await supabase.from('profiles').upsert(record, { onConflict: 'user_id' }).select().single()
+    if (error) throw new Error(error.message || 'プロフィールの保存に失敗しました')
     if (upserted) setProfile(upserted)
   }
 
@@ -283,8 +296,9 @@ export default function App() {
 
   // ────────── Shop CRUD ──────────────────────────
   async function addShop(name) {
-    const { error } = await supabase.from('shops').insert([{ user_id: user.id, name }])
-    if (!error) setShops((prev) => [...prev, name])
+    const { error } = await supabase.from('shops').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
+    if (error) throw new Error(error.message || 'お店の追加に失敗しました')
+    setShops((prev) => prev.includes(name) ? prev : [...prev, name])
   }
 
   async function deleteShop(name) {
@@ -316,16 +330,17 @@ export default function App() {
   if (loading) {
     return (
       <>
-        <Header tab={tab} profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onAdd={handleAdd} onSignOut={handleSignOut} />
+        <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut} />
         <TabBar tab={tab} onChange={setTab} />
         <main className="main"><div className="loading">読み込み中…</div></main>
+        <Dock tab={tab} onChange={setTab} />
       </>
     )
   }
 
   return (
     <>
-      <Header tab={tab} profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onAdd={handleAdd} onSignOut={handleSignOut} />
+      <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut} />
       <TabBar tab={tab} onChange={setTab} />
 
       <main className="main">
@@ -406,6 +421,16 @@ export default function App() {
         onClose={() => setViewingProfile(null)}
         onOpenWork={setDetailWork}
       />
+
+      {tab !== 'feed' && (
+        <button className="fab" onClick={handleAdd}>
+          <span className="fab-icon">＋</span>
+          <span className="fab-label">
+            {tab === 'yarn' ? '毛糸追加' : tab === 'tools' ? '道具追加' : tab === 'books' ? '書籍追加' : '作品追加'}
+          </span>
+        </button>
+      )}
+      <Dock tab={tab} onChange={setTab} />
 
       <footer className="app-footer">
         <div className="footer-divider" />

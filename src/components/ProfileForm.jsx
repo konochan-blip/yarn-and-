@@ -9,6 +9,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   const [imgFile, setImgFile] = useState(null)
   const [imgPreview, setImgPreview] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
   const imgInputRef = useRef()
 
   useEffect(() => {
@@ -32,9 +33,12 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
 
   async function handleSave() {
     setSaving(true)
+    setError('')
     try {
       await onSave({ username, bio, is_public: isPublic, avatar_url: imgPreview || '' }, imgFile)
       onClose()
+    } catch (e) {
+      setError(e.message || 'プロフィールの保存に失敗しました')
     } finally {
       setSaving(false)
     }
@@ -77,6 +81,11 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
         </div>
       </div>
 
+      {error && (
+        <div style={{ background: 'var(--danger-light)', border: '1px solid #E8C4C4', borderRadius: '8px', padding: '10px 12px', fontSize: '13px', color: 'var(--danger)', marginBottom: '14px' }}>
+          {error}
+        </div>
+      )}
       <div className="modal-actions">
         <button className="btn" onClick={onClose}>キャンセル</button>
         <button className="btn primary" disabled={saving} onClick={handleSave}>{saving ? '保存中…' : '保存する'}</button>

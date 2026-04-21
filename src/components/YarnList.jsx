@@ -1,5 +1,16 @@
 import { YarnSvgSm } from '../lib/svgs'
 
+const SWATCHES = [
+  ['#fbd0dc','#e8a8bc'],['#e8b5c1','#c98598'],['#cde8c8','#a9c8a7'],
+  ['#cfdff3','#a9bedc'],['#fbe6b3','#f3d492'],['#dec9ee','#c7b3dc'],
+  ['#fbdccb','#f4c4a8'],['#d4eaec','#a8c8cc'],['#f0dce8','#d4a0bc'],
+]
+function swatchOf(yarn) {
+  const key = (yarn.name || '') + (yarn.color || '') + (yarn.colorname || '')
+  const h = key.split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 0)
+  return SWATCHES[Math.abs(h) % SWATCHES.length]
+}
+
 function getSorted(items, sort) {
   const list = [...items]
   if (sort === 'count-desc') return list.sort((a, b) => (Number(b.count) || 0) - (Number(a.count) || 0))
@@ -88,10 +99,21 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
             return (
               <div key={item.id} className="yarn-row" onClick={() => onOpenDetail(item)}>
                 <div className="yarn-thumb">
-                  {item.img_url ? <img src={item.img_url} alt="" /> : <YarnSvgSm />}
+                  {item.img_url ? (
+                    <img src={item.img_url} alt="" />
+                  ) : (() => { const [c1,c2] = swatchOf(item); return (<>
+                    <div className="yarn-swatch" style={{'--sw1':c1,'--sw2':c2}} />
+                    <div className="yarn-swatch-stitch" />
+                    <div className="yarn-swatch-rim" />
+                  </>)})()}
                 </div>
                 <div className="yarn-info">
                   <div className="yarn-name">{item.name || '名前なし'}</div>
+                  {(item.color || item.lot || item.material) && (
+                    <div className="yarn-meta">
+                      {[item.color && `No.${item.color}`, item.lot && `Lot.${item.lot}`, item.material].filter(Boolean).join(' · ')}
+                    </div>
+                  )}
                   <div className="yarn-tags">{tags}</div>
                   <div className="yarn-tags" style={{ marginTop: '4px' }}>{shopTags}{workTags}</div>
                 </div>

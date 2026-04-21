@@ -3,12 +3,22 @@ import Modal from './Modal'
 
 export default function ShopSettings({ open, shops, onClose, onAdd, onDelete }) {
   const [input, setInput] = useState('')
+  const [error, setError] = useState('')
+  const [adding, setAdding] = useState(false)
 
-  function handleAdd() {
+  async function handleAdd() {
     const name = input.trim()
     if (!name || shops.includes(name) || name === 'その他') return
-    onAdd(name)
-    setInput('')
+    setError('')
+    setAdding(true)
+    try {
+      await onAdd(name)
+      setInput('')
+    } catch (e) {
+      setError(e.message || 'お店の追加に失敗しました')
+    } finally {
+      setAdding(false)
+    }
   }
 
   function handleKeyDown(e) {
@@ -32,9 +42,10 @@ export default function ShopSettings({ open, shops, onClose, onAdd, onDelete }) 
       </div>
 
       <div className="add-shop-row">
-        <input type="text" value={input} placeholder="例：オカダヤ" onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} />
-        <button className="btn primary" onClick={handleAdd}>追加</button>
+        <input type="text" value={input} placeholder="例：オカダヤ" onChange={(e) => { setInput(e.target.value); setError('') }} onKeyDown={handleKeyDown} />
+        <button className="btn primary" disabled={adding} onClick={handleAdd}>{adding ? '追加中…' : '追加'}</button>
       </div>
+      {error && <p style={{ fontSize: '12px', color: 'var(--danger)', marginTop: '6px' }}>{error}</p>}
       <p className="settings-note">※「その他」は常に表示されます</p>
 
       <div className="modal-actions">
