@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { PersonSvg } from '../lib/svgs'
 
@@ -33,7 +33,16 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
 }
 
 export default function MyPage({ open, profile, yarns, tools, books, works, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile }) {
-  const [sheet, setSheet] = useState(null) // 'follows' | 'followers'
+  const [sheet, setSheet] = useState(null)
+  const [copied, setCopied] = useState(false)
+
+  const handleCopyUrl = useCallback(() => {
+    const url = `https://yarn-and.vercel.app/user/${username}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }, [username]) // 'follows' | 'followers'
   const [followingProfiles, setFollowingProfiles] = useState([])
   const [loadingFollowing, setLoadingFollowing] = useState(false)
   const [followers, setFollowers] = useState([])
@@ -144,6 +153,21 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
               <span className="mypage-stat-label">作品</span>
             </div>
           </div>
+
+          {isPublic && (
+            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '8px', letterSpacing: '0.06em' }}>プロフィールURL</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ flex: 1, fontSize: '12px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-mono)' }}>
+                  yarn-and.vercel.app/user/{username}
+                </div>
+                <button className="btn" onClick={handleCopyUrl}
+                  style={{ fontSize: '12px', padding: '5px 12px', flexShrink: 0, background: copied ? 'var(--accent)' : '', color: copied ? '#fff' : '', borderColor: copied ? 'var(--accent)' : '' }}>
+                  {copied ? '✓ コピー済み' : 'コピー'}
+                </button>
+              </div>
+            </div>
+          )}
 
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px' }}>
             <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '4px', letterSpacing: '0.06em' }}>登録情報</div>
