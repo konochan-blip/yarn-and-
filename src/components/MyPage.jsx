@@ -37,12 +37,12 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
   const [copied, setCopied] = useState(false)
 
   const handleCopyUrl = useCallback(() => {
-    const url = `https://yarn-and.vercel.app/user/${username}`
+    const url = `https://yarn-and.vercel.app/user/${profile?.username || ''}`
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
-  }, [username]) // 'follows' | 'followers'
+  }, [profile?.username]) // 'follows' | 'followers'
   const [followingProfiles, setFollowingProfiles] = useState([])
   const [loadingFollowing, setLoadingFollowing] = useState(false)
   const [followers, setFollowers] = useState([])
