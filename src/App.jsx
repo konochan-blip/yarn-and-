@@ -405,8 +405,10 @@ export default function App() {
         onClose={() => setSettingsOpen(false)} onAdd={addShop} onDelete={deleteShop} />
       <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works}
         followsCount={follows.length} followersCount={followersCount}
+        follows={follows} feedProfiles={feedProfiles}
         onClose={() => setMyPageOpen(false)}
-        onEdit={() => { setMyPageOpen(false); setProfileFormOpen(true) }} />
+        onEdit={() => { setMyPageOpen(false); setProfileFormOpen(true) }}
+        onOpenProfile={(p) => { setMyPageOpen(false); setViewingProfile(p) }} />
       <ProfileForm open={profileFormOpen} profile={profile}
         onSave={saveProfile} onClose={() => setProfileFormOpen(false)} />
       <PublicProfile
