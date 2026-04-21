@@ -19,7 +19,7 @@ export default function Header({ profile, onOpenMyPage, onOpenSettings, onSignOu
         >
           {profile?.avatar_url
             ? <img src={profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-            : <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '15px', color: 'var(--text-secondary)' }}>
+            : <span style={{ fontFamily: 'var(--font-serif)', fontSize: '15px', fontWeight: 500, color: 'var(--text-secondary)' }}>
                 {profile?.username?.[0]?.toUpperCase() || 'K'}
               </span>
           }

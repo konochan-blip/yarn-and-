@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Zen+Kaku+Gothic+New:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
   /* Sugar palette ── くすみピンク */
@@ -37,8 +37,8 @@
   --radius:    18px;
   --radius-sm: 12px;
 
-  --font-sans:  'Zen Kaku Gothic New', 'Noto Sans JP', system-ui, sans-serif;
-  --font-serif: 'Fraunces', serif;
+  --font-sans:  'Zen Maru Gothic', system-ui, sans-serif;
+  --font-serif: 'Shippori Mincho', serif;
   --font-mono:  'JetBrains Mono', ui-monospace, monospace;
 }
 
@@ -75,14 +75,13 @@ body {
 }
 .app-title {
   font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 300;
+  font-weight: 600;
   font-size: 28px;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.04em;
   line-height: 1;
 }
-.app-title b { font-style: normal; font-weight: 300; color: var(--accent); }
+.app-title b { font-weight: 400; color: var(--accent); }
 .header-icon { display: none; }
 .header-btns { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
 
@@ -397,12 +396,11 @@ body {
 .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 99px; margin: 0 auto 16px; }
 .modal-title {
   font-family: var(--font-serif);
-  font-style: italic;
   font-size: 17px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 16px;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
 }
 
 /* ── Form fields ─────────────────────────── */
@@ -508,20 +506,20 @@ body {
 .mypage-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 200; overflow-y: auto; animation: fadeSlideIn 0.22s ease; }
 @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 .mypage-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
-.mypage-topbar-title { font-family: var(--font-serif); font-style: italic; font-weight: 300; font-size: 16px; color: var(--text-primary); }
+.mypage-topbar-title { font-family: var(--font-serif); font-weight: 500; font-size: 16px; color: var(--text-primary); }
 .mypage-body { max-width: 480px; margin: 0 auto; padding: 32px 20px 60px; }
 .mypage-profile-card { background: var(--surface); border-radius: 20px; border: 1px solid var(--border); padding: 32px 20px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
 .mypage-avatar-wrap { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; background: var(--accent-light); border: 2.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-bottom: 4px; }
 .mypage-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
 .mypage-avatar-wrap svg { width: 46px; height: 46px; }
-.mypage-username { font-family: var(--font-serif); font-style: italic; font-weight: 300; font-size: 22px; color: var(--text-primary); letter-spacing: -0.01em; }
+.mypage-username { font-family: var(--font-serif); font-weight: 500; font-size: 22px; color: var(--text-primary); letter-spacing: 0.02em; }
 .mypage-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 10px; border-radius: 99px; }
 .mypage-badge.public { background: var(--tag-shop-bg); color: var(--tag-shop-text); }
 .mypage-badge.private { background: var(--accent-light); color: var(--accent); }
 .mypage-bio { font-size: 13px; color: var(--text-secondary); text-align: center; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
 .mypage-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
 .mypage-stat { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); padding: 14px 8px; text-align: center; }
-.mypage-stat-num { font-family: var(--font-serif); font-style: italic; font-weight: 300; font-size: 26px; color: var(--accent); line-height: 1; display: block; margin-bottom: 4px; }
+.mypage-stat-num { font-family: var(--font-serif); font-weight: 600; font-size: 26px; color: var(--accent); line-height: 1; display: block; margin-bottom: 4px; }
 .mypage-stat-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; }
 
 /* ── Toggle ──────────────────────────────── */
@@ -544,5 +542,5 @@ body {
 /* ── Footer ──────────────────────────────── */
 .app-footer { text-align: center; padding: 28px 20px 120px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .footer-divider { width: 40px; height: 1px; background: linear-gradient(to right, transparent, var(--accent-mid), transparent); margin-bottom: 2px; }
-.footer-logo { font-family: var(--font-serif); font-style: italic; font-weight: 300; font-size: 14px; color: var(--text-tertiary); letter-spacing: 0.08em; }
+.footer-logo { font-family: var(--font-serif); font-weight: 400; font-size: 14px; color: var(--text-tertiary); letter-spacing: 0.08em; }
 .footer-copy { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.08em; }
