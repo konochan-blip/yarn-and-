@@ -34,6 +34,8 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
 
 export default function MyPage({ open, profile, yarns, tools, books, works, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile }) {
   const [sheet, setSheet] = useState(null) // 'follows' | 'followers'
+  const [followingProfiles, setFollowingProfiles] = useState([])
+  const [loadingFollowing, setLoadingFollowing] = useState(false)
   const [followers, setFollowers] = useState([])
   const [loadingFollowers, setLoadingFollowers] = useState(false)
 
@@ -43,6 +45,19 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
   const bio = profile?.bio || ''
   const avatarUrl = profile?.avatar_url || ''
   const isPublic = profile?.is_public || false
+
+  async function openFollowing() {
+    setSheet('follows')
+    setLoadingFollowing(true)
+    if (follows.length > 0) {
+      const ids = follows.map((f) => f.following_id)
+      const { data } = await supabase.from('profiles').select('*').in('user_id', ids)
+      setFollowingProfiles(data || [])
+    } else {
+      setFollowingProfiles([])
+    }
+    setLoadingFollowing(false)
+  }
 
   async function openFollowers() {
     setSheet('followers')
@@ -57,8 +72,6 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
     }
     setLoadingFollowers(false)
   }
-
-  const followingProfiles = follows.map((f) => feedProfiles.find((p) => p.user_id === f.following_id)).filter(Boolean)
 
   return (
     <>
@@ -102,7 +115,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
 
           {/* Social stats */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
-            <div className="mypage-stat" style={{ cursor: 'pointer' }} onClick={() => setSheet('follows')}>
+            <div className="mypage-stat" style={{ cursor: 'pointer' }} onClick={openFollowing}>
               <span className="mypage-stat-num">{followsCount}</span>
               <span className="mypage-stat-label">フォロー</span>
             </div>
@@ -145,7 +158,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
         <UserListSheet
           title={`フォロー中 ${followsCount}人`}
           users={followingProfiles}
-          loading={false}
+          loading={loadingFollowing}
           onClose={() => setSheet(null)}
           onOpenProfile={onOpenProfile}
         />
