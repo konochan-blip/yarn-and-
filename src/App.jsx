@@ -116,8 +116,8 @@ export default function App() {
         supabase.from('works').select('*').order('created_at', { ascending: true }),
         supabase.from('shops').select('name').order('created_at', { ascending: true }),
         supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
-        supabase.from('follows').select('*').eq('follower_id', user.id).catch(() => ({ data: null })),
-        supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', user.id).catch(() => ({ count: 0 })),
+        supabase.from('follows').select('*').eq('follower_id', user.id),
+        supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
       ])
       setYarns(y || [])
       setTools(t || [])
