@@ -340,8 +340,6 @@ export default function App() {
   return (
     <>
       <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut} />
-      <TabBar tab={tab} onChange={setTab} />
-
       <main className="main">
         {tab === 'yarn' && (
           <YarnList yarns={yarns} works={works} sort={yarnSort} view={yarnView} onSortChange={setYarnSort}
