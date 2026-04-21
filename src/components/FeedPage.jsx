@@ -129,11 +129,11 @@ export default function FeedPage({
       {/* Empty state */}
       {follows.length === 0 && !query && (
         <div className="empty">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="40" cy="40" r="26" fill="#EDE0E5"/>
-            <circle cx="30" cy="34" r="7" stroke="#C4A0AE" strokeWidth="1.5" fill="#F0E4EA"/>
-            <circle cx="50" cy="34" r="7" stroke="#C4A0AE" strokeWidth="1.5" fill="#F0E4EA"/>
-            <path d="M18 56c0-6 5-10 12-10 2 0 4 0.5 6 2 2-1.5 4-2 6-2 7 0 12 4 12 10" stroke="#C4A0AE" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
           </svg>
           ユーザー名で検索して<br />気になる人をフォローしてみよう
         </div>

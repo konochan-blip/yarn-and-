@@ -56,11 +56,12 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
 
       {yarns.length === 0 ? (
         <div className="empty">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="40" cy="40" r="26" fill="#EDE0E5"/>
-            <circle cx="40" cy="40" r="18" stroke="#C4A0AE" strokeWidth="1.5" fill="#F0E4EA"/>
-            <path d="M28 40 Q33 28 40 40 Q47 52 52 40" stroke="#8C6272" strokeWidth="2" fill="none" strokeLinecap="round"/>
-            <circle cx="40" cy="40" r="5" fill="#8C6272" opacity="0.35"/>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round">
+            <circle cx="12" cy="12" r="8"/>
+            <path d="M12 4c0 5-4 8-8 8"/>
+            <path d="M12 4c0 5 4 8 8 8"/>
+            <path d="M4 12c5 0 8 4 8 8"/>
+            <path d="M20 12c-5 0-8 4-8 8"/>
           </svg>
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>

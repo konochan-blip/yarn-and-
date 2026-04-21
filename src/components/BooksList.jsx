@@ -32,13 +32,9 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
 
       {books.length === 0 ? (
         <div className="empty">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="40" cy="40" r="26" fill="#EDE0E5"/>
-            <rect x="24" y="22" width="26" height="36" rx="3" stroke="#C4A0AE" strokeWidth="1.5" fill="#F0E4EA"/>
-            <rect x="24" y="22" width="7" height="36" rx="3" fill="#C4A0AE" opacity="0.4"/>
-            <line x1="35" y1="33" x2="46" y2="33" stroke="#8C6272" strokeWidth="1.8" strokeLinecap="round"/>
-            <line x1="35" y1="39" x2="46" y2="39" stroke="#8C6272" strokeWidth="1.8" strokeLinecap="round"/>
-            <line x1="35" y1="45" x2="42" y2="45" stroke="#8C6272" strokeWidth="1.8" strokeLinecap="round"/>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
           </svg>
           まだ書籍が登録されていないよ<br />「＋ 書籍追加」から登録してみてね
         </div>

@@ -30,10 +30,8 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
 
       {tools.length === 0 ? (
         <div className="empty">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="40" cy="40" r="26" fill="#EDE0E5"/>
-            <circle cx="40" cy="40" r="18" stroke="#C4A0AE" strokeWidth="1.5" fill="#F0E4EA"/>
-            <path d="M27 32 L40 52 L53 32" stroke="#8C6272" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
           </svg>
           まだ道具が登録されていないよ<br />「＋ 道具追加」から登録してみてね
         </div>
