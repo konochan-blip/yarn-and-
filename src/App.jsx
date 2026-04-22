@@ -130,9 +130,9 @@ export default function App() {
         { data: y }, { data: t }, { data: b }, { data: w }, { data: s }, { data: p },
         { data: f }, { count: fc }, { data: yc },
       ] = await Promise.all([
-        supabase.from('yarns').select('*').order('created_at', { ascending: true }),
-        supabase.from('tools').select('*').order('created_at', { ascending: true }),
-        supabase.from('books').select('*').order('created_at', { ascending: true }),
+        supabase.from('yarns').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
+        supabase.from('tools').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
+        supabase.from('books').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
         supabase.from('works').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
         supabase.from('shops').select('name').order('created_at', { ascending: true }),
         supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
