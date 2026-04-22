@@ -64,7 +64,8 @@ export default function App() {
   const [works,  setWorks]  = useState([])
   const [shops,  setShops]  = useState([])
   const [loading, setLoading] = useState(false)
-  const [tab, setTab] = useState('yarn')
+  const [tab, setTab] = useState(() => localStorage.getItem('active_tab') || 'yarn')
+  function changeTab(t) { setTab(t); localStorage.setItem('active_tab', t) }
 
   // Sort / filter
   const [yarnSort,    setYarnSort]    = useState('default')
@@ -393,7 +394,7 @@ export default function App() {
       <>
         <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut} />
         <main className="main"><div className="loading">読み込み中…</div></main>
-        <Dock tab={tab} onChange={setTab} />
+        <Dock tab={tab} onChange={changeTab} />
       </>
     )
   }
@@ -498,7 +499,7 @@ export default function App() {
           </span>
         </button>
       )}
-      <Dock tab={tab} onChange={setTab} />
+      <Dock tab={tab} onChange={changeTab} />
 
       <footer className="app-footer">
         <div className="footer-links">
