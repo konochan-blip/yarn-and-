@@ -140,7 +140,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
           <div className="mypage-stat">
             <span className="mypage-stat-num">{followersCount === null ? '…' : followersCount}</span>
             <span className="mypage-stat-label">フォロワー</span>
@@ -150,6 +150,33 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
             <span className="mypage-stat-label">フォロー中</span>
           </div>
         </div>
+
+        {profile.link_url && (
+          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '6px', letterSpacing: '0.06em' }}>リンク</div>
+            <a href={profile.link_url} target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: '13px', color: 'var(--accent)', wordBreak: 'break-all', textDecoration: 'none' }}>
+              {profile.link_url}
+            </a>
+          </div>
+        )}
+
+        {profile.favorite_shops?.length > 0 && (
+          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '14px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>お気に入りのお店</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {profile.favorite_shops.map((s, i) => (
+                s.url
+                  ? <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
+                      <span style={{ fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
+                      <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>›</span>
+                    </a>
+                  : <span key={i} style={{ background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {profile.is_public ? (
           <>
