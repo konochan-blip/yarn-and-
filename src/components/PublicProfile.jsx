@@ -6,7 +6,7 @@ import ToolDetail from './ToolDetail'
 import BookDetail from './BookDetail'
 import WorkDetail from './WorkDetail'
 
-export default function PublicProfile({ profile, currentUserId, isFollowing, onFollow, onUnfollow, onClose }) {
+export default function PublicProfile({ profile, currentUserId, isFollowing, onFollow, onUnfollow, onClose, onLoginClick }) {
   const [followersCount, setFollowersCount] = useState(null)
   const [followingCount, setFollowingCount] = useState(null)
   const [profileYarns, setProfileYarns] = useState([])
@@ -102,12 +102,23 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
         <span className="mypage-topbar-title">{profile.username || 'プロフィール'}</span>
         {isFollowing ? (
           <button className="btn" style={{ padding: '6px 14px', fontSize: '13px' }} onClick={() => onUnfollow(profile.user_id)}>フォロー中</button>
-        ) : profile.is_public ? (
+        ) : onFollow && profile.is_public ? (
           <button className="btn primary" style={{ padding: '6px 14px', fontSize: '13px' }} onClick={() => onFollow(profile.user_id)}>フォローする</button>
-        ) : (
+        ) : onLoginClick ? (
+          <button className="btn primary" style={{ padding: '6px 14px', fontSize: '13px' }} onClick={onLoginClick}>フォローする</button>
+        ) : !profile.is_public ? (
           <button className="btn" style={{ padding: '6px 14px', fontSize: '13px', opacity: 0.5, cursor: 'default' }} disabled>🔒 非公開</button>
-        )}
+        ) : null}
       </div>
+
+      {onLoginClick && (
+        <div style={{ background: 'var(--accent)', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          <span style={{ fontSize: '13px', color: '#fff' }}>YARN&に登録してフォローしよう</span>
+          <button onClick={onLoginClick} style={{ background: '#fff', border: 'none', borderRadius: '99px', padding: '6px 14px', fontSize: '12px', fontWeight: 600, color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>
+            登録 / ログイン
+          </button>
+        </div>
+      )}
 
       <div className="mypage-body">
         <div className="mypage-profile-card">
