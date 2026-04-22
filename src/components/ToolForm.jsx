@@ -67,7 +67,7 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
         </select>
       </div>
       <div className="field"><label>サイズ・号数</label><input type="text" value={size} placeholder="例：3号 / 2.3mm" onChange={(e) => setSize(e.target.value)} /></div>
-      <div className="field"><textarea value={memo} placeholder="メモなど" onChange={(e) => setMemo(e.target.value)} /></div>
+      <div className="field"><label>メモ</label><textarea value={memo} placeholder="使い心地・購入店・メモなど" onChange={(e) => setMemo(e.target.value)} /></div>
 
       <div className="modal-actions">
         <button className="btn" onClick={onClose}>キャンセル</button>

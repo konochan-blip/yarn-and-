@@ -176,7 +176,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
         <div className="field"><label>ロット番号</label><input type="text" value={lot} placeholder="例：L204" onChange={(e) => setLot(e.target.value)} /></div>
         <div className="field"><label>本数</label><input type="number" value={count} placeholder="例：5" min="0" onChange={(e) => setCount(e.target.value)} /></div>
         <div className="field"><label>定価</label><input type="text" value={price} placeholder="例：550円" onChange={(e) => setPrice(e.target.value)} /></div>
-        <div className="field"><textarea value={memo} placeholder="店名・URL・メモなど" onChange={(e) => setMemo(e.target.value)} /></div>
+        <div className="field"><label>メモ</label><textarea value={memo} placeholder="購入店・URL・メモなど" onChange={(e) => setMemo(e.target.value)} /></div>
 
         <div className="field">
           <label>購入したお店</label>
