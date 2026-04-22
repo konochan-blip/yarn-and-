@@ -502,7 +502,7 @@ export default function App() {
           <span className="footer-sep">|</span>
           <button onClick={() => setContactOpen(true)} className="footer-link">お問い合わせ</button>
           <span className="footer-sep">|</span>
-          <button onClick={handleSignOut} className="footer-link">新規登録・ログイン</button>
+          <button onClick={handleSignOut} className="footer-link">新規登録</button>
           <span className="footer-sep">|</span>
           <button onClick={() => setWithdrawOpen(true)} className="footer-link">退会</button>
         </div>
