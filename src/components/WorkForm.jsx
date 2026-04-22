@@ -103,25 +103,6 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
         </div>
       </div>
 
-      {/* 編み図写真 */}
-      <div className="field">
-        <label>編み図・参考写真</label>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '6px', marginBottom: '8px' }}>
-          {patternItems.map((item, idx) => (
-            <div key={idx} style={{ position: 'relative', aspectRatio: '1', borderRadius: '10px', overflow: 'hidden', background: 'var(--surface-2)' }}>
-              <img src={item.preview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-              <button onClick={() => removePatternItem(idx)}
-                style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>×</button>
-            </div>
-          ))}
-          <button onClick={() => patternInputRef.current?.click()}
-            style={{ aspectRatio: '1', borderRadius: '10px', border: '1.5px dashed var(--border)', background: 'var(--surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', color: 'var(--text-tertiary)' }}>＋</button>
-        </div>
-        <input ref={patternInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handlePatternImgAdd} />
-      </div>
-
-      <div className="field"><textarea value={ref} placeholder="編み図・作り方参考URL" onChange={(e) => setRef(e.target.value)} /></div>
-
       <div className="field">
         <label>使った毛糸</label>
         <div className="yarn-select-list">
@@ -149,6 +130,25 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
           ))}
         </div>
       </div>
+
+      {/* 編み図写真 */}
+      <div className="field">
+        <label>編み図・参考写真</label>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '6px', marginBottom: '8px' }}>
+          {patternItems.map((item, idx) => (
+            <div key={idx} style={{ position: 'relative', aspectRatio: '1', borderRadius: '10px', overflow: 'hidden', background: 'var(--surface-2)' }}>
+              <img src={item.preview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+              <button onClick={() => removePatternItem(idx)}
+                style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>×</button>
+            </div>
+          ))}
+          <button onClick={() => patternInputRef.current?.click()}
+            style={{ aspectRatio: '1', borderRadius: '10px', border: '1.5px dashed var(--border)', background: 'var(--surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', color: 'var(--text-tertiary)' }}>＋</button>
+        </div>
+        <input ref={patternInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handlePatternImgAdd} />
+      </div>
+
+      <div className="field"><textarea value={ref} placeholder="編み図・作り方参考URL" onChange={(e) => setRef(e.target.value)} /></div>
 
       <div className="field"><label>メモ</label><textarea value={memo} placeholder="使用針・サイズ・感想など" onChange={(e) => setMemo(e.target.value)} /></div>
       <div className="field"><label>自分メモ（非公開）</label><textarea value={privateMemo} placeholder="自分だけのメモ。他の人には見えません" rows={3} onChange={(e) => setPrivateMemo(e.target.value)} /></div>
