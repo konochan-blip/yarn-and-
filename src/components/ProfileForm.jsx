@@ -8,7 +8,8 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   const [isPublic, setIsPublic] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [favoriteShops, setFavoriteShops] = useState([])
-  const [shopInput, setShopInput] = useState('')
+  const [shopNameInput, setShopNameInput] = useState('')
+  const [shopUrlInput, setShopUrlInput] = useState('')
   const [imgFile, setImgFile] = useState(null)
   const [imgPreview, setImgPreview] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -22,7 +23,8 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setIsPublic(profile?.is_public || false)
     setLinkUrl(profile?.link_url || '')
     setFavoriteShops(profile?.favorite_shops || [])
-    setShopInput('')
+    setShopNameInput('')
+    setShopUrlInput('')
     setImgFile(null)
     setImgPreview(profile?.avatar_url || null)
   }, [open, profile])
@@ -38,14 +40,15 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   }
 
   function addShop() {
-    const s = shopInput.trim()
-    if (!s || favoriteShops.includes(s)) return
-    setFavoriteShops((prev) => [...prev, s])
-    setShopInput('')
+    const name = shopNameInput.trim()
+    if (!name) return
+    setFavoriteShops((prev) => [...prev, { name, url: shopUrlInput.trim() }])
+    setShopNameInput('')
+    setShopUrlInput('')
   }
 
-  function removeShop(shop) {
-    setFavoriteShops((prev) => prev.filter((s) => s !== shop))
+  function removeShop(idx) {
+    setFavoriteShops((prev) => prev.filter((_, i) => i !== idx))
   }
 
   async function handleSave() {
@@ -88,19 +91,25 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
 
       <div className="field">
         <label>お気に入りのお店</label>
+        <input type="text" value={shopNameInput} placeholder="お店の名前" onChange={(e) => setShopNameInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addShop())}
+          style={{ marginBottom: '6px' }} />
         <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-          <input type="text" value={shopInput} placeholder="お店の名前を入力" onChange={(e) => setShopInput(e.target.value)}
+          <input type="url" value={shopUrlInput} placeholder="URL（任意）https://..." onChange={(e) => setShopUrlInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addShop())}
             style={{ flex: 1 }} />
           <button type="button" className="btn primary" style={{ padding: '8px 14px', flexShrink: 0 }} onClick={addShop}>追加</button>
         </div>
         {favoriteShops.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-            {favoriteShops.map((s) => (
-              <span key={s} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'var(--tag-shop-bg)', color: 'var(--tag-shop-text)', borderRadius: '99px', fontSize: '12px', padding: '3px 10px 3px 12px' }}>
-                {s}
-                <button onClick={() => removeShop(s)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--tag-shop-text)', fontSize: '14px', lineHeight: 1, padding: '0 2px' }}>×</button>
-              </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {favoriteShops.map((s, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '7px 10px' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</div>
+                  {s.url && <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.url}</div>}
+                </div>
+                <button onClick={() => removeShop(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: '16px', lineHeight: 1, padding: '0 4px', flexShrink: 0 }}>×</button>
+              </div>
             ))}
           </div>
         )}

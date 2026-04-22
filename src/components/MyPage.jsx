@@ -182,9 +182,15 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
           {profile?.favorite_shops?.length > 0 && (
             <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
               <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>お気に入りのお店</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {profile.favorite_shops.map((s) => (
-                  <span key={s} style={{ background: 'var(--tag-shop-bg)', color: 'var(--tag-shop-text)', borderRadius: '99px', fontSize: '12px', padding: '4px 12px' }}>{s}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {profile.favorite_shops.map((s, i) => (
+                  s.url
+                    ? <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
+                        <span style={{ fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>›</span>
+                      </a>
+                    : <span key={i} style={{ background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
                 ))}
               </div>
             </div>
