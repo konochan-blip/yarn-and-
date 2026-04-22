@@ -23,11 +23,12 @@ export default function FeedPage({
 
   async function doSearch(q) {
     setSearching(true)
+    const term = q.startsWith('@') ? q.slice(1) : q
     const { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('is_public', true)
-      .ilike('username', `%${q}%`)
+      .or(`username.ilike.%${term}%,handle.ilike.%${term}%`)
       .limit(15)
     setSearchResults(data || [])
     setSearching(false)
@@ -86,6 +87,7 @@ export default function FeedPage({
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.username || 'ユーザー'}</div>
+                    {p.handle && <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '1px' }}>@{p.handle}</div>}
                     {p.bio && <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>{p.bio}</div>}
                   </div>
                   <button

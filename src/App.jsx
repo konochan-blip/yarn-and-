@@ -183,7 +183,7 @@ export default function App() {
   // ────────── Profile CRUD ──────────────────────
   async function saveProfile(data, imgFile) {
     const avatar_url = await resolveImgUrl({ img_url: data.avatar_url }, imgFile)
-    const record = { user_id: user.id, username: data.username, bio: data.bio, is_public: data.is_public, avatar_url, link_url: data.link_url || '', favorite_shops: data.favorite_shops || [] }
+    const record = { user_id: user.id, username: data.username, handle: data.handle || null, bio: data.bio, is_public: data.is_public, avatar_url, link_url: data.link_url || '', favorite_shops: data.favorite_shops || [] }
     const { data: upserted, error } = await supabase.from('profiles').upsert(record, { onConflict: 'user_id' }).select().single()
     if (error) throw new Error(error.message || 'プロフィールの保存に失敗しました')
     if (upserted) setProfile(upserted)

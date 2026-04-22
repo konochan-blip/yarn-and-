@@ -37,12 +37,12 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
   const [copied, setCopied] = useState(false)
 
   const handleCopyUrl = useCallback(() => {
-    const url = `https://yarn-and.vercel.app/user/${profile?.username || ''}`
+    const url = `https://yarn-and.vercel.app/user/${profile?.handle || profile?.username || ''}`
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
-  }, [profile?.username]) // 'follows' | 'followers'
+  }, [profile?.handle, profile?.username]) // 'follows' | 'followers'
   const [followingProfiles, setFollowingProfiles] = useState([])
   const [loadingFollowing, setLoadingFollowing] = useState(false)
   const [followers, setFollowers] = useState([])
@@ -97,6 +97,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
               {avatarUrl ? <img src={avatarUrl} alt="" /> : <PersonSvg />}
             </div>
             <div className="mypage-username">{username}</div>
+            {profile?.handle && <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>@{profile.handle}</div>}
             <div className={`mypage-badge ${isPublic ? 'public' : 'private'}`}>
               {isPublic ? (
                 <>
@@ -159,7 +160,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
               <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '8px', letterSpacing: '0.06em' }}>プロフィールURL</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ flex: 1, fontSize: '12px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-mono)' }}>
-                  yarn-and.vercel.app/user/{username}
+                  yarn-and.vercel.app/user/{profile?.handle || username}
                 </div>
                 <button className="btn" onClick={handleCopyUrl}
                   style={{ fontSize: '12px', padding: '5px 12px', flexShrink: 0, background: copied ? 'var(--accent)' : '', color: copied ? '#fff' : '', borderColor: copied ? 'var(--accent)' : '' }}>

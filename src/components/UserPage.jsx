@@ -16,8 +16,8 @@ export default function UserPage({ username }) {
       const { data: p } = await supabase
         .from('profiles')
         .select('*')
-        .eq('username', username)
         .eq('is_public', true)
+        .or(`handle.eq.${username},username.eq.${username}`)
         .maybeSingle()
       if (!p) { setNotFound(true); setLoading(false); return }
       setProfile(p)
@@ -58,7 +58,8 @@ export default function UserPage({ username }) {
           <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', background: 'var(--accent-light)', border: '2.5px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
             {profile.avatar_url ? <img src={profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <PersonSvg />}
           </div>
-          <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '20px', color: 'var(--text-primary)', marginBottom: '8px' }}>{profile.username}</div>
+          <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '20px', color: 'var(--text-primary)', marginBottom: '4px' }}>{profile.username}</div>
+          {profile.handle && <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>@{profile.handle}</div>}
           {profile.bio && <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '16px' }}>{profile.bio}</div>}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
             <div style={{ textAlign: 'center' }}>

@@ -4,6 +4,7 @@ import { PersonSvg } from '../lib/svgs'
 
 export default function ProfileForm({ open, profile, onSave, onClose }) {
   const [username, setUsername] = useState('')
+  const [handle, setHandle] = useState('')
   const [bio, setBio] = useState('')
   const [isPublic, setIsPublic] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
@@ -19,6 +20,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   useEffect(() => {
     if (!open) return
     setUsername(profile?.username || '')
+    setHandle(profile?.handle || '')
     setBio(profile?.bio || '')
     setIsPublic(profile?.is_public || false)
     setLinkUrl(profile?.link_url || '')
@@ -55,7 +57,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setSaving(true)
     setError('')
     try {
-      await onSave({ username, bio, is_public: isPublic, avatar_url: imgPreview || '', link_url: linkUrl, favorite_shops: favoriteShops }, imgFile)
+      await onSave({ username, handle, bio, is_public: isPublic, avatar_url: imgPreview || '', link_url: linkUrl, favorite_shops: favoriteShops }, imgFile)
       onClose()
     } catch (e) {
       setError(e.message || 'プロフィールの保存に失敗しました')
@@ -75,8 +77,20 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
       <div style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '-10px', marginBottom: '14px' }}>タップして写真を変更</div>
 
       <div className="field">
-        <label>ユーザー名</label>
+        <label>ユーザー名（表示名）</label>
         <input type="text" value={username} placeholder="例：にわとり編み物部" onChange={(e) => setUsername(e.target.value)} />
+      </div>
+
+      <div className="field">
+        <label>ID（半角英数字・アンダースコアのみ）</label>
+        <div style={{ position: 'relative' }}>
+          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', fontSize: '14px' }}>@</span>
+          <input type="text" value={handle} placeholder="例：knitting_lover" style={{ paddingLeft: '26px' }}
+            onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} />
+        </div>
+        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+          プロフィールURL: yarn-and.vercel.app/user/{handle || '（ID）'}
+        </div>
       </div>
 
       <div className="field">
