@@ -107,11 +107,11 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
       {author && (
         <div onClick={onOpenProfile}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px', marginBottom: '4px', cursor: onOpenProfile ? 'pointer' : 'default' }}>
-          <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', background: 'var(--accent-light)', border: '1.5px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', background: 'var(--accent-light)', border: '1.5px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {author.avatar_url ? <img src={author.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <PersonSvg />}
           </div>
-          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 500 }}>{author.username || 'ユーザー'}</span>
-          {onOpenProfile && <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>›</span>}
+          <span style={{ fontSize: '16px', color: 'var(--text-primary)', fontWeight: 600 }}>{author.username || 'ユーザー'}</span>
+          {onOpenProfile && <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>›</span>}
         </div>
       )}
 
