@@ -443,7 +443,7 @@ export default function App() {
         onClose={() => setDetailBook(null)}
         onEdit={(book) => { setDetailBook(null); setEditingBook(book); setBookFormOpen(true) }}
         onDelete={deleteBook} onOpenWorkDetail={setDetailWork} />
-      <WorkDetail work={detailWork} yarns={yarns} books={books}
+      <WorkDetail work={detailWork} yarns={yarns} books={books} currentUserId={user?.id}
         onClose={() => setDetailWork(null)}
         onEdit={isOwnWork(detailWork) ? (work) => { setDetailWork(null); setEditingWork(work); setWorkFormOpen(true) } : undefined}
         onDelete={isOwnWork(detailWork) ? deleteWork : undefined}
