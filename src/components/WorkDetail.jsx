@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Modal from './Modal'
-import { WorkSvgSm, YarnSvgSm, BookSvgSm } from '../lib/svgs'
+import { WorkSvgSm, YarnSvgSm, BookSvgSm, PersonSvg } from '../lib/svgs'
 import { supabase } from '../lib/supabase'
 
 const YarnBallIcon = ({ active, size = 28 }) => (
@@ -23,7 +23,7 @@ const MiniYarnBall = () => (
 
 export { MiniYarnBall }
 
-export default function WorkDetail({ work, yarns, books, currentUserId, onClose, onEdit, onDelete, onYarnChange, onOpenYarnDetail, onOpenBookDetail }) {
+export default function WorkDetail({ work, yarns, books, currentUserId, author, onClose, onEdit, onDelete, onYarnChange, onOpenYarnDetail, onOpenBookDetail, onOpenProfile }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [yarnCount, setYarnCount] = useState(0)
@@ -86,6 +86,18 @@ export default function WorkDetail({ work, yarns, books, currentUserId, onClose,
   return (
     <Modal open={!!work} onClose={onClose}>
       <div className="modal-title">{work.name || '名前なし'}</div>
+
+      {author && (
+        <div onClick={onOpenProfile}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px', marginBottom: '4px', cursor: onOpenProfile ? 'pointer' : 'default' }}>
+          <div style={{ width: '22px', height: '22px', borderRadius: '50%', overflow: 'hidden', background: 'var(--accent-light)', border: '1.5px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {author.avatar_url ? <img src={author.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <PersonSvg />}
+          </div>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 500 }}>{author.username || 'ユーザー'}</span>
+          {onOpenProfile && <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>›</span>}
+        </div>
+      )}
+
       <div className="detail-thumb">
         {work.img_url ? <img src={work.img_url} alt="" /> : <WorkSvgSm />}
       </div>

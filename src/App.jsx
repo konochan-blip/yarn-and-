@@ -91,10 +91,11 @@ export default function App() {
   const [editingBook,   setEditingBook]   = useState(null)
   const [workFormOpen,  setWorkFormOpen]  = useState(false)
   const [editingWork,   setEditingWork]   = useState(null)
-  const [detailYarn,    setDetailYarn]    = useState(null)
-  const [detailTool,    setDetailTool]    = useState(null)
-  const [detailBook,    setDetailBook]    = useState(null)
-  const [detailWork,    setDetailWork]    = useState(null)
+  const [detailYarn,       setDetailYarn]       = useState(null)
+  const [detailTool,       setDetailTool]       = useState(null)
+  const [detailBook,       setDetailBook]       = useState(null)
+  const [detailWork,       setDetailWork]       = useState(null)
+  const [detailWorkAuthor, setDetailWorkAuthor] = useState(null)
   const [labelSearchOpen,  setLabelSearchOpen]  = useState(false)
   const [settingsOpen,     setSettingsOpen]     = useState(false)
   const [myPageOpen,       setMyPageOpen]       = useState(false)
@@ -431,7 +432,7 @@ export default function App() {
             onLoadPublicWorks={loadPublicWorks}
             onFollowUser={followUser} onUnfollowUser={unfollowUser}
             onOpenProfile={setViewingProfile}
-            onOpenWork={setDetailWork}
+            onOpenWork={(work, author) => { setDetailWork(work); setDetailWorkAuthor(author || null) }}
           />
         )}
       </main>
@@ -460,11 +461,13 @@ export default function App() {
         onEdit={(book) => { setDetailBook(null); setEditingBook(book); setBookFormOpen(true) }}
         onDelete={deleteBook} onOpenWorkDetail={setDetailWork} />
       <WorkDetail work={detailWork} yarns={yarns} books={books} currentUserId={user?.id}
-        onClose={() => setDetailWork(null)}
+        author={detailWorkAuthor}
+        onClose={() => { setDetailWork(null); setDetailWorkAuthor(null) }}
         onEdit={isOwnWork(detailWork) ? (work) => { setDetailWork(null); setEditingWork(work); setWorkFormOpen(true) } : undefined}
         onDelete={isOwnWork(detailWork) ? deleteWork : undefined}
         onYarnChange={handleYarnChange}
-        onOpenYarnDetail={setDetailYarn} onOpenBookDetail={setDetailBook} />
+        onOpenYarnDetail={setDetailYarn} onOpenBookDetail={setDetailBook}
+        onOpenProfile={detailWorkAuthor ? () => { setDetailWork(null); setDetailWorkAuthor(null); setViewingProfile(detailWorkAuthor) } : undefined} />
 
       {/* Others */}
       <LabelSearch open={labelSearchOpen} yarns={yarns}

@@ -194,7 +194,7 @@ export default function FeedPage({
                     const author = feedProfiles.find((p) => p.user_id === work.user_id)
                     const count = yarnCounts[work.id] || 0
                     return (
-                      <div key={work.id} onClick={() => onOpenWork(work)}
+                      <div key={work.id} onClick={() => onOpenWork(work, author)}
                         style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
                         {work.img_url
                           ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
@@ -252,7 +252,7 @@ export default function FeedPage({
                 const author = publicProfiles.find((p) => p.user_id === work.user_id)
                 const count = yarnCounts[work.id] || 0
                 return (
-                  <div key={work.id} onClick={() => onOpenWork(work)}
+                  <div key={work.id} onClick={() => onOpenWork(work, author)}
                     style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
                     {work.img_url
                       ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
