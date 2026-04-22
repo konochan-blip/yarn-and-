@@ -97,13 +97,17 @@ export default function App() {
   const [profile,          setProfile]          = useState(null)
 
   // ────────── Social ─────────────────────────────
-  const [follows,         setFollows]         = useState([])   // who I follow
-  const [followersCount,  setFollowersCount]  = useState(0)    // my follower count
-  const [feedWorks,       setFeedWorks]       = useState([])
-  const [feedProfiles,    setFeedProfiles]    = useState([])
-  const [feedLoaded,      setFeedLoaded]      = useState(false)
-  const [feedLoading,     setFeedLoading]     = useState(false)
-  const [viewingProfile,  setViewingProfile]  = useState(null)
+  const [follows,             setFollows]             = useState([])   // who I follow
+  const [followersCount,      setFollowersCount]      = useState(0)    // my follower count
+  const [feedWorks,           setFeedWorks]           = useState([])
+  const [feedProfiles,        setFeedProfiles]        = useState([])
+  const [feedLoaded,          setFeedLoaded]          = useState(false)
+  const [feedLoading,         setFeedLoading]         = useState(false)
+  const [publicWorks,         setPublicWorks]         = useState([])
+  const [publicProfiles,      setPublicProfiles]      = useState([])
+  const [publicWorksLoaded,   setPublicWorksLoaded]   = useState(false)
+  const [publicWorksLoading,  setPublicWorksLoading]  = useState(false)
+  const [viewingProfile,      setViewingProfile]      = useState(null)
 
   // Trigger feed load when switching to feed tab
   useEffect(() => {
@@ -174,6 +178,35 @@ export default function App() {
     setFeedProfiles(pr || [])
     setFeedLoaded(true)
     setFeedLoading(false)
+  }
+
+  async function loadPublicWorks() {
+    setPublicWorksLoading(true)
+    try {
+      const { data: pr } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('is_public', true)
+        .neq('user_id', user.id)
+      if (!pr || pr.length === 0) {
+        setPublicWorks([])
+        setPublicProfiles([])
+        setPublicWorksLoaded(true)
+        return
+      }
+      const publicUserIds = pr.map((p) => p.user_id)
+      const { data: w } = await supabase
+        .from('works')
+        .select('*')
+        .in('user_id', publicUserIds)
+        .limit(90)
+      const shuffled = [...(w || [])].sort(() => Math.random() - 0.5)
+      setPublicWorks(shuffled)
+      setPublicProfiles(pr)
+      setPublicWorksLoaded(true)
+    } finally {
+      setPublicWorksLoading(false)
+    }
   }
 
   // ────────── Image helper ───────────────────────
@@ -377,6 +410,9 @@ export default function App() {
           <FeedPage
             follows={follows} feedWorks={feedWorks} feedProfiles={feedProfiles}
             feedLoaded={feedLoaded} feedLoading={feedLoading}
+            publicWorks={publicWorks} publicProfiles={publicProfiles}
+            publicWorksLoaded={publicWorksLoaded} publicWorksLoading={publicWorksLoading}
+            onLoadPublicWorks={loadPublicWorks}
             onFollowUser={followUser} onUnfollowUser={unfollowUser}
             onOpenProfile={setViewingProfile}
             onOpenWork={setDetailWork}
@@ -454,9 +490,9 @@ export default function App() {
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <button onClick={() => setTermsOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>利用規約</button>
           <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
-          <button onClick={handleSignOut} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>新規登録・ログイン</button>
-          <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
           <button onClick={() => setContactOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>お問い合わせ</button>
+          <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
+          <button onClick={handleSignOut} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>新規登録・ログイン</button>
           <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
           <button onClick={() => setWithdrawOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>退会</button>
         </div>

@@ -120,8 +120,6 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
         <input ref={patternInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handlePatternImgAdd} />
       </div>
 
-      <div className="field"><label>メモ</label><textarea value={memo} placeholder="使用針・サイズ・感想など" onChange={(e) => setMemo(e.target.value)} /></div>
-      <div className="field"><label>自分メモ（非公開）</label><textarea value={privateMemo} placeholder="自分だけのメモ。他の人には見えません" rows={3} onChange={(e) => setPrivateMemo(e.target.value)} /></div>
       <div className="field"><textarea value={ref} placeholder="編み図・作り方参考URL" onChange={(e) => setRef(e.target.value)} /></div>
 
       <div className="field">
@@ -151,6 +149,9 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
           ))}
         </div>
       </div>
+
+      <div className="field"><label>メモ</label><textarea value={memo} placeholder="使用針・サイズ・感想など" onChange={(e) => setMemo(e.target.value)} /></div>
+      <div className="field"><label>自分メモ（非公開）</label><textarea value={privateMemo} placeholder="自分だけのメモ。他の人には見えません" rows={3} onChange={(e) => setPrivateMemo(e.target.value)} /></div>
 
       <div className="modal-actions">
         <button className="btn" onClick={onClose}>キャンセル</button>
