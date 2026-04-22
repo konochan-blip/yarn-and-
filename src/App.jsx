@@ -554,7 +554,8 @@ export default function App() {
           <button onClick={() => setPrivacyOpen(true)} className="footer-link">プライバシーポリシー</button>
           <span className="footer-sep">|</span>
           <button onClick={() => setContactOpen(true)} className="footer-link">お問い合わせ</button>
-          <span className="footer-sep">|</span>
+        </div>
+        <div className="footer-links" style={{ marginTop: '6px' }}>
           <button onClick={handleSignOut} className="footer-link">新規登録</button>
           <span className="footer-sep">|</span>
           <button onClick={() => setWithdrawOpen(true)} className="footer-link">退会</button>
