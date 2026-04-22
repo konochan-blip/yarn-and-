@@ -91,25 +91,23 @@ export default function WorkDetail({ work, yarns, books, currentUserId, onClose,
       </div>
 
       {/* YARNボタン */}
-      <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 0 6px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '10px 0 6px' }}>
         <button
           onClick={toggleYarn}
           disabled={yarnLoading}
           style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            background: hasYarned ? '#F7ECF0' : 'var(--surface)',
-            border: `1.5px solid ${hasYarned ? '#8C6272' : 'var(--border)'}`,
-            borderRadius: '99px', padding: '9px 22px',
+            background: 'none', border: 'none', padding: 0,
             cursor: yarnLoading ? 'default' : 'pointer',
-            fontSize: '13px', fontFamily: 'inherit', fontWeight: hasYarned ? 600 : 400,
-            color: hasYarned ? '#8C6272' : 'var(--text-secondary)',
-            transition: 'all 0.18s', opacity: yarnLoading ? 0.7 : 1,
-            letterSpacing: '0.05em',
+            opacity: yarnLoading ? 0.7 : 1,
+            transform: hasYarned ? 'scale(1.1)' : 'scale(1)',
+            transition: 'transform 0.18s, opacity 0.18s',
           }}
         >
-          <YarnBallIcon active={hasYarned} size={22} />
-          YARN{yarnCount > 0 ? `  ${yarnCount}` : ''}
+          <YarnBallIcon active={hasYarned} size={64} />
         </button>
+        <div style={{ fontSize: '11px', color: hasYarned ? '#8C6272' : 'var(--text-tertiary)', fontWeight: hasYarned ? 600 : 400, marginTop: '4px', letterSpacing: '0.06em' }}>
+          YARN{yarnCount > 0 ? ` ${yarnCount}` : ''}
+        </div>
       </div>
 
       {work.needle ? <div className="detail-row"><span className="dl">編み方</span><span className="dv">{work.needle}</span></div> : null}
