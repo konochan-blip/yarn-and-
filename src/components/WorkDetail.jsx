@@ -3,37 +3,22 @@ import Modal from './Modal'
 import { WorkSvgSm, YarnSvgSm, BookSvgSm } from '../lib/svgs'
 import { supabase } from '../lib/supabase'
 
-const YarnBallIcon = ({ active, size = 24 }) => {
-  const fill   = active ? '#8C6272' : '#F2E4E9'
-  const stroke = active ? '#6B4555' : '#C4A0AE'
-  const line1  = active ? 'rgba(255,255,255,0.92)' : '#9C6B7E'
-  const line2  = active ? 'rgba(255,255,255,0.55)' : '#C4A0AE'
-  return (
-    <svg width={size} height={size} viewBox="0 0 28 28" fill="none">
-      <circle cx="14" cy="14" r="10.5" fill={fill} stroke={stroke} strokeWidth="1.2"/>
-      <path d="M4 11 Q8.5 6 14 11 Q19.5 16 24 11"
-        stroke={line1} strokeWidth="1.4" fill="none" strokeLinecap="round"/>
-      <path d="M3.5 17 Q8.5 22 14 17 Q19.5 12 24.5 17"
-        stroke={line1} strokeWidth="1.4" fill="none" strokeLinecap="round" opacity="0.7"/>
-      <path d="M9 4 Q11.5 9 14 14 Q16.5 19 19.5 24"
-        stroke={line2} strokeWidth="1.1" fill="none" strokeLinecap="round"/>
-      <circle cx="14" cy="14" r="2.2"
-        fill={active ? 'rgba(255,255,255,0.28)' : '#8C6272'} opacity={active ? 1 : 0.18}/>
-      <path d="M21.5 5.5 Q23.5 3.5 24 2.5"
-        stroke={stroke} strokeWidth="1.4" fill="none" strokeLinecap="round"/>
-      <circle cx="24" cy="2.5" r="1.1" fill={stroke}/>
-    </svg>
-  )
-}
+const YarnBallIcon = ({ active, size = 28 }) => (
+  <img
+    src="/yarn.png"
+    width={size}
+    height={size}
+    alt="YARN"
+    style={{
+      objectFit: 'contain',
+      filter: active ? 'none' : 'grayscale(0.3) opacity(0.55)',
+      transition: 'filter 0.18s',
+    }}
+  />
+)
 
 const MiniYarnBall = () => (
-  <svg width="12" height="12" viewBox="0 0 28 28" fill="none">
-    <circle cx="14" cy="14" r="10.5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.85)" strokeWidth="2"/>
-    <path d="M4 11 Q8.5 6 14 11 Q19.5 16 24 11"
-      stroke="rgba(255,255,255,0.95)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-    <path d="M3.5 17 Q8.5 22 14 17 Q19.5 12 24.5 17"
-      stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-  </svg>
+  <img src="/yarn.png" width={13} height={13} alt="" style={{ objectFit: 'contain' }} />
 )
 
 export { MiniYarnBall }
