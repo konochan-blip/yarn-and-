@@ -140,7 +140,7 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
           <YarnBallIcon active={hasYarned} size={64} />
         </button>
         <div style={{ fontSize: '11px', color: hasYarned ? '#8C6272' : 'var(--text-tertiary)', fontWeight: hasYarned ? 600 : 400, marginTop: '4px', letterSpacing: '0.06em' }}>
-          YARN{yarnCount > 0 ? ` ${yarnCount}` : ''}
+          {yarnCount > 0 ? `${yarnCount} ` : ''}YARN
         </div>
       </div>
 
