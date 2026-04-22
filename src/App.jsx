@@ -24,6 +24,7 @@ import ProfileForm from './components/ProfileForm'
 import PublicProfile from './components/PublicProfile'
 import ChangePasswordModal from './components/ChangePasswordModal'
 import TermsPage from './components/TermsPage'
+import PrivacyPolicyPage from './components/PrivacyPolicyPage'
 import WithdrawModal from './components/WithdrawModal'
 import ContactModal from './components/ContactModal'
 
@@ -48,6 +49,7 @@ export default function App() {
   const [passwordRecovery, setPasswordRecovery] = useState(false)
   const [changePasswordOpen, setChangePasswordOpen] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
+  const [privacyOpen, setPrivacyOpen] = useState(false)
   const [withdrawOpen, setWithdrawOpen] = useState(false)
   const [contactOpen, setContactOpen] = useState(false)
 
@@ -549,6 +551,8 @@ export default function App() {
         <div className="footer-links">
           <button onClick={() => setTermsOpen(true)} className="footer-link">利用規約</button>
           <span className="footer-sep">|</span>
+          <button onClick={() => setPrivacyOpen(true)} className="footer-link">プライバシーポリシー</button>
+          <span className="footer-sep">|</span>
           <button onClick={() => setContactOpen(true)} className="footer-link">お問い合わせ</button>
           <span className="footer-sep">|</span>
           <button onClick={handleSignOut} className="footer-link">新規登録</button>
@@ -560,6 +564,7 @@ export default function App() {
         <span className="footer-copy">© 2026 YARN&amp; All rights reserved.</span>
       </footer>
       {termsOpen && <TermsPage onClose={() => setTermsOpen(false)} />}
+      {privacyOpen && <PrivacyPolicyPage onClose={() => setPrivacyOpen(false)} />}
       <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSignOut={handleSignOut} />
       <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </>
