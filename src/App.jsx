@@ -71,10 +71,14 @@ export default function App() {
   const [toolsSort,   setToolsSort]   = useState('default')
   const [booksSort,   setBooksSort]   = useState('default')
   const [worksSort,   setWorksSort]   = useState('default')
-  const [yarnView,    setYarnView]    = useState('list')
-  const [toolsView,   setToolsView]   = useState('list')
-  const [booksView,   setBooksView]   = useState('list')
-  const [worksView,   setWorksView]   = useState('list')
+  const [yarnView,    setYarnView]    = useState(() => localStorage.getItem('view_yarn')  || 'list')
+  const [toolsView,   setToolsView]   = useState(() => localStorage.getItem('view_tools') || 'list')
+  const [booksView,   setBooksView]   = useState(() => localStorage.getItem('view_books') || 'list')
+  const [worksView,   setWorksView]   = useState(() => localStorage.getItem('view_works') || 'list')
+  function changeYarnView(v)  { setYarnView(v);  localStorage.setItem('view_yarn',  v) }
+  function changeToolsView(v) { setToolsView(v); localStorage.setItem('view_tools', v) }
+  function changeBooksView(v) { setBooksView(v); localStorage.setItem('view_books', v) }
+  function changeWorksView(v) { setWorksView(v); localStorage.setItem('view_works', v) }
   const [needleFilter, setNeedleFilter] = useState('')
 
   // Modals
@@ -400,21 +404,21 @@ export default function App() {
       <main className="main">
         {tab === 'yarn' && (
           <YarnList yarns={yarns} works={works} sort={yarnSort} view={yarnView} onSortChange={setYarnSort}
-            onViewChange={setYarnView} onOpenDetail={setDetailYarn} onOpenLabelSearch={() => setLabelSearchOpen(true)} />
+            onViewChange={changeYarnView} onOpenDetail={setDetailYarn} onOpenLabelSearch={() => setLabelSearchOpen(true)} />
         )}
         {tab === 'tools' && (
           <ToolsList tools={tools} sort={toolsSort} view={toolsView} onSortChange={setToolsSort}
-            onViewChange={setToolsView} onOpenDetail={setDetailTool} />
+            onViewChange={changeToolsView} onOpenDetail={setDetailTool} />
         )}
         {tab === 'books' && (
           <BooksList books={books} works={works} sort={booksSort} view={booksView} onSortChange={setBooksSort}
-            onViewChange={setBooksView} onOpenDetail={setDetailBook} />
+            onViewChange={changeBooksView} onOpenDetail={setDetailBook} />
         )}
         {tab === 'works' && (
           <WorksList works={works} yarns={yarns} sort={worksSort} needleFilter={needleFilter} view={worksView}
             yarnCounts={yarnCountsMap}
             onSortChange={setWorksSort} onNeedleFilterChange={setNeedleFilter}
-            onViewChange={setWorksView} onOpenDetail={setDetailWork} />
+            onViewChange={changeWorksView} onOpenDetail={setDetailWork} />
         )}
         {tab === 'feed' && (
           <FeedPage
