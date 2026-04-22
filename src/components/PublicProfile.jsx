@@ -32,13 +32,21 @@ export default function PublicProfile({ profile, feedWorks, isFollowing, onFollo
           ← 戻る
         </button>
         <span className="mypage-topbar-title">{profile.username || 'プロフィール'}</span>
-        <button
-          className={`btn${isFollowing ? '' : ' primary'}`}
-          style={{ padding: '6px 14px', fontSize: '13px' }}
-          onClick={() => isFollowing ? onUnfollow(profile.user_id) : onFollow(profile.user_id)}
-        >
-          {isFollowing ? 'フォロー中' : 'フォローする'}
-        </button>
+        {isFollowing ? (
+          <button className="btn" style={{ padding: '6px 14px', fontSize: '13px' }}
+            onClick={() => onUnfollow(profile.user_id)}>
+            フォロー中
+          </button>
+        ) : profile.is_public ? (
+          <button className="btn primary" style={{ padding: '6px 14px', fontSize: '13px' }}
+            onClick={() => onFollow(profile.user_id)}>
+            フォローする
+          </button>
+        ) : (
+          <button className="btn" style={{ padding: '6px 14px', fontSize: '13px', opacity: 0.5, cursor: 'default' }} disabled>
+            🔒 非公開
+          </button>
+        )}
       </div>
 
       <div className="mypage-body">
