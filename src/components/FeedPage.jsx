@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { PersonSvg, WorkSvgSm } from '../lib/svgs'
+import { MiniYarnBall } from './WorkDetail'
 
 export default function FeedPage({
   follows, feedWorks, feedProfiles, feedLoaded, feedLoading,
   publicWorks, publicProfiles, publicWorksLoaded, publicWorksLoading,
+  yarnCounts = {},
   onLoadPublicWorks,
   onFollowUser, onUnfollowUser, onOpenProfile, onOpenWork,
 }) {
@@ -190,6 +192,7 @@ export default function FeedPage({
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
                   {sortedFeedWorks.map((work) => {
                     const author = feedProfiles.find((p) => p.user_id === work.user_id)
+                    const count = yarnCounts[work.id] || 0
                     return (
                       <div key={work.id} onClick={() => onOpenWork(work)}
                         style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
@@ -197,6 +200,12 @@ export default function FeedPage({
                           ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                           : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
                         }
+                        {count > 0 && (
+                          <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                            <MiniYarnBall />
+                            <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
+                          </div>
+                        )}
                         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.52))', padding: '18px 6px 5px', pointerEvents: 'none' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                             <div style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden', background: 'rgba(255,255,255,0.25)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -240,6 +249,7 @@ export default function FeedPage({
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
               {publicWorks.map((work) => {
                 const author = publicProfiles.find((p) => p.user_id === work.user_id)
+                const count = yarnCounts[work.id] || 0
                 return (
                   <div key={work.id} onClick={() => onOpenWork(work)}
                     style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
@@ -247,6 +257,12 @@ export default function FeedPage({
                       ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                       : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
                     }
+                    {count > 0 && (
+                      <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                        <MiniYarnBall />
+                        <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
+                      </div>
+                    )}
                     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.52))', padding: '18px 6px 5px', pointerEvents: 'none' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <div style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden', background: 'rgba(255,255,255,0.25)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

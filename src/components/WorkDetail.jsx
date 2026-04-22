@@ -3,32 +3,47 @@ import Modal from './Modal'
 import { WorkSvgSm, YarnSvgSm, BookSvgSm } from '../lib/svgs'
 import { supabase } from '../lib/supabase'
 
-const YarnBallIcon = ({ active }) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="9"
-      fill={active ? '#8C6272' : '#EDE0E5'}
-      stroke={active ? '#8C6272' : '#C4A0AE'}
-      strokeWidth="1.3"/>
-    <path d="M5 12 Q8 5.5 12 12 Q16 18.5 19 12"
-      stroke={active ? '#fff' : '#8C6272'}
-      strokeWidth="1.4" fill="none" strokeLinecap="round"/>
-    <path d="M8 7.5 Q10 11 12 12 Q14 13 16.5 16.5"
-      stroke={active ? 'rgba(255,255,255,0.5)' : '#C4A0AE'}
-      strokeWidth="1" fill="none" strokeLinecap="round"/>
-    <circle cx="12" cy="12" r="2.2"
-      fill={active ? 'rgba(255,255,255,0.35)' : '#8C6272'}
-      opacity={active ? 1 : 0.3}/>
+const YarnBallIcon = ({ active, size = 24 }) => {
+  const fill   = active ? '#8C6272' : '#F2E4E9'
+  const stroke = active ? '#6B4555' : '#C4A0AE'
+  const line1  = active ? 'rgba(255,255,255,0.92)' : '#9C6B7E'
+  const line2  = active ? 'rgba(255,255,255,0.55)' : '#C4A0AE'
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="10.5" fill={fill} stroke={stroke} strokeWidth="1.2"/>
+      <path d="M4 11 Q8.5 6 14 11 Q19.5 16 24 11"
+        stroke={line1} strokeWidth="1.4" fill="none" strokeLinecap="round"/>
+      <path d="M3.5 17 Q8.5 22 14 17 Q19.5 12 24.5 17"
+        stroke={line1} strokeWidth="1.4" fill="none" strokeLinecap="round" opacity="0.7"/>
+      <path d="M9 4 Q11.5 9 14 14 Q16.5 19 19.5 24"
+        stroke={line2} strokeWidth="1.1" fill="none" strokeLinecap="round"/>
+      <circle cx="14" cy="14" r="2.2"
+        fill={active ? 'rgba(255,255,255,0.28)' : '#8C6272'} opacity={active ? 1 : 0.18}/>
+      <path d="M21.5 5.5 Q23.5 3.5 24 2.5"
+        stroke={stroke} strokeWidth="1.4" fill="none" strokeLinecap="round"/>
+      <circle cx="24" cy="2.5" r="1.1" fill={stroke}/>
+    </svg>
+  )
+}
+
+const MiniYarnBall = () => (
+  <svg width="12" height="12" viewBox="0 0 28 28" fill="none">
+    <circle cx="14" cy="14" r="10.5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.85)" strokeWidth="2"/>
+    <path d="M4 11 Q8.5 6 14 11 Q19.5 16 24 11"
+      stroke="rgba(255,255,255,0.95)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+    <path d="M3.5 17 Q8.5 22 14 17 Q19.5 12 24.5 17"
+      stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
   </svg>
 )
 
-export default function WorkDetail({ work, yarns, books, currentUserId, onClose, onEdit, onDelete, onOpenYarnDetail, onOpenBookDetail }) {
+export { MiniYarnBall }
+
+export default function WorkDetail({ work, yarns, books, currentUserId, onClose, onEdit, onDelete, onYarnChange, onOpenYarnDetail, onOpenBookDetail }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [yarnCount, setYarnCount] = useState(0)
   const [hasYarned, setHasYarned] = useState(false)
   const [yarnLoading, setYarnLoading] = useState(false)
-
-  const isOwnWork = currentUserId && work?.user_id === currentUserId
 
   useEffect(() => {
     if (!work) return
@@ -55,10 +70,12 @@ export default function WorkDetail({ work, yarns, books, currentUserId, onClose,
         await supabase.from('work_yarns').delete().eq('work_id', work.id).eq('user_id', currentUserId)
         setHasYarned(false)
         setYarnCount((n) => Math.max(0, n - 1))
+        onYarnChange?.(work.id, -1)
       } else {
         await supabase.from('work_yarns').insert({ work_id: work.id, user_id: currentUserId })
         setHasYarned(true)
         setYarnCount((n) => n + 1)
+        onYarnChange?.(work.id, +1)
       }
     } finally {
       setYarnLoading(false)
@@ -89,24 +106,24 @@ export default function WorkDetail({ work, yarns, books, currentUserId, onClose,
       </div>
 
       {/* YARNボタン */}
-      <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 4px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 0 6px' }}>
         <button
           onClick={toggleYarn}
           disabled={yarnLoading}
           style={{
-            display: 'flex', alignItems: 'center', gap: '7px',
-            background: hasYarned ? 'var(--accent-light)' : 'var(--surface)',
-            border: `1.5px solid ${hasYarned ? 'var(--accent)' : 'var(--border)'}`,
-            borderRadius: '99px', padding: '8px 20px',
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: hasYarned ? '#F7ECF0' : 'var(--surface)',
+            border: `1.5px solid ${hasYarned ? '#8C6272' : 'var(--border)'}`,
+            borderRadius: '99px', padding: '9px 22px',
             cursor: yarnLoading ? 'default' : 'pointer',
             fontSize: '13px', fontFamily: 'inherit', fontWeight: hasYarned ? 600 : 400,
-            color: hasYarned ? 'var(--accent)' : 'var(--text-secondary)',
+            color: hasYarned ? '#8C6272' : 'var(--text-secondary)',
             transition: 'all 0.18s', opacity: yarnLoading ? 0.7 : 1,
-            letterSpacing: '0.04em',
+            letterSpacing: '0.05em',
           }}
         >
-          <YarnBallIcon active={hasYarned} />
-          YARN{yarnCount > 0 ? `　${yarnCount}` : ''}
+          <YarnBallIcon active={hasYarned} size={22} />
+          YARN{yarnCount > 0 ? `  ${yarnCount}` : ''}
         </button>
       </div>
 
@@ -126,7 +143,6 @@ export default function WorkDetail({ work, yarns, books, currentUserId, onClose,
         </div>
       ) : null}
 
-      {/* 使った毛糸 */}
       <div className="linked-section">
         <div className="linked-title">使った毛糸</div>
         {linkedYarns.length === 0
@@ -145,7 +161,6 @@ export default function WorkDetail({ work, yarns, books, currentUserId, onClose,
         }
       </div>
 
-      {/* 参考にした書籍 */}
       {linkedBooks.length > 0 && (
         <div className="linked-section">
           <div className="linked-title">参考にした書籍</div>

@@ -107,6 +107,7 @@ export default function App() {
   const [publicProfiles,      setPublicProfiles]      = useState([])
   const [publicWorksLoaded,   setPublicWorksLoaded]   = useState(false)
   const [publicWorksLoading,  setPublicWorksLoading]  = useState(false)
+  const [yarnCountsMap,       setYarnCountsMap]       = useState({})
   const [viewingProfile,      setViewingProfile]      = useState(null)
 
   // Trigger feed load when switching to feed tab
@@ -122,7 +123,7 @@ export default function App() {
     try {
       const [
         { data: y }, { data: t }, { data: b }, { data: w }, { data: s }, { data: p },
-        { data: f }, { count: fc },
+        { data: f }, { count: fc }, { data: yc },
       ] = await Promise.all([
         supabase.from('yarns').select('*').order('created_at', { ascending: true }),
         supabase.from('tools').select('*').order('created_at', { ascending: true }),
@@ -132,7 +133,11 @@ export default function App() {
         supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
         supabase.from('follows').select('*').eq('follower_id', user.id),
         supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
+        supabase.from('work_yarns').select('work_id'),
       ])
+      const countsMap = {}
+      yc?.forEach(({ work_id }) => { countsMap[work_id] = (countsMap[work_id] || 0) + 1 })
+      setYarnCountsMap(countsMap)
       setYarns(y || [])
       setTools(t || [])
       setBooks(b || [])
@@ -354,6 +359,10 @@ export default function App() {
     setShops((prev) => prev.filter((s) => s !== name))
   }
 
+  function handleYarnChange(workId, delta) {
+    setYarnCountsMap((prev) => ({ ...prev, [workId]: Math.max(0, (prev[workId] || 0) + delta) }))
+  }
+
   // ────────── Modal helpers ──────────────────────
   function handleAdd() {
     if      (tab === 'yarn')  { setEditingYarn(null);  setYarnFormOpen(true)  }
@@ -403,6 +412,7 @@ export default function App() {
         )}
         {tab === 'works' && (
           <WorksList works={works} yarns={yarns} sort={worksSort} needleFilter={needleFilter} view={worksView}
+            yarnCounts={yarnCountsMap}
             onSortChange={setWorksSort} onNeedleFilterChange={setNeedleFilter}
             onViewChange={setWorksView} onOpenDetail={setDetailWork} />
         )}
@@ -412,6 +422,7 @@ export default function App() {
             feedLoaded={feedLoaded} feedLoading={feedLoading}
             publicWorks={publicWorks} publicProfiles={publicProfiles}
             publicWorksLoaded={publicWorksLoaded} publicWorksLoading={publicWorksLoading}
+            yarnCounts={yarnCountsMap}
             onLoadPublicWorks={loadPublicWorks}
             onFollowUser={followUser} onUnfollowUser={unfollowUser}
             onOpenProfile={setViewingProfile}
@@ -447,6 +458,7 @@ export default function App() {
         onClose={() => setDetailWork(null)}
         onEdit={isOwnWork(detailWork) ? (work) => { setDetailWork(null); setEditingWork(work); setWorkFormOpen(true) } : undefined}
         onDelete={isOwnWork(detailWork) ? deleteWork : undefined}
+        onYarnChange={handleYarnChange}
         onOpenYarnDetail={setDetailYarn} onOpenBookDetail={setDetailBook} />
 
       {/* Others */}
