@@ -29,6 +29,8 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
   const [yarnCount, setYarnCount] = useState(0)
   const [hasYarned, setHasYarned] = useState(false)
   const [yarnLoading, setYarnLoading] = useState(false)
+  const [linkedYarns, setLinkedYarns] = useState([])
+  const [linkedBooks, setLinkedBooks] = useState([])
 
   useEffect(() => {
     if (!work) return
@@ -46,6 +48,24 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
     }
     fetchYarns()
   }, [work?.id, currentUserId])
+
+  useEffect(() => {
+    if (!work) return
+    const yarnIds = work.yarn_ids || []
+    const bookIds = work.book_ids || []
+    if (author) {
+      Promise.all([
+        yarnIds.length > 0 ? supabase.from('yarns').select('*').in('id', yarnIds) : Promise.resolve({ data: [] }),
+        bookIds.length > 0 ? supabase.from('books').select('*').in('id', bookIds) : Promise.resolve({ data: [] }),
+      ]).then(([{ data: y }, { data: b }]) => {
+        setLinkedYarns(y || [])
+        setLinkedBooks(b || [])
+      })
+    } else {
+      setLinkedYarns(yarnIds.map((id) => yarns.find((y) => y.id === id)).filter(Boolean))
+      setLinkedBooks(bookIds.map((id) => books.find((b) => b.id === id)).filter(Boolean))
+    }
+  }, [work?.id, author])
 
   async function toggleYarn() {
     if (!currentUserId || yarnLoading) return
@@ -68,9 +88,6 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
   }
 
   if (!work) return null
-
-  const linkedYarns = (work.yarn_ids || []).map((id) => yarns.find((y) => y.id === id)).filter(Boolean)
-  const linkedBooks = (work.book_ids || []).map((id) => books.find((b) => b.id === id)).filter(Boolean)
 
   const refHtml = work.ref
     ? work.ref.replace(/(https?:\/\/[^\s]+)/g, (url) => `<a href="${url}" target="_blank" rel="noreferrer" style="color:#8C6272;text-decoration:underline;">${url}</a>`)
