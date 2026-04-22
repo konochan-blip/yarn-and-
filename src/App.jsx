@@ -133,7 +133,7 @@ export default function App() {
         supabase.from('yarns').select('*').order('created_at', { ascending: true }),
         supabase.from('tools').select('*').order('created_at', { ascending: true }),
         supabase.from('books').select('*').order('created_at', { ascending: true }),
-        supabase.from('works').select('*').order('created_at', { ascending: true }),
+        supabase.from('works').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
         supabase.from('shops').select('name').order('created_at', { ascending: true }),
         supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
         supabase.from('follows').select('*').eq('follower_id', user.id),
