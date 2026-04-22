@@ -106,12 +106,17 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
 
       {author && (
         <div onClick={onOpenProfile}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px', marginBottom: '4px', cursor: onOpenProfile ? 'pointer' : 'default' }}>
-          <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', background: 'var(--accent-light)', border: '1.5px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '9px',
+            marginBottom: '8px', cursor: onOpenProfile ? 'pointer' : 'default',
+            background: 'var(--accent-light)', border: '1.5px solid var(--border)',
+            borderRadius: '99px', padding: '8px 16px 8px 10px', alignSelf: 'center',
+          }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden', background: 'var(--surface)', border: '1.5px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {author.avatar_url ? <img src={author.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <PersonSvg />}
           </div>
-          <span style={{ fontSize: '16px', color: 'var(--text-primary)', fontWeight: 600 }}>{author.username || 'ユーザー'}</span>
-          {onOpenProfile && <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>›</span>}
+          <span style={{ fontSize: '15px', color: 'var(--text-primary)', fontWeight: 600 }}>{author.username || 'ユーザー'}</span>
+          {onOpenProfile && <span style={{ fontSize: '14px', color: 'var(--accent)', fontWeight: 700 }}>›</span>}
         </div>
       )}
 
