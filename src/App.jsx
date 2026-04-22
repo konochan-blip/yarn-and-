@@ -497,17 +497,17 @@ export default function App() {
       <Dock tab={tab} onChange={setTab} />
 
       <footer className="app-footer">
+        <div className="footer-links">
+          <button onClick={() => setTermsOpen(true)} className="footer-link">利用規約</button>
+          <span className="footer-sep">|</span>
+          <button onClick={() => setContactOpen(true)} className="footer-link">お問い合わせ</button>
+          <span className="footer-sep">|</span>
+          <button onClick={handleSignOut} className="footer-link">新規登録・ログイン</button>
+          <span className="footer-sep">|</span>
+          <button onClick={() => setWithdrawOpen(true)} className="footer-link">退会</button>
+        </div>
         <div className="footer-divider" />
         <span className="footer-logo">YARN&amp;</span>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <button onClick={() => setTermsOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>利用規約</button>
-          <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
-          <button onClick={() => setContactOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>お問い合わせ</button>
-          <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
-          <button onClick={handleSignOut} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>新規登録・ログイン</button>
-          <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
-          <button onClick={() => setWithdrawOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>退会</button>
-        </div>
         <span className="footer-copy">© 2026 YARN&amp; All rights reserved.</span>
       </footer>
       {termsOpen && <TermsPage onClose={() => setTermsOpen(false)} />}

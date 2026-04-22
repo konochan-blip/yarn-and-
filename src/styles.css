@@ -541,7 +541,10 @@ body {
 .avatar-upload svg { width: 40px; height: 40px; }
 
 /* ── Footer ──────────────────────────────── */
-.app-footer { text-align: center; padding: 28px 20px 120px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.footer-divider { width: 40px; height: 1px; background: linear-gradient(to right, transparent, var(--accent-mid), transparent); margin-bottom: 2px; }
+.app-footer { text-align: center; padding: 28px 20px 120px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.footer-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 10px; }
+.footer-link { background: none; border: none; font-size: 11px; color: var(--text-tertiary); cursor: pointer; font-family: var(--font-sans); text-decoration: underline; padding: 0; }
+.footer-sep { color: var(--border); font-size: 11px; }
+.footer-divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, var(--accent-mid), transparent); }
 .footer-logo { font-family: var(--font-serif); font-weight: 400; font-size: 14px; color: var(--text-tertiary); letter-spacing: 0.08em; }
 .footer-copy { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.08em; }
