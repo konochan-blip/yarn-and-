@@ -183,7 +183,7 @@ export default function App() {
   // ────────── Profile CRUD ──────────────────────
   async function saveProfile(data, imgFile) {
     const avatar_url = await resolveImgUrl({ img_url: data.avatar_url }, imgFile)
-    const record = { user_id: user.id, username: data.username, bio: data.bio, is_public: data.is_public, avatar_url }
+    const record = { user_id: user.id, username: data.username, bio: data.bio, is_public: data.is_public, avatar_url, link_url: data.link_url || '', favorite_shops: data.favorite_shops || [] }
     const { data: upserted, error } = await supabase.from('profiles').upsert(record, { onConflict: 'user_id' }).select().single()
     if (error) throw new Error(error.message || 'プロフィールの保存に失敗しました')
     if (upserted) setProfile(upserted)
@@ -287,7 +287,12 @@ export default function App() {
   // ────────── Work CRUD ──────────────────────────
   async function saveWork(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, name: data.name, needle: data.needle, memo: data.memo, ref: data.ref, yarn_ids: data.yarn_ids, book_ids: data.book_ids, img_url }
+    const pattern_imgs = await Promise.all(
+      (data.patternItems || []).map((item) =>
+        item.file ? uploadImage(item.file).catch(() => item.preview) : Promise.resolve(item.preview)
+      )
+    )
+    const record = { user_id: user.id, name: data.name, needle: data.needle, memo: data.memo, private_memo: data.private_memo, ref: data.ref, yarn_ids: data.yarn_ids, book_ids: data.book_ids, img_url, pattern_imgs }
     if (data.id) {
       const { data: updated } = await supabase.from('works').update(record).eq('id', data.id).select().single()
       setWorks((prev) => prev.map((w) => w.id === data.id ? updated : w))

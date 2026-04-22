@@ -169,6 +169,27 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
             </div>
           )}
 
+          {profile?.link_url && (
+            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '6px', letterSpacing: '0.06em' }}>リンク</div>
+              <a href={profile.link_url} target="_blank" rel="noopener noreferrer"
+                style={{ fontSize: '13px', color: 'var(--accent)', wordBreak: 'break-all', textDecoration: 'none' }}>
+                {profile.link_url}
+              </a>
+            </div>
+          )}
+
+          {profile?.favorite_shops?.length > 0 && (
+            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>お気に入りのお店</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {profile.favorite_shops.map((s) => (
+                  <span key={s} style={{ background: 'var(--tag-shop-bg)', color: 'var(--tag-shop-text)', borderRadius: '99px', fontSize: '12px', padding: '4px 12px' }}>{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '4px 12px' }}>
             <button onClick={onChangePassword} style={{ width: '100%', background: 'none', border: 'none', padding: '12px 0', fontSize: '14px', color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span>パスワードを変更する</span>

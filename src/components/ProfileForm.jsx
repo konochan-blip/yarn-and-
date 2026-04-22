@@ -6,6 +6,9 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   const [username, setUsername] = useState('')
   const [bio, setBio] = useState('')
   const [isPublic, setIsPublic] = useState(false)
+  const [linkUrl, setLinkUrl] = useState('')
+  const [favoriteShops, setFavoriteShops] = useState([])
+  const [shopInput, setShopInput] = useState('')
   const [imgFile, setImgFile] = useState(null)
   const [imgPreview, setImgPreview] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -17,6 +20,9 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setUsername(profile?.username || '')
     setBio(profile?.bio || '')
     setIsPublic(profile?.is_public || false)
+    setLinkUrl(profile?.link_url || '')
+    setFavoriteShops(profile?.favorite_shops || [])
+    setShopInput('')
     setImgFile(null)
     setImgPreview(profile?.avatar_url || null)
   }, [open, profile])
@@ -31,11 +37,22 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     e.target.value = ''
   }
 
+  function addShop() {
+    const s = shopInput.trim()
+    if (!s || favoriteShops.includes(s)) return
+    setFavoriteShops((prev) => [...prev, s])
+    setShopInput('')
+  }
+
+  function removeShop(shop) {
+    setFavoriteShops((prev) => prev.filter((s) => s !== shop))
+  }
+
   async function handleSave() {
     setSaving(true)
     setError('')
     try {
-      await onSave({ username, bio, is_public: isPublic, avatar_url: imgPreview || '' }, imgFile)
+      await onSave({ username, bio, is_public: isPublic, avatar_url: imgPreview || '', link_url: linkUrl, favorite_shops: favoriteShops }, imgFile)
       onClose()
     } catch (e) {
       setError(e.message || 'プロフィールの保存に失敗しました')
@@ -49,10 +66,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
       <div className="modal-title">プロフィール編集</div>
 
       <div className="avatar-upload" onClick={() => imgInputRef.current?.click()}>
-        {imgPreview
-          ? <img src={imgPreview} alt="" />
-          : <PersonSvg />
-        }
+        {imgPreview ? <img src={imgPreview} alt="" /> : <PersonSvg />}
       </div>
       <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
       <div style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '-10px', marginBottom: '14px' }}>タップして写真を変更</div>
@@ -65,6 +79,31 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
       <div className="field">
         <label>自己紹介</label>
         <textarea value={bio} placeholder="好きな毛糸や得意な編み方など…" rows={4} onChange={(e) => setBio(e.target.value)} />
+      </div>
+
+      <div className="field">
+        <label>リンク</label>
+        <input type="url" value={linkUrl} placeholder="https://..." onChange={(e) => setLinkUrl(e.target.value)} />
+      </div>
+
+      <div className="field">
+        <label>お気に入りのお店</label>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+          <input type="text" value={shopInput} placeholder="お店の名前を入力" onChange={(e) => setShopInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addShop())}
+            style={{ flex: 1 }} />
+          <button type="button" className="btn primary" style={{ padding: '8px 14px', flexShrink: 0 }} onClick={addShop}>追加</button>
+        </div>
+        {favoriteShops.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {favoriteShops.map((s) => (
+              <span key={s} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'var(--tag-shop-bg)', color: 'var(--tag-shop-text)', borderRadius: '99px', fontSize: '12px', padding: '3px 10px 3px 12px' }}>
+                {s}
+                <button onClick={() => removeShop(s)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--tag-shop-text)', fontSize: '14px', lineHeight: 1, padding: '0 2px' }}>×</button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div style={{ background: 'var(--bg)', borderRadius: '10px', padding: '4px 12px', marginBottom: '14px' }}>
@@ -82,9 +121,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
       </div>
 
       {error && (
-        <div style={{ background: 'var(--danger-light)', border: '1px solid #E8C4C4', borderRadius: '8px', padding: '10px 12px', fontSize: '13px', color: 'var(--danger)', marginBottom: '14px' }}>
-          {error}
-        </div>
+        <div style={{ background: 'var(--danger-light)', border: '1px solid #E8C4C4', borderRadius: '8px', padding: '10px 12px', fontSize: '13px', color: 'var(--danger)', marginBottom: '14px' }}>{error}</div>
       )}
       <div className="modal-actions">
         <button className="btn" onClick={onClose}>キャンセル</button>
