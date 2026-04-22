@@ -207,8 +207,7 @@ export default function FeedPage({
                           </div>
                         )}
                         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.52))', padding: '18px 6px 5px' }}>
-                          <div onClick={(e) => { e.stopPropagation(); if (author) onOpenProfile(author) }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: author ? 'pointer' : 'default' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                             <div style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden', background: 'rgba(255,255,255,0.25)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               {author?.avatar_url && <img src={author.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
                             </div>
@@ -265,8 +264,7 @@ export default function FeedPage({
                       </div>
                     )}
                     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.52))', padding: '18px 6px 5px' }}>
-                      <div onClick={(e) => { e.stopPropagation(); if (author) onOpenProfile(author) }}
-                        style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: author ? 'pointer' : 'default' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <div style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden', background: 'rgba(255,255,255,0.25)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {author?.avatar_url && <img src={author.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
                         </div>
