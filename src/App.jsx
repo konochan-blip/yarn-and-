@@ -450,16 +450,18 @@ export default function App() {
       {/* Details */}
       <YarnDetail yarn={detailYarn} works={works}
         onClose={() => setDetailYarn(null)}
-        onEdit={(yarn) => { setDetailYarn(null); setEditingYarn(yarn); setYarnFormOpen(true) }}
-        onDelete={deleteYarn} onOpenWorkDetail={setDetailWork} />
+        onEdit={detailYarn?.user_id === user?.id ? (yarn) => { setDetailYarn(null); setEditingYarn(yarn); setYarnFormOpen(true) } : undefined}
+        onDelete={detailYarn?.user_id === user?.id ? deleteYarn : undefined}
+        onOpenWorkDetail={setDetailWork} />
       <ToolDetail tool={detailTool}
         onClose={() => setDetailTool(null)}
-        onEdit={(tool) => { setDetailTool(null); setEditingTool(tool); setToolFormOpen(true) }}
-        onDelete={deleteTool} />
+        onEdit={detailTool?.user_id === user?.id ? (tool) => { setDetailTool(null); setEditingTool(tool); setToolFormOpen(true) } : undefined}
+        onDelete={detailTool?.user_id === user?.id ? deleteTool : undefined} />
       <BookDetail book={detailBook} works={works}
         onClose={() => setDetailBook(null)}
-        onEdit={(book) => { setDetailBook(null); setEditingBook(book); setBookFormOpen(true) }}
-        onDelete={deleteBook} onOpenWorkDetail={setDetailWork} />
+        onEdit={detailBook?.user_id === user?.id ? (book) => { setDetailBook(null); setEditingBook(book); setBookFormOpen(true) } : undefined}
+        onDelete={detailBook?.user_id === user?.id ? deleteBook : undefined}
+        onOpenWorkDetail={setDetailWork} />
       <WorkDetail work={detailWork} yarns={yarns} books={books} currentUserId={user?.id}
         author={detailWorkAuthor}
         onClose={() => { setDetailWork(null); setDetailWorkAuthor(null) }}
