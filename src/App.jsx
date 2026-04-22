@@ -69,13 +69,6 @@ export default function App() {
 
   useEffect(() => { if (user) loadAll() }, [user])
 
-  // ログイン済みユーザーが /user/:handle で来た場合、データ読込後にプロフィールを開く
-  useEffect(() => {
-    if (user && urlProfile && !loading) setViewingProfile(urlProfile)
-  }, [user, urlProfile, loading]) // eslint-disable-line
-
-  async function handleSignOut() { await supabase.auth.signOut() }
-
   // ────────── Data ───────────────────────────────
   const [yarns,  setYarns]  = useState([])
   const [tools,  setTools]  = useState([])
@@ -83,6 +76,13 @@ export default function App() {
   const [works,  setWorks]  = useState([])
   const [shops,  setShops]  = useState([])
   const [loading, setLoading] = useState(false)
+
+  // ログイン済みユーザーが /user/:handle で来た場合、データ読込後にプロフィールを開く
+  useEffect(() => {
+    if (user && urlProfile && !loading) setViewingProfile(urlProfile)
+  }, [user, urlProfile, loading]) // eslint-disable-line
+
+  async function handleSignOut() { await supabase.auth.signOut() }
   const [tab, setTab] = useState(() => localStorage.getItem('active_tab') || 'yarn')
   function changeTab(t) { setTab(t); localStorage.setItem('active_tab', t) }
 
