@@ -68,7 +68,7 @@ export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onO
         </div>
       )}
 
-      {confirmDelete && (
+      {onDelete && confirmDelete && (
         <div className="delete-confirm">
           <p>本当に削除する？</p>
           <div className="delete-confirm-btns">
@@ -79,8 +79,8 @@ export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onO
       )}
 
       <div className="modal-actions">
-        <button className="btn danger" onClick={() => setConfirmDelete(true)}>削除</button>
-        <button className="btn" onClick={() => { onClose(); onEdit(yarn) }}>編集</button>
+        {onDelete && <button className="btn danger" onClick={() => setConfirmDelete(true)}>削除</button>}
+        {onEdit && <button className="btn" onClick={() => { onClose(); onEdit(yarn) }}>編集</button>}
         <button className="btn primary" onClick={onClose}>閉じる</button>
       </div>
     </Modal>

@@ -483,12 +483,11 @@ export default function App() {
         onSave={saveProfile} onClose={() => setProfileFormOpen(false)} />
       <PublicProfile
         profile={viewingProfile}
-        feedWorks={feedWorks}
+        currentUserId={user?.id}
         isFollowing={follows.some((f) => f.following_id === viewingProfile?.user_id)}
         onFollow={followUser}
         onUnfollow={unfollowUser}
         onClose={() => setViewingProfile(null)}
-        onOpenWork={setDetailWork}
       />
 
       {tab !== 'feed' && (
