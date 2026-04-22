@@ -24,6 +24,7 @@ import ProfileForm from './components/ProfileForm'
 import PublicProfile from './components/PublicProfile'
 import ChangePasswordModal from './components/ChangePasswordModal'
 import TermsPage from './components/TermsPage'
+import WithdrawModal from './components/WithdrawModal'
 
 export default function App() {
   // ────────── Auth ───────────────────────────────
@@ -32,6 +33,7 @@ export default function App() {
   const [passwordRecovery, setPasswordRecovery] = useState(false)
   const [changePasswordOpen, setChangePasswordOpen] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
+  const [withdrawOpen, setWithdrawOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -442,10 +444,17 @@ export default function App() {
       <footer className="app-footer">
         <div className="footer-divider" />
         <span className="footer-logo">YARN&amp;</span>
-        <button onClick={() => setTermsOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>利用規約</button>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <button onClick={() => setTermsOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>利用規約</button>
+          <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
+          <button onClick={handleSignOut} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>新規登録・ログイン</button>
+          <span style={{ color: 'var(--border)', fontSize: '11px' }}>|</span>
+          <button onClick={() => setWithdrawOpen(true)} style={{ background: 'none', border: 'none', fontSize: '11px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textDecoration: 'underline', padding: 0 }}>退会</button>
+        </div>
         <span className="footer-copy">© 2026 YARN&amp; All rights reserved.</span>
       </footer>
       {termsOpen && <TermsPage onClose={() => setTermsOpen(false)} />}
+      <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSignOut={handleSignOut} />
     </>
   )
 }
