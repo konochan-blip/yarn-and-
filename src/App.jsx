@@ -252,7 +252,11 @@ export default function App() {
     const avatar_url = await resolveImgUrl({ img_url: data.avatar_url }, imgFile)
     const record = { user_id: user.id, username: data.username, handle: data.handle || null, bio: data.bio, is_public: data.is_public, avatar_url, social_links: data.social_links || [], favorite_shops: data.favorite_shops || [] }
     const { data: upserted, error } = await supabase.from('profiles').upsert(record, { onConflict: 'user_id' }).select().single()
-    if (error) throw new Error(error.message || 'プロフィールの保存に失敗しました')
+    if (error) {
+      if (error.message?.includes('profiles_handle_unique') || (error.message?.includes('duplicate key') && error.message?.includes('handle')))
+        throw new Error('このIDはすでに使われています')
+      throw new Error(error.message || 'プロフィールの保存に失敗しました')
+    }
     if (upserted) setProfile(upserted)
   }
 
@@ -536,6 +540,7 @@ export default function App() {
         onFollow={followUser}
         onUnfollow={unfollowUser}
         onClose={() => setViewingProfile(null)}
+        onOpenProfile={setViewingProfile}
       />
 
       {tab !== 'feed' && (

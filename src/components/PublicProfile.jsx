@@ -6,9 +6,44 @@ import ToolDetail from './ToolDetail'
 import BookDetail from './BookDetail'
 import WorkDetail from './WorkDetail'
 
-export default function PublicProfile({ profile, currentUserId, isFollowing, onFollow, onUnfollow, onClose, onLoginClick }) {
+function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 300, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, background: 'rgba(0,0,0,0.35)' }} onClick={onClose} />
+      <div style={{ background: 'var(--bg)', borderRadius: '20px 20px 0 0', padding: '0 0 env(safe-area-inset-bottom)', maxHeight: '70vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px 12px' }}>
+          <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>{title}</span>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '20px', color: 'var(--text-tertiary)', cursor: 'pointer', lineHeight: 1, padding: '4px' }}>×</button>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, paddingBottom: '16px' }}>
+          {loading && <div style={{ textAlign: 'center', padding: '32px', fontSize: '13px', color: 'var(--text-tertiary)' }}>読み込み中…</div>}
+          {!loading && users.length === 0 && <div style={{ textAlign: 'center', padding: '32px', fontSize: '13px', color: 'var(--text-tertiary)' }}>まだいません</div>}
+          {users.map((p) => (
+            <div key={p.user_id}
+              onClick={() => { if (onOpenProfile) { onOpenProfile(p); onClose() } }}
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 20px', cursor: onOpenProfile ? 'pointer' : 'default', borderBottom: '1px solid var(--border-light)' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '50%', overflow: 'hidden', background: 'var(--accent-light)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid var(--border)' }}>
+                {p.avatar_url ? <img src={p.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <PersonSvg />}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{p.username || 'ユーザー'}</div>
+                {p.handle && <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '1px' }}>@{p.handle}</div>}
+                {p.bio && <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>{p.bio}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function PublicProfile({ profile, currentUserId, isFollowing, onFollow, onUnfollow, onClose, onLoginClick, onOpenProfile }) {
   const [followersCount, setFollowersCount] = useState(null)
   const [followingCount, setFollowingCount] = useState(null)
+  const [sheet, setSheet] = useState(null)
+  const [sheetUsers, setSheetUsers] = useState([])
+  const [sheetLoading, setSheetLoading] = useState(false)
   const [profileYarns, setProfileYarns] = useState([])
   const [profileTools, setProfileTools] = useState([])
   const [profileBooks, setProfileBooks] = useState([])
@@ -63,6 +98,30 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
     })
   }, [profile?.user_id])
 
+  async function openFollowers() {
+    setSheet('followers')
+    setSheetUsers([])
+    setSheetLoading(true)
+    const { data: rows } = await supabase.from('follows').select('follower_id').eq('following_id', profile.user_id)
+    if (rows && rows.length > 0) {
+      const { data: profiles } = await supabase.from('profiles').select('*').in('user_id', rows.map((r) => r.follower_id))
+      setSheetUsers(profiles || [])
+    }
+    setSheetLoading(false)
+  }
+
+  async function openFollowing() {
+    setSheet('following')
+    setSheetUsers([])
+    setSheetLoading(true)
+    const { data: rows } = await supabase.from('follows').select('following_id').eq('follower_id', profile.user_id)
+    if (rows && rows.length > 0) {
+      const { data: profiles } = await supabase.from('profiles').select('*').in('user_id', rows.map((r) => r.following_id))
+      setSheetUsers(profiles || [])
+    }
+    setSheetLoading(false)
+  }
+
   if (!profile) return null
 
   const TABS = [
@@ -73,6 +132,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
   ]
 
   return (
+    <>
     <div className="mypage-overlay">
       <WorkDetail
         work={detailWork}
@@ -152,11 +212,11 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
-          <div className="mypage-stat">
+          <div className="mypage-stat" style={{ cursor: 'pointer' }} onClick={openFollowers}>
             <span className="mypage-stat-num">{followersCount === null ? '…' : followersCount}</span>
             <span className="mypage-stat-label">フォロワー</span>
           </div>
-          <div className="mypage-stat">
+          <div className="mypage-stat" style={{ cursor: 'pointer' }} onClick={openFollowing}>
             <span className="mypage-stat-num">{followingCount === null ? '…' : followingCount}</span>
             <span className="mypage-stat-label">フォロー中</span>
           </div>
@@ -309,5 +369,16 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
         )}
       </div>
     </div>
+
+    {sheet && (
+      <UserListSheet
+        title={sheet === 'followers' ? `フォロワー ${followersCount}人` : `フォロー中 ${followingCount}人`}
+        users={sheetUsers}
+        loading={sheetLoading}
+        onClose={() => setSheet(null)}
+        onOpenProfile={onOpenProfile}
+      />
+    )}
+  </>
   )
 }
