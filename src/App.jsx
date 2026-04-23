@@ -152,10 +152,10 @@ export default function App() {
         { data: y }, { data: t }, { data: b }, { data: w }, { data: s }, { data: p },
         { data: f }, { count: fc }, { data: yc },
       ] = await Promise.all([
-        supabase.from('yarns').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
-        supabase.from('tools').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
-        supabase.from('books').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
-        supabase.from('works').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
+        supabase.from('yarns').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
+        supabase.from('tools').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
+        supabase.from('books').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
+        supabase.from('works').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('shops').select('name').order('created_at', { ascending: true }),
         supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
         supabase.from('follows').select('*').eq('follower_id', user.id),
@@ -292,7 +292,8 @@ export default function App() {
       const { data: updated } = await supabase.from('yarns').update(record).eq('id', data.id).select().single()
       setYarns((prev) => prev.map((y) => y.id === data.id ? updated : y))
     } else {
-      const { data: inserted } = await supabase.from('yarns').insert([record]).select().single()
+      const maxOrder = yarns.reduce((m, y) => Math.max(m, y.sort_order || 0), 0)
+      const { data: inserted } = await supabase.from('yarns').insert([{ ...record, sort_order: maxOrder + 1 }]).select().single()
       if (inserted) setYarns((prev) => [...prev, inserted])
     }
   }
@@ -321,7 +322,8 @@ export default function App() {
       const { data: updated } = await supabase.from('tools').update(record).eq('id', data.id).select().single()
       setTools((prev) => prev.map((t) => t.id === data.id ? updated : t))
     } else {
-      const { data: inserted } = await supabase.from('tools').insert([record]).select().single()
+      const maxOrder = tools.reduce((m, t) => Math.max(m, t.sort_order || 0), 0)
+      const { data: inserted } = await supabase.from('tools').insert([{ ...record, sort_order: maxOrder + 1 }]).select().single()
       if (inserted) setTools((prev) => [...prev, inserted])
     }
   }
@@ -339,7 +341,8 @@ export default function App() {
       const { data: updated } = await supabase.from('books').update(record).eq('id', data.id).select().single()
       setBooks((prev) => prev.map((b) => b.id === data.id ? updated : b))
     } else {
-      const { data: inserted } = await supabase.from('books').insert([record]).select().single()
+      const maxOrder = books.reduce((m, b) => Math.max(m, b.sort_order || 0), 0)
+      const { data: inserted } = await supabase.from('books').insert([{ ...record, sort_order: maxOrder + 1 }]).select().single()
       if (inserted) setBooks((prev) => [...prev, inserted])
     }
   }
@@ -368,7 +371,8 @@ export default function App() {
       const { data: updated } = await supabase.from('works').update(record).eq('id', data.id).select().single()
       setWorks((prev) => prev.map((w) => w.id === data.id ? updated : w))
     } else {
-      const { data: inserted } = await supabase.from('works').insert([record]).select().single()
+      const maxOrder = works.reduce((m, w) => Math.max(m, w.sort_order || 0), 0)
+      const { data: inserted } = await supabase.from('works').insert([{ ...record, sort_order: maxOrder + 1 }]).select().single()
       if (inserted) setWorks((prev) => [...prev, inserted])
     }
   }
@@ -376,6 +380,24 @@ export default function App() {
   async function deleteWork(id) {
     await supabase.from('works').delete().eq('id', id)
     setWorks((prev) => prev.filter((w) => w.id !== id))
+  }
+
+  // ────────── Sort order ────────────────────────
+  async function reorderYarns(items) {
+    setYarns(items)
+    await Promise.all(items.map((item, idx) => supabase.from('yarns').update({ sort_order: idx + 1 }).eq('id', item.id)))
+  }
+  async function reorderTools(items) {
+    setTools(items)
+    await Promise.all(items.map((item, idx) => supabase.from('tools').update({ sort_order: idx + 1 }).eq('id', item.id)))
+  }
+  async function reorderBooks(items) {
+    setBooks(items)
+    await Promise.all(items.map((item, idx) => supabase.from('books').update({ sort_order: idx + 1 }).eq('id', item.id)))
+  }
+  async function reorderWorks(items) {
+    setWorks(items)
+    await Promise.all(items.map((item, idx) => supabase.from('works').update({ sort_order: idx + 1 }).eq('id', item.id)))
   }
 
   // ────────── Shop CRUD ──────────────────────────
@@ -452,21 +474,22 @@ export default function App() {
       <main className="main">
         {tab === 'yarn' && (
           <YarnList yarns={yarns} works={works} sort={yarnSort} view={yarnView} onSortChange={setYarnSort}
-            onViewChange={changeYarnView} onOpenDetail={setDetailYarn} onOpenLabelSearch={() => setLabelSearchOpen(true)} />
+            onViewChange={changeYarnView} onOpenDetail={setDetailYarn} onOpenLabelSearch={() => setLabelSearchOpen(true)}
+            onReorder={reorderYarns} />
         )}
         {tab === 'tools' && (
           <ToolsList tools={tools} sort={toolsSort} view={toolsView} onSortChange={setToolsSort}
-            onViewChange={changeToolsView} onOpenDetail={setDetailTool} />
+            onViewChange={changeToolsView} onOpenDetail={setDetailTool} onReorder={reorderTools} />
         )}
         {tab === 'books' && (
           <BooksList books={books} works={works} sort={booksSort} view={booksView} onSortChange={setBooksSort}
-            onViewChange={changeBooksView} onOpenDetail={setDetailBook} />
+            onViewChange={changeBooksView} onOpenDetail={setDetailBook} onReorder={reorderBooks} />
         )}
         {tab === 'works' && (
           <WorksList works={works} yarns={yarns} sort={worksSort} needleFilter={needleFilter} view={worksView}
             yarnCounts={yarnCountsMap}
             onSortChange={setWorksSort} onNeedleFilterChange={setNeedleFilter}
-            onViewChange={changeWorksView} onOpenDetail={setDetailWork} />
+            onViewChange={changeWorksView} onOpenDetail={setDetailWork} onReorder={reorderWorks} />
         )}
         {tab === 'feed' && (
           <FeedPage

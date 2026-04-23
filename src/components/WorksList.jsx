@@ -1,12 +1,28 @@
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import SortableItem, { DragHandle } from './SortableItem'
 import { WorkSvgSm, YarnSvgSm } from '../lib/svgs'
 import { MiniYarnBall } from './WorkDetail'
 
-export default function WorksList({ works, yarns, sort, needleFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onViewChange, onOpenDetail }) {
+export default function WorksList({ works, yarns, sort, needleFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onViewChange, onOpenDetail, onReorder }) {
   let list = [...works]
   if (needleFilter) list = list.filter((w) => w.needle === needleFilter)
   if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
   else if (sort === 'yarn') list.sort((a, b) => (b.yarn_ids?.length || 0) - (a.yarn_ids?.length || 0))
-  else list.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  const canDrag = sort === 'default' && view === 'list' && !needleFilter
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
+  )
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIndex = list.findIndex((i) => i.id === active.id)
+    const newIndex = list.findIndex((i) => i.id === over.id)
+    onReorder(arrayMove(list, oldIndex, newIndex))
+  }
 
   return (
     <>
@@ -62,6 +78,43 @@ export default function WorksList({ works, yarns, sort, needleFilter, view, yarn
             )
           })}
         </div>
+      ) : canDrag ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={list.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            <div className="list">
+              {list.map((work) => {
+                const linkedYarns = (work.yarn_ids || []).map((id) => yarns.find((y) => y.id === id)).filter(Boolean)
+                const yarnTags = linkedYarns.length
+                  ? linkedYarns.map((y) => <span key={y.id} className="tag color-name">{y.name || '毛糸'}</span>)
+                  : <span className="meta-text">毛糸未紐付け</span>
+                return (
+                  <SortableItem key={work.id} id={work.id}>
+                    {({ handleProps }) => (
+                      <div className="yarn-row" onClick={() => onOpenDetail(work)}>
+                        <DragHandle {...handleProps} />
+                        <div className="yarn-thumb">
+                          {work.img_url ? <img src={work.img_url} alt="" /> : <WorkSvgSm />}
+                        </div>
+                        <div className="yarn-info">
+                          <div className="yarn-name">{work.name || '名前なし'}</div>
+                          <div className="yarn-tags">
+                            {yarnTags}
+                            {work.needle ? <span className="tag">{work.needle}</span> : null}
+                          </div>
+                          {work.memo ? (
+                            <div className="meta-text" style={{ marginTop: '3px' }}>
+                              {work.memo.slice(0, 30)}{work.memo.length > 30 ? '…' : ''}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    )}
+                  </SortableItem>
+                )
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
       ) : (
         <div className="list">
           {list.map((work) => {

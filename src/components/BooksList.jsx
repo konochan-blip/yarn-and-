@@ -1,3 +1,6 @@
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import SortableItem, { DragHandle } from './SortableItem'
 import { BookSvgSm } from '../lib/svgs'
 
 function ViewToggle({ view, onViewChange }) {
@@ -11,11 +14,24 @@ function ViewToggle({ view, onViewChange }) {
   )
 }
 
-export default function BooksList({ books, works, sort, view, onSortChange, onViewChange, onOpenDetail }) {
+export default function BooksList({ books, works, sort, view, onSortChange, onViewChange, onOpenDetail, onReorder }) {
   const sorted = [...books]
   if (sort === 'title') sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ja'))
   else if (sort === 'author') sorted.sort((a, b) => (a.author || '').localeCompare(b.author || '', 'ja'))
-  else sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  const canDrag = sort === 'default' && view === 'list'
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
+  )
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIndex = sorted.findIndex((i) => i.id === active.id)
+    const newIndex = sorted.findIndex((i) => i.id === over.id)
+    onReorder(arrayMove(sorted, oldIndex, newIndex))
+  }
 
   return (
     <>
@@ -54,6 +70,48 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
             </div>
           ))}
         </div>
+      ) : canDrag ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={sorted.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            <div className="list">
+              {sorted.map((book) => {
+                const workCount = works.filter((w) => (w.book_ids || []).includes(book.id)).length
+                return (
+                  <SortableItem key={book.id} id={book.id}>
+                    {({ handleProps }) => (
+                      <div className="yarn-row" onClick={() => onOpenDetail(book)}>
+                        <DragHandle {...handleProps} />
+                        <div className="yarn-thumb">
+                          {book.img_url ? <img src={book.img_url} alt="" /> : <BookSvgSm />}
+                        </div>
+                        <div className="yarn-info">
+                          <div className="yarn-name">{book.title || '無題'}</div>
+                          <div className="yarn-tags">
+                            {book.author ? <span className="tag">{book.author}</span> : null}
+                            {book.publisher ? <span className="meta-text">{book.publisher}</span> : null}
+                          </div>
+                          {workCount > 0 && (
+                            <div className="yarn-tags" style={{ marginTop: '4px' }}>
+                              <span className="tag work">✦ {workCount}作品</span>
+                            </div>
+                          )}
+                        </div>
+                        {book.link && (
+                          <div style={{ flexShrink: 0, color: 'var(--text-tertiary)' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </SortableItem>
+                )
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
       ) : (
         <div className="list">
           {sorted.map((book) => {

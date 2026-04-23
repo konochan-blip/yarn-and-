@@ -1,3 +1,6 @@
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import SortableItem, { DragHandle } from './SortableItem'
 import { ToolSvgSm } from '../lib/svgs'
 
 function ViewToggle({ view, onViewChange }) {
@@ -11,10 +14,23 @@ function ViewToggle({ view, onViewChange }) {
   )
 }
 
-export default function ToolsList({ tools, sort, view, onSortChange, onViewChange, onOpenDetail }) {
+export default function ToolsList({ tools, sort, view, onSortChange, onViewChange, onOpenDetail, onReorder }) {
   const sorted = [...tools]
   if (sort === 'name') sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
-  else sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  const canDrag = sort === 'default' && view === 'list'
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
+  )
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIndex = sorted.findIndex((i) => i.id === active.id)
+    const newIndex = sorted.findIndex((i) => i.id === over.id)
+    onReorder(arrayMove(sorted, oldIndex, newIndex))
+  }
 
   return (
     <>
@@ -51,6 +67,37 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
             </div>
           ))}
         </div>
+      ) : canDrag ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={sorted.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            <div className="list">
+              {sorted.map((tool) => (
+                <SortableItem key={tool.id} id={tool.id}>
+                  {({ handleProps }) => (
+                    <div className="yarn-row" onClick={() => onOpenDetail(tool)}>
+                      <DragHandle {...handleProps} />
+                      <div className="yarn-thumb">
+                        {tool.img_url ? <img src={tool.img_url} alt="" /> : <ToolSvgSm />}
+                      </div>
+                      <div className="yarn-info">
+                        <div className="yarn-name">{tool.name || '名前なし'}</div>
+                        <div className="yarn-tags">
+                          {tool.type ? <span className="tag">{tool.type}</span> : null}
+                          {tool.size ? <span className="meta-text">{tool.size}</span> : null}
+                        </div>
+                        {tool.memo ? (
+                          <div className="meta-text" style={{ marginTop: '3px' }}>
+                            {tool.memo.slice(0, 30)}{tool.memo.length > 30 ? '…' : ''}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
+                </SortableItem>
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       ) : (
         <div className="list">
           {sorted.map((tool) => (
