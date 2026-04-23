@@ -162,13 +162,18 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
           </div>
         </div>
 
-        {profile.link_url && (
+        {profile.social_links?.length > 0 && (
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
-            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '6px', letterSpacing: '0.06em' }}>リンク</div>
-            <a href={profile.link_url} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize: '13px', color: 'var(--accent)', wordBreak: 'break-all', textDecoration: 'none' }}>
-              {profile.link_url}
-            </a>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>リンク</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {profile.social_links.map((l, i) => (
+                <a key={i} href={l.url} target="_blank" rel="noopener noreferrer"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--accent-light)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
+                  <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{l.title}</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>↗</span>
+                </a>
+              ))}
+            </div>
           </div>
         )}
 

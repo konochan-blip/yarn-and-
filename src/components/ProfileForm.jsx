@@ -7,7 +7,9 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   const [handle, setHandle] = useState('')
   const [bio, setBio] = useState('')
   const [isPublic, setIsPublic] = useState(false)
-  const [linkUrl, setLinkUrl] = useState('')
+  const [socialLinks, setSocialLinks] = useState([])
+  const [linkTitleInput, setLinkTitleInput] = useState('')
+  const [linkUrlInput, setLinkUrlInput] = useState('')
   const [favoriteShops, setFavoriteShops] = useState([])
   const [shopNameInput, setShopNameInput] = useState('')
   const [shopUrlInput, setShopUrlInput] = useState('')
@@ -23,7 +25,12 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setHandle(profile?.handle || '')
     setBio(profile?.bio || '')
     setIsPublic(profile?.is_public || false)
-    setLinkUrl(profile?.link_url || '')
+    const existing = profile?.social_links || []
+    setSocialLinks(existing.length === 0 && profile?.link_url
+      ? [{ title: 'リンク', url: profile.link_url }]
+      : existing)
+    setLinkTitleInput('')
+    setLinkUrlInput('')
     setFavoriteShops(profile?.favorite_shops || [])
     setShopNameInput('')
     setShopUrlInput('')
@@ -39,6 +46,18 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     reader.onload = (ev) => setImgPreview(ev.target.result)
     reader.readAsDataURL(file)
     e.target.value = ''
+  }
+
+  function addLink() {
+    const url = linkUrlInput.trim()
+    if (!url) return
+    setSocialLinks((prev) => [...prev, { title: linkTitleInput.trim() || 'リンク', url }])
+    setLinkTitleInput('')
+    setLinkUrlInput('')
+  }
+
+  function removeLink(idx) {
+    setSocialLinks((prev) => prev.filter((_, i) => i !== idx))
   }
 
   function addShop() {
@@ -57,7 +76,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setSaving(true)
     setError('')
     try {
-      await onSave({ username, handle, bio, is_public: isPublic, avatar_url: imgPreview || '', link_url: linkUrl, favorite_shops: favoriteShops }, imgFile)
+      await onSave({ username, handle, bio, is_public: isPublic, avatar_url: imgPreview || '', social_links: socialLinks, favorite_shops: favoriteShops }, imgFile)
       onClose()
     } catch (e) {
       setError(e.message || 'プロフィールの保存に失敗しました')
@@ -100,7 +119,30 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
 
       <div className="field">
         <label>リンク</label>
-        <input type="url" value={linkUrl} placeholder="https://..." onChange={(e) => setLinkUrl(e.target.value)} />
+        <input type="text" value={linkTitleInput} placeholder="タイトル（例：X、YouTube、ブログ）"
+          onChange={(e) => setLinkTitleInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addLink())}
+          style={{ marginBottom: '6px' }} />
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+          <input type="url" value={linkUrlInput} placeholder="https://..."
+            onChange={(e) => setLinkUrlInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addLink())}
+            style={{ flex: 1 }} />
+          <button type="button" className="btn primary" style={{ padding: '8px 14px', flexShrink: 0 }} onClick={addLink}>追加</button>
+        </div>
+        {socialLinks.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {socialLinks.map((l, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--accent-light)', borderRadius: '10px', padding: '7px 10px' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{l.title}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.url}</div>
+                </div>
+                <button onClick={() => removeLink(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: '16px', lineHeight: 1, padding: '0 4px', flexShrink: 0 }}>×</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="field">
