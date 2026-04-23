@@ -3,7 +3,7 @@ import Modal from './Modal'
 import LabelReader from './LabelReader'
 import { YarnSvgSm } from '../lib/svgs'
 
-export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onClose, onMergeCount }) {
+export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onClose, onMergeCount, onOpenShopSettings }) {
   const [name, setName] = useState('')
   const [color, setColor] = useState('')
   const [colorname, setColorname] = useState('')
@@ -179,7 +179,15 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
         <div className="field"><label>メモ</label><textarea value={memo} placeholder="購入店・URL・メモなど" onChange={(e) => setMemo(e.target.value)} /></div>
 
         <div className="field">
-          <label>購入したお店</label>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <label style={{ margin: 0 }}>購入したお店</label>
+            {onOpenShopSettings && (
+              <button type="button" onClick={onOpenShopSettings}
+                style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0' }}>
+                ＋ お店を編集
+              </button>
+            )}
+          </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
             {[...shops, 'その他'].map((s) => (
               <button

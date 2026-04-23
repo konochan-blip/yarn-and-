@@ -24,7 +24,6 @@ export default function Header({ profile, onOpenMyPage, onOpenSettings, onSignOu
               </span>
           }
         </button>
-        <button className="btn" onClick={onOpenSettings} style={{ fontSize: '12px', padding: '6px 12px' }}>お店</button>
         <button className="btn" onClick={onSignOut} title="ログアウト" style={{ padding: '7px 10px' }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

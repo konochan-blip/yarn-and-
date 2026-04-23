@@ -481,7 +481,8 @@ export default function App() {
 
       {/* Forms */}
       <YarnForm open={yarnFormOpen} editingYarn={editingYarn} shops={shops} yarns={yarns}
-        onSave={saveYarn} onClose={() => setYarnFormOpen(false)} onMergeCount={mergeYarnCount} />
+        onSave={saveYarn} onClose={() => setYarnFormOpen(false)} onMergeCount={mergeYarnCount}
+        onOpenShopSettings={() => setSettingsOpen(true)} />
       <ToolForm open={toolFormOpen} editingTool={editingTool}
         onSave={saveTool} onClose={() => setToolFormOpen(false)} />
       <BookForm open={bookFormOpen} editingBook={editingBook}
