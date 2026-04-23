@@ -180,12 +180,27 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
 
         <div className="field">
           <label>購入したお店</label>
-          <div className="shops-check">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
             {[...shops, 'その他'].map((s) => (
-              <label key={s} className={`shop-label${selectedShops.includes(s) ? ' checked' : ''}`}>
-                <input type="checkbox" checked={selectedShops.includes(s)} onChange={() => toggleShop(s)} />
+              <button
+                key={s}
+                type="button"
+                onClick={() => toggleShop(s)}
+                style={{
+                  padding: '7px 14px',
+                  borderRadius: '99px',
+                  border: selectedShops.includes(s) ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
+                  background: selectedShops.includes(s) ? 'var(--accent)' : 'var(--surface)',
+                  color: selectedShops.includes(s) ? '#fff' : 'var(--text-secondary)',
+                  fontSize: '13px',
+                  fontFamily: 'inherit',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  fontWeight: selectedShops.includes(s) ? 600 : 400,
+                }}
+              >
                 {s}
-              </label>
+              </button>
             ))}
           </div>
         </div>
