@@ -23,6 +23,7 @@ import MyPage from './components/MyPage'
 import ProfileForm from './components/ProfileForm'
 import PublicProfile from './components/PublicProfile'
 import ChangePasswordModal from './components/ChangePasswordModal'
+import ChangeHandleModal from './components/ChangeHandleModal'
 import TermsPage from './components/TermsPage'
 import PrivacyPolicyPage from './components/PrivacyPolicyPage'
 import WithdrawModal from './components/WithdrawModal'
@@ -48,6 +49,7 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(true)
   const [passwordRecovery, setPasswordRecovery] = useState(false)
   const [changePasswordOpen, setChangePasswordOpen] = useState(false)
+  const [changeHandleOpen,   setChangeHandleOpen]   = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
   const [privacyOpen, setPrivacyOpen] = useState(false)
   const [withdrawOpen, setWithdrawOpen] = useState(false)
@@ -552,8 +554,12 @@ export default function App() {
         onClose={() => setMyPageOpen(false)}
         onEdit={() => { setMyPageOpen(false); setProfileFormOpen(true) }}
         onOpenProfile={(p) => { setMyPageOpen(false); setViewingProfile(p) }}
-        onChangePassword={() => { setMyPageOpen(false); setChangePasswordOpen(true) }} />
+        onChangePassword={() => { setMyPageOpen(false); setChangePasswordOpen(true) }}
+        onChangeHandle={() => { setMyPageOpen(false); setChangeHandleOpen(true) }} />
       <ChangePasswordModal open={changePasswordOpen || passwordRecovery} onClose={() => { setChangePasswordOpen(false); setPasswordRecovery(false) }} />
+      <ChangeHandleModal open={changeHandleOpen} currentHandle={profile?.handle} userId={user?.id}
+        onClose={() => setChangeHandleOpen(false)}
+        onSaved={(updated) => { setProfile(updated); setChangeHandleOpen(false) }} />
       <ProfileForm open={profileFormOpen} profile={profile}
         onSave={saveProfile} onClose={() => setProfileFormOpen(false)} />
       <PublicProfile

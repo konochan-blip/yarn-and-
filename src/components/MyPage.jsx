@@ -32,7 +32,7 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   )
 }
 
-export default function MyPage({ open, profile, yarns, tools, books, works, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword }) {
+export default function MyPage({ open, profile, yarns, tools, books, works, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle }) {
   const [sheet, setSheet] = useState(null)
   const [copied, setCopied] = useState(false)
 
@@ -203,6 +203,10 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
           )}
 
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '4px 12px' }}>
+            <button onClick={onChangeHandle} style={{ width: '100%', background: 'none', border: 'none', padding: '12px 0', fontSize: '14px', color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)' }}>
+              <span>IDを変更する</span>
+              <span style={{ color: 'var(--text-tertiary)', fontSize: '13px' }}>{profile?.handle ? `@${profile.handle}` : '未設定'} ›</span>
+            </button>
             <button onClick={onChangePassword} style={{ width: '100%', background: 'none', border: 'none', padding: '12px 0', fontSize: '14px', color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span>パスワードを変更する</span>
               <span style={{ color: 'var(--text-tertiary)', fontSize: '16px' }}>›</span>
