@@ -10,14 +10,17 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
   const [memo, setMemo] = useState('')
   const [privateMemo, setPrivateMemo] = useState('')
   const [ref, setRef] = useState('')
+  const [categories, setCategories] = useState([])
+  const [categoryInput, setCategoryInput] = useState('')
   const [selectedYarnIds, setSelectedYarnIds] = useState([])
   const [selectedBookIds, setSelectedBookIds] = useState([])
   const [imgFile, setImgFile] = useState(null)
   const [imgPreview, setImgPreview] = useState(null)
-  const [patternItems, setPatternItems] = useState([]) // [{preview, file}]
+  const [patternItems, setPatternItems] = useState([])
   const [saving, setSaving] = useState(false)
   const imgInputRef = useRef()
   const patternInputRef = useRef()
+  const categoryInputRef = useRef()
 
   useEffect(() => {
     if (!open) return
@@ -27,6 +30,7 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
       setMemo(editingWork.memo || '')
       setPrivateMemo(editingWork.private_memo || '')
       setRef(editingWork.ref || '')
+      setCategories(editingWork.categories || [])
       setSelectedYarnIds(editingWork.yarn_ids || [])
       setSelectedBookIds(editingWork.book_ids || [])
       setImgFile(null)
@@ -34,10 +38,30 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
       setPatternItems((editingWork.pattern_imgs || []).map((url) => ({ preview: url, file: null })))
     } else {
       setName(''); setNeedle(''); setMemo(''); setPrivateMemo(''); setRef('')
+      setCategories([]); setCategoryInput('')
       setSelectedYarnIds([]); setSelectedBookIds([])
       setImgFile(null); setImgPreview(null); setPatternItems([])
     }
+    setCategoryInput('')
   }, [open, editingWork])
+
+  function addCategory() {
+    const val = categoryInput.trim()
+    if (!val || categories.includes(val)) { setCategoryInput(''); return }
+    setCategories((prev) => [...prev, val])
+    setCategoryInput('')
+  }
+
+  function handleCategoryKeyDown(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addCategory() }
+    if (e.key === 'Backspace' && !categoryInput && categories.length > 0) {
+      setCategories((prev) => prev.slice(0, -1))
+    }
+  }
+
+  function removeCategory(cat) {
+    setCategories((prev) => prev.filter((c) => c !== cat))
+  }
 
   function handleImgChange(e) {
     const file = e.target.files[0]
@@ -74,7 +98,7 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
   async function handleSave() {
     setSaving(true)
     try {
-      const data = { name, needle, memo, private_memo: privateMemo, ref, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems }
+      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems }
       if (editingWork) data.id = editingWork.id
       await onSave(data, imgFile)
       onClose()
@@ -93,6 +117,33 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
       <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
 
       <div className="field"><label>作品名</label><input type="text" value={name} placeholder="例：フリルスカート、帽子など" onChange={(e) => setName(e.target.value)} /></div>
+
+      <div className="field">
+        <label>カテゴリー</label>
+        <div
+          onClick={() => categoryInputRef.current?.focus()}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', minHeight: '42px', padding: '6px 10px', border: '1px solid var(--border)', borderRadius: '10px', background: 'var(--bg)', cursor: 'text' }}
+        >
+          {categories.map((cat) => (
+            <span key={cat} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'var(--accent-light)', border: '1px solid var(--border)', borderRadius: '99px', padding: '3px 10px 3px 10px', fontSize: '13px', color: 'var(--accent)', fontWeight: 500 }}>
+              {cat}
+              <button type="button" onClick={(e) => { e.stopPropagation(); removeCategory(cat) }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: '14px', lineHeight: 1, padding: '0 0 0 2px', display: 'flex', alignItems: 'center' }}>×</button>
+            </span>
+          ))}
+          <input
+            ref={categoryInputRef}
+            type="text"
+            value={categoryInput}
+            onChange={(e) => setCategoryInput(e.target.value)}
+            onKeyDown={handleCategoryKeyDown}
+            onBlur={addCategory}
+            placeholder={categories.length === 0 ? 'タグを入力してEnter' : ''}
+            style={{ border: 'none', outline: 'none', background: 'transparent', fontSize: '13px', color: 'var(--text-primary)', fontFamily: 'inherit', minWidth: '120px', flex: 1, padding: '2px 0' }}
+          />
+        </div>
+        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>例：セーター・プレゼント・春夏　Enterで追加</div>
+      </div>
 
       <div className="field">
         <label>編み方</label>

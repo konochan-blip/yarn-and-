@@ -144,6 +144,16 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
         </div>
       </div>
 
+      {work.categories?.length > 0 && (
+        <div className="detail-row">
+          <span className="dl">カテゴリー</span>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', justifyContent: 'flex-end' }}>
+            {work.categories.map((cat) => (
+              <span key={cat} style={{ background: 'var(--accent-light)', border: '1px solid var(--border)', borderRadius: '99px', padding: '2px 10px', fontSize: '12px', color: 'var(--accent)', fontWeight: 500 }}>{cat}</span>
+            ))}
+          </div>
+        </div>
+      )}
       {work.needle ? <div className="detail-row"><span className="dl">編み方</span><span className="dv">{work.needle}</span></div> : null}
 
       {work.memo ? (
