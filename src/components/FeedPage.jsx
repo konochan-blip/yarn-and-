@@ -65,7 +65,7 @@ export default function FeedPage({
             type="text"
             value={query}
             onChange={handleQueryChange}
-            placeholder="ユーザー名で検索…"
+            placeholder="ユーザー名・@ID で検索…"
             style={{
               width: '100%', fontFamily: 'inherit', fontSize: '14px',
               padding: '10px 40px 10px 40px',
@@ -175,7 +175,7 @@ export default function FeedPage({
                 <rect x="3" y="14" width="7" height="7" rx="1"/>
                 <rect x="14" y="14" width="7" height="7" rx="1"/>
               </svg>
-              ユーザー名で検索して<br />気になる人をフォローしてみよう
+              ユーザー名や @ID で検索して<br />気になる人をフォローしてみよう
             </div>
           )}
 
