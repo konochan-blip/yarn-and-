@@ -234,15 +234,18 @@ export default function UserPage({ username }) {
           {activeTab === 'yarn' && (
             yarns.length === 0
               ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ毛糸が登録されていません</div>
-              : <div className="list">
+              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
                   {yarns.map((yarn) => (
-                    <div key={yarn.id} className="yarn-row">
-                      <div className="yarn-thumb">
-                        {yarn.img_url ? <img src={yarn.img_url} alt="" /> : <YarnSvgSm />}
-                      </div>
-                      <div className="yarn-info">
-                        <div className="yarn-name">{yarn.name || '名前なし'}</div>
-                        <div className="yarn-meta">{[yarn.colorname, yarn.material].filter(Boolean).join(' · ')}</div>
+                    <div key={yarn.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                      {yarn.img_url
+                        ? <img src={yarn.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
+                      }
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
+                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{yarn.name || '名前なし'}</div>
+                        {(yarn.colorname || yarn.material) && (
+                          <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{[yarn.colorname, yarn.material].filter(Boolean).join(' · ')}</div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -252,15 +255,18 @@ export default function UserPage({ username }) {
           {activeTab === 'tool' && (
             tools.length === 0
               ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ道具が登録されていません</div>
-              : <div className="list">
+              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
                   {tools.map((tool) => (
-                    <div key={tool.id} className="yarn-row">
-                      <div className="yarn-thumb">
-                        {tool.img_url ? <img src={tool.img_url} alt="" /> : <ToolSvgSm />}
-                      </div>
-                      <div className="yarn-info">
-                        <div className="yarn-name">{tool.name || '名前なし'}</div>
-                        <div className="yarn-meta">{[tool.type, tool.size].filter(Boolean).join(' · ')}</div>
+                    <div key={tool.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                      {tool.img_url
+                        ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
+                      }
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
+                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tool.name || '名前なし'}</div>
+                        {(tool.type || tool.size) && (
+                          <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{[tool.type, tool.size].filter(Boolean).join(' · ')}</div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -270,15 +276,18 @@ export default function UserPage({ username }) {
           {activeTab === 'book' && (
             books.length === 0
               ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ書籍が登録されていません</div>
-              : <div className="list">
+              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
                   {books.map((book) => (
-                    <div key={book.id} className="yarn-row">
-                      <div className="yarn-thumb">
-                        {book.img_url ? <img src={book.img_url} alt="" /> : <BookSvgSm />}
-                      </div>
-                      <div className="yarn-info">
-                        <div className="yarn-name">{book.title || '無題'}</div>
-                        <div className="yarn-meta">{[book.author, book.publisher].filter(Boolean).join(' · ')}</div>
+                    <div key={book.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                      {book.img_url
+                        ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
+                      }
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
+                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{book.title || '無題'}</div>
+                        {book.author && (
+                          <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{book.author}</div>
+                        )}
                       </div>
                     </div>
                   ))}
