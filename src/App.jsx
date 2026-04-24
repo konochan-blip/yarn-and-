@@ -104,6 +104,7 @@ export default function App() {
   function changeBooksView(v) { setBooksView(v); localStorage.setItem('view_books', v) }
   function changeWorksView(v) { setWorksView(v); localStorage.setItem('view_works', v) }
   const [needleFilter, setNeedleFilter] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('')
 
   // Modals
   const [yarnFormOpen,  setYarnFormOpen]  = useState(false)
@@ -488,9 +489,9 @@ export default function App() {
             onViewChange={changeBooksView} onOpenDetail={setDetailBook} onReorder={reorderBooks} />
         )}
         {tab === 'works' && (
-          <WorksList works={works} yarns={yarns} sort={worksSort} needleFilter={needleFilter} view={worksView}
+          <WorksList works={works} yarns={yarns} sort={worksSort} needleFilter={needleFilter} categoryFilter={categoryFilter} view={worksView}
             yarnCounts={yarnCountsMap}
-            onSortChange={setWorksSort} onNeedleFilterChange={setNeedleFilter}
+            onSortChange={setWorksSort} onNeedleFilterChange={setNeedleFilter} onCategoryFilterChange={setCategoryFilter}
             onViewChange={changeWorksView} onOpenDetail={setDetailWork} onReorder={reorderWorks} />
         )}
         {tab === 'feed' && (

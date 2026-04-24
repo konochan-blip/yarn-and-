@@ -4,12 +4,15 @@ import SortableItem, { DragHandle } from './SortableItem'
 import { WorkSvgSm, YarnSvgSm } from '../lib/svgs'
 import { MiniYarnBall } from './WorkDetail'
 
-export default function WorksList({ works, yarns, sort, needleFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onViewChange, onOpenDetail, onReorder }) {
+export default function WorksList({ works, yarns, sort, needleFilter, categoryFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onCategoryFilterChange, onViewChange, onOpenDetail, onReorder }) {
+  const allCategories = [...new Set(works.flatMap((w) => w.categories || []))].sort((a, b) => a.localeCompare(b, 'ja'))
+
   let list = [...works]
   if (needleFilter) list = list.filter((w) => w.needle === needleFilter)
+  if (categoryFilter) list = list.filter((w) => (w.categories || []).includes(categoryFilter))
   if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
   else if (sort === 'yarn') list.sort((a, b) => (b.yarn_ids?.length || 0) - (a.yarn_ids?.length || 0))
-  const canDrag = sort === 'default' && view === 'list' && !needleFilter
+  const canDrag = sort === 'default' && view === 'list' && !needleFilter && !categoryFilter
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -41,6 +44,13 @@ export default function WorksList({ works, yarns, sort, needleFilter, view, yarn
           <option value="輪針">輪針</option>
           <option value="その他">その他</option>
         </select>
+        {allCategories.length > 0 && (
+          <select value={categoryFilter} onChange={(e) => onCategoryFilterChange(e.target.value)}
+            style={{ fontFamily: 'inherit', fontSize: '13px', padding: '4px 8px', border: '1px solid var(--border)', borderRadius: '99px', background: 'var(--bg)', color: 'var(--text-secondary)', cursor: 'pointer', outline: 'none' }}>
+            <option value="">カテゴリー</option>
+            {allCategories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+          </select>
+        )}
         <span className="count-badge">{works.length}点</span>
         <div style={{ display: 'flex', gap: '4px', marginLeft: '4px' }}>
           <button onClick={() => onViewChange('list')} title="リスト"
