@@ -450,7 +450,7 @@ body {
 .modal-actions .btn { flex: 1; text-align: center; }
 
 /* ── Detail view ─────────────────────────── */
-.detail-thumb { width: 100%; height: 160px; border-radius: 10px; background: var(--bg); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border-light); }
+.detail-thumb { width: 100%; aspect-ratio: 1; border-radius: 10px; background: var(--bg); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border-light); }
 .detail-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .detail-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; gap: 12px; }
 .dl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); white-space: nowrap; padding-top: 2px; }
