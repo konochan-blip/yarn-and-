@@ -24,6 +24,7 @@ import ProfileForm from './components/ProfileForm'
 import PublicProfile from './components/PublicProfile'
 import ChangePasswordModal from './components/ChangePasswordModal'
 import ChangeHandleModal from './components/ChangeHandleModal'
+import LandingPage from './components/LandingPage'
 import TermsPage from './components/TermsPage'
 import PrivacyPolicyPage from './components/PrivacyPolicyPage'
 import WithdrawModal from './components/WithdrawModal'
@@ -56,6 +57,8 @@ export default function App() {
   const [withdrawOpen, setWithdrawOpen] = useState(false)
   const [contactOpen, setContactOpen] = useState(false)
   const [faqOpen, setFaqOpen] = useState(false)
+  const [showAuth, setShowAuth] = useState(false)
+  const [authMode, setAuthMode] = useState('login')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -461,7 +464,10 @@ export default function App() {
     )
   }
 
-  if (!user) return <AuthPage />
+  if (!user) {
+    if (showAuth) return <AuthPage initialMode={authMode} onBack={() => setShowAuth(false)} />
+    return <LandingPage onLogin={() => { setAuthMode('login'); setShowAuth(true) }} onSignup={() => { setAuthMode('signup'); setShowAuth(true) }} />
+  }
 
   if (loading) {
     return (

@@ -17,8 +17,8 @@ function translateError(msg) {
   return msg
 }
 
-export default function AuthPage() {
-  const [mode, setMode] = useState('login') // 'login' | 'signup' | 'forgot'
+export default function AuthPage({ initialMode = 'login', onBack }) {
+  const [mode, setMode] = useState(initialMode) // 'login' | 'signup' | 'forgot'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -40,7 +40,7 @@ export default function AuthPage() {
         setSignedUp(true)
       } else if (mode === 'forgot') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: 'https://yarn-and.vercel.app/',
+          redirectTo: 'https://yarn-and.com/',
         })
         if (error) throw error
         setResetSent(true)
@@ -69,6 +69,13 @@ export default function AuthPage() {
       justifyContent: 'center',
       padding: '20px',
     }}>
+      {/* 戻るボタン */}
+      {onBack && (
+        <button onClick={onBack} style={{ alignSelf: 'flex-start', background: 'none', border: 'none', fontSize: '13px', color: 'var(--text-tertiary)', cursor: 'pointer', fontFamily: 'inherit', marginBottom: '12px', padding: '4px 0' }}>
+          ← トップへ戻る
+        </button>
+      )}
+
       {/* ロゴ */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '32px' }}>
         <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
