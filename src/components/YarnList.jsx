@@ -91,7 +91,6 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>
       ) : view === 'grid' ? (
-        {/* 壁 */}
         <div style={{ background: '#F0E8DC' }}>
           {chunk(sorted, 3).map((row, rowIdx) => (
             <div key={rowIdx}>
