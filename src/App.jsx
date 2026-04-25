@@ -28,6 +28,7 @@ import TermsPage from './components/TermsPage'
 import PrivacyPolicyPage from './components/PrivacyPolicyPage'
 import WithdrawModal from './components/WithdrawModal'
 import ContactModal from './components/ContactModal'
+import FaqPage from './components/FaqPage'
 
 export default function App() {
   // ────────── URL-based public profile ──────────
@@ -54,6 +55,7 @@ export default function App() {
   const [privacyOpen, setPrivacyOpen] = useState(false)
   const [withdrawOpen, setWithdrawOpen] = useState(false)
   const [contactOpen, setContactOpen] = useState(false)
+  const [faqOpen, setFaqOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -592,6 +594,8 @@ export default function App() {
           <span className="footer-sep">|</span>
           <button onClick={() => setPrivacyOpen(true)} className="footer-link">プライバシーポリシー</button>
           <span className="footer-sep">|</span>
+          <button onClick={() => setFaqOpen(true)} className="footer-link">FAQ</button>
+          <span className="footer-sep">|</span>
           <button onClick={() => setContactOpen(true)} className="footer-link">お問い合わせ</button>
         </div>
         <div className="footer-links" style={{ marginTop: '6px' }}>
@@ -605,6 +609,7 @@ export default function App() {
       </footer>
       {termsOpen && <TermsPage onClose={() => setTermsOpen(false)} />}
       {privacyOpen && <PrivacyPolicyPage onClose={() => setPrivacyOpen(false)} />}
+      {faqOpen && <FaqPage onClose={() => setFaqOpen(false)} />}
       <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSignOut={handleSignOut} />
       <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </>
