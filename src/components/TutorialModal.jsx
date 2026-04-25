@@ -12,7 +12,6 @@ const STEPS = [
     emoji: '📋',
     title: 'STEP 1｜毛糸タブを開く',
     desc: '画面下のタブバーから「毛糸」を選びます。\n毛糸の一覧ページが開きます。',
-    img: 'tab_yarn',
   },
   {
     emoji: '＋',
@@ -20,9 +19,15 @@ const STEPS = [
     desc: '画面右下の「＋ 毛糸追加」ボタンをタップすると、\n登録フォームが開きます。',
   },
   {
+    emoji: '✦',
+    title: 'STEP 3｜写真でAI自動入力',
+    desc: '写真を追加すると、AIが毛糸の情報を自動で読み取ります。\n名前・色・素材・メーカーなどを自動入力！\nあとから手動で編集もできます。',
+    accent: true,
+  },
+  {
     emoji: '✏️',
-    title: 'STEP 3｜情報を入力する',
-    desc: '毛糸の名前・色名・在庫数などを入力します。\n写真も追加できます。入力したら「保存」で完了！',
+    title: 'STEP 4｜内容を確認して保存',
+    desc: 'AI入力の内容を確認・修正して「保存」をタップ。\n在庫数やお店の情報も追加できます。',
   },
   {
     emoji: '✅',
@@ -88,13 +93,14 @@ export default function TutorialModal({ onClose }) {
         {/* アイコン */}
         <div style={{
           width: '72px', height: '72px', borderRadius: '20px',
-          background: 'var(--accent-light)', border: '1.5px solid var(--border)',
+          background: current.accent ? 'var(--accent)' : 'var(--accent-light)',
+          border: '1.5px solid var(--border)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: step === 0 ? '36px' : step === 2 ? '28px' : '32px',
+          fontSize: (step === 0 || current.accent) ? '28px' : step === 2 ? '28px' : '32px',
           margin: '0 auto 18px',
-          fontWeight: step === 2 ? '700' : 'normal',
-          color: step === 2 ? 'var(--accent)' : undefined,
-          fontFamily: step === 2 ? 'inherit' : undefined,
+          fontWeight: (step === 2 || current.accent) ? '700' : 'normal',
+          color: current.accent ? '#fff' : step === 2 ? 'var(--accent)' : undefined,
+          fontFamily: 'inherit',
         }}>{current.emoji}</div>
 
         {/* タイトル */}
