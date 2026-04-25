@@ -14,14 +14,6 @@ function swatchOf(yarn) {
   return SWATCHES[Math.abs(h) % SWATCHES.length]
 }
 
-const WOOD_BG = `repeating-linear-gradient(
-  90deg,
-  transparent 0px, transparent 7px,
-  rgba(120,80,30,0.07) 7px, rgba(120,80,30,0.07) 9px,
-  transparent 9px, transparent 18px,
-  rgba(120,80,30,0.04) 18px, rgba(120,80,30,0.04) 19px
-),
-linear-gradient(180deg, #D4A86A 0%, #C09050 40%, #A87840 100%)`
 
 function chunk(arr, size) {
   const result = []
@@ -99,13 +91,15 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>
       ) : view === 'grid' ? (
-        <div style={{ background: WOOD_BG, paddingTop: '10px', paddingLeft: '10px', paddingRight: '10px', boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.25), inset 3px 0 0 rgba(255,255,255,0.15), inset -3px 0 0 rgba(255,255,255,0.15)' }}>
+        {/* 壁 */}
+        <div style={{ background: '#F0E8DC' }}>
           {chunk(sorted, 3).map((row, rowIdx) => (
             <div key={rowIdx}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+              {/* アイテム行 */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '4px', padding: '14px 4px 0' }}>
                 {row.map((item) => (
                   <div key={item.id} onClick={() => onOpenDetail(item)}
-                    style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0CC', cursor: 'pointer', position: 'relative' }}>
+                    style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0CC', cursor: 'pointer', position: 'relative', boxShadow: '0 4px 6px rgba(0,0,0,0.18)' }}>
                     {item.img_url
                       ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                       : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
@@ -119,8 +113,11 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                   </div>
                 ))}
               </div>
-              {/* 棚板 */}
-              <div style={{ height: '14px', background: WOOD_BG, borderTop: '1.5px solid rgba(255,255,255,0.4)', boxShadow: '0 5px 10px rgba(80,50,20,0.25)' }} />
+              {/* 棚板：上面＋前面の2段で立体感 */}
+              <div style={{ margin: '0 0 0 0' }}>
+                <div style={{ height: '6px', background: 'linear-gradient(180deg, #E8D4A8 0%, #D4BC88 100%)' }} />
+                <div style={{ height: '12px', background: 'linear-gradient(180deg, #C4A060 0%, #A88040 100%)', boxShadow: '0 6px 12px rgba(60,30,0,0.28)' }} />
+              </div>
             </div>
           ))}
         </div>
