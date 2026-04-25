@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YARN& – 毛糸と作品の、ぜんぶを記録するアプリ</title>
+  <meta name="description" content="毛糸・作品・道具・書籍をまとめて管理できる、編み物好きのためのノートアプリ。無料で始められます。" />
+  <meta property="og:title" content="YARN& – 毛糸と作品の、ぜんぶを記録するアプリ" />
+  <meta property="og:description" content="毛糸・作品・道具・書籍をまとめて管理できる、編み物好きのためのノートアプリ。" />
+  <meta property="og:url" content="https://yarn-and.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent:        #8C6272;
+      --accent-light:  #FBE8EF;
+      --accent-mid:    #C9A0B0;
+      --bg:            #FDF5F7;
+      --surface:       #FFF8FA;
+      --border:        #DCCDD4;
+      --text-primary:  #3D2B33;
+      --text-secondary:#7A6369;
+      --text-tertiary: #A89298;
+      --serif:         'Noto Serif JP', serif;
+      --sans:          'Noto Sans JP', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(253,245,247,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 600;
+      color: var(--accent); letter-spacing: 0.04em;
+    }
+    .logo b { font-weight: 700; }
+    .header-cta {
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 99px;
+      padding: 9px 20px; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: var(--sans);
+      text-decoration: none; display: inline-block;
+      transition: opacity 0.18s;
+    }
+    .header-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 72px 24px 60px;
+      background: linear-gradient(160deg, #FFF0F4 0%, #FDF5F7 60%, #F5EEF8 100%);
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 11px; letter-spacing: 0.14em;
+      color: var(--accent-mid); font-weight: 500;
+      background: var(--accent-light);
+      border: 1px solid var(--border);
+      border-radius: 99px; padding: 4px 14px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(26px, 6vw, 42px);
+      font-weight: 600; line-height: 1.45;
+      color: var(--text-primary);
+      margin-bottom: 18px;
+    }
+    .hero h1 em {
+      font-style: normal; color: var(--accent);
+    }
+    .hero-sub {
+      font-size: 15px; color: var(--text-secondary);
+      max-width: 480px; margin: 0 auto 36px;
+      line-height: 1.9;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 99px;
+      padding: 16px 40px; font-size: 16px; font-weight: 700;
+      cursor: pointer; font-family: var(--sans);
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(140,98,114,0.28);
+      transition: opacity 0.18s, transform 0.18s;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-free-note {
+      display: block; font-size: 12px;
+      color: var(--text-tertiary); margin-top: 10px;
+    }
+    .hero-img-wrap {
+      margin-top: 52px;
+      display: flex; justify-content: center;
+    }
+    .hero-mockup {
+      width: 260px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 32px;
+      box-shadow: 0 16px 48px rgba(140,98,114,0.14);
+      overflow: hidden;
+    }
+    .mockup-bar {
+      background: var(--accent);
+      height: 52px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mockup-bar-title {
+      font-family: var(--serif);
+      font-size: 16px; font-weight: 600; color: #fff; letter-spacing: 0.06em;
+    }
+    .mockup-body { padding: 16px; }
+    .mockup-row {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 12px; margin-bottom: 8px;
+    }
+    .mockup-thumb {
+      width: 40px; height: 40px; border-radius: 8px;
+      background: var(--accent-light); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .mockup-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+    .mockup-sub { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+    .mockup-tag {
+      display: inline-block;
+      background: var(--accent-light); color: var(--accent);
+      border-radius: 99px; padding: 2px 8px; font-size: 9px; font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 64px 24px; }
+    .section-inner { max-width: 680px; margin: 0 auto; }
+    .section-label {
+      display: inline-block;
+      font-size: 11px; letter-spacing: 0.14em;
+      color: var(--accent-mid); font-weight: 600;
+      margin-bottom: 10px; text-transform: uppercase;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 600; color: var(--text-primary);
+      margin-bottom: 12px; line-height: 1.5;
+    }
+    .section-desc {
+      font-size: 14px; color: var(--text-secondary);
+      line-height: 1.9; max-width: 520px;
+    }
+
+    /* ── PAIN ── */
+    .pain { background: var(--surface); }
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px; margin-top: 32px;
+    }
+    .pain-card {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 18px 20px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .pain-icon {
+      font-size: 22px; flex-shrink: 0; margin-top: 2px;
+    }
+    .pain-text { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+    .pain-text strong { color: var(--text-primary); display: block; font-size: 14px; margin-bottom: 2px; }
+
+    /* ── FEATURES ── */
+    .features { background: var(--bg); }
+    .feature-list {
+      display: flex; flex-direction: column; gap: 36px;
+      margin-top: 40px;
+    }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 20px;
+    }
+    .feature-icon-wrap {
+      width: 52px; height: 52px; border-radius: 16px;
+      background: var(--accent-light);
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .feature-body {}
+    .feature-title {
+      font-size: 15px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 6px;
+    }
+    .feature-desc {
+      font-size: 13px; color: var(--text-secondary); line-height: 1.85;
+    }
+
+    /* ── WHO ── */
+    .who { background: var(--surface); }
+    .who-list {
+      display: flex; flex-direction: column; gap: 12px;
+      margin-top: 28px;
+    }
+    .who-item {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 14px 18px;
+      font-size: 14px; color: var(--text-primary); font-weight: 500;
+    }
+    .who-check {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; flex-shrink: 0;
+    }
+
+    /* ── CTA ── */
+    .cta {
+      background: linear-gradient(135deg, #8C6272 0%, #C9A0B0 100%);
+      text-align: center; padding: 80px 24px;
+    }
+    .cta-title {
+      font-family: var(--serif);
+      font-size: clamp(22px, 5vw, 34px);
+      font-weight: 600; color: #fff;
+      margin-bottom: 14px; line-height: 1.5;
+    }
+    .cta-sub {
+      font-size: 14px; color: rgba(255,255,255,0.82);
+      margin-bottom: 36px; line-height: 1.8;
+    }
+    .btn-white {
+      display: inline-block;
+      background: #fff; color: var(--accent);
+      border: none; border-radius: 99px;
+      padding: 16px 44px; font-size: 16px; font-weight: 700;
+      cursor: pointer; font-family: var(--sans);
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      transition: opacity 0.18s, transform 0.18s;
+    }
+    .btn-white:hover { opacity: 0.92; transform: translateY(-1px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text-primary);
+      padding: 36px 24px;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 600;
+      color: var(--accent-light); letter-spacing: 0.06em;
+      display: block; margin-bottom: 14px;
+    }
+    .footer-links {
+      display: flex; gap: 16px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .footer-links a {
+      font-size: 12px; color: #A89298;
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--accent-light); }
+    .footer-copy {
+      font-size: 11px; color: #6B5560;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .hero { padding: 56px 20px 48px; }
+      section { padding: 52px 20px; }
+      .feature-item { gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Yarn<b>&amp;</b></div>
+  <a href="https://yarn-and.com" class="header-cta">無料で始める</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">編み物好きのためのノートアプリ</div>
+  <h1>毛糸も、作品も、<br><em>ぜんぶここに。</em></h1>
+  <p class="hero-sub">
+    増え続ける毛糸、作りたいもの、使った道具。<br>
+    YARN&amp; はそのすべてをきれいに記録・管理できる、<br>編み物好きのためのアプリです。
+  </p>
+  <a href="https://yarn-and.com" class="btn-primary">無料で始める</a>
+  <span class="btn-free-note">登録1分・完全無料</span>
+
+  <div class="hero-img-wrap">
+    <div class="hero-mockup">
+      <div class="mockup-bar">
+        <span class="mockup-bar-title">Yarn&amp;</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-row">
+          <div class="mockup-thumb">🧶</div>
+          <div>
+            <div class="mockup-name">コットンラフィア・ナチュラル</div>
+            <div class="mockup-sub">リッチモア · 生成り</div>
+            <span class="mockup-tag">残3玉</span>
+          </div>
+        </div>
+        <div class="mockup-row">
+          <div class="mockup-thumb">🪡</div>
+          <div>
+            <div class="mockup-name">メリノウール・ピンクベージュ</div>
+            <div class="mockup-sub">ダルマ · ウール100%</div>
+            <span class="mockup-tag">残1玉</span>
+          </div>
+        </div>
+        <div class="mockup-row">
+          <div class="mockup-thumb">✨</div>
+          <div>
+            <div class="mockup-name">モヘアシルク・ラベンダー</div>
+            <div class="mockup-sub">ランベルト · モヘア</div>
+            <span class="mockup-tag">残5玉</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="pain">
+  <div class="section-inner">
+    <div class="section-label">こんなこと、ありませんか？</div>
+    <h2 class="section-title">毛糸沼あるある</h2>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">😔</div>
+        <div class="pain-text">
+          <strong>どこで買ったか忘れた</strong>
+          同じ毛糸を探しているのに、メーカーも品番も思い出せない…
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">🤯</div>
+        <div class="pain-text">
+          <strong>在庫が把握できていない</strong>
+          棚に積み上がった毛糸、何玉あるか自分でもわからない
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">📷</div>
+        <div class="pain-text">
+          <strong>作品の記録が散らばっている</strong>
+          写真はカメラロール、メモはメモ帳、どこにあるかわからない
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">📚</div>
+        <div class="pain-text">
+          <strong>持っている本を忘れる</strong>
+          同じ編み図の本を二冊買ってしまったことがある
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">YARN&amp; でできること</h2>
+    <p class="section-desc">毛糸まわりのすべてを、ひとつのアプリでまとめて管理。</p>
+
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon-wrap">🧶</div>
+        <div class="feature-body">
+          <div class="feature-title">毛糸を管理する</div>
+          <div class="feature-desc">メーカー・色番号・素材・残量・購入店などを記録。写真も一緒に保存できるので、どんな毛糸か一目でわかります。</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon-wrap">🧤</div>
+        <div class="feature-body">
+          <div class="feature-title">作品を記録する</div>
+          <div class="feature-desc">完成した作品や制作中のものを記録。使った毛糸・参考書籍・編み方・編み図URLまでまとめて残せます。カテゴリータグで整理も簡単。</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon-wrap">🪡</div>
+        <div class="feature-body">
+          <div class="feature-title">道具・書籍も一元管理</div>
+          <div class="feature-desc">かぎ針・棒針などの道具、編み図本・テキストもアプリ内で管理。「あの本、持ってたっけ？」がなくなります。</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon-wrap">✨</div>
+        <div class="feature-body">
+          <div class="feature-title">みんなの作品を見る・シェアする</div>
+          <div class="feature-desc">プロフィールを公開すれば、他のユーザーと作品を見せ合うことができます。気に入った作品には「YARN」でいいねを。フォロー機能でお気に入りの作家さんをフォローしよう。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="who">
+  <div class="section-inner">
+    <div class="section-label">こんな方におすすめ</div>
+    <h2 class="section-title">あなたのためのアプリです</h2>
+    <div class="who-list">
+      <div class="who-item">
+        <div class="who-check">✓</div>
+        かぎ針・棒針・輪針、どの編み方でも使えます
+      </div>
+      <div class="who-item">
+        <div class="who-check">✓</div>
+        毛糸コレクターで在庫管理に困っている方
+      </div>
+      <div class="who-item">
+        <div class="who-check">✓</div>
+        作品の記録をきれいに残したい方
+      </div>
+      <div class="who-item">
+        <div class="who-check">✓</div>
+        編み物作家・ハンドメイド作家として活動している方
+      </div>
+      <div class="who-item">
+        <div class="who-check">✓</div>
+        他の編み物好きとつながりたい方
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2 class="cta-title">さあ、毛糸沼を<br>整理しよう。</h2>
+  <p class="cta-sub">無料・登録1分。スマホからすぐに始められます。</p>
+  <a href="https://yarn-and.com" class="btn-white">YARN&amp; を始める</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Yarn&amp;</span>
+  <div class="footer-links">
+    <a href="https://yarn-and.com">アプリを開く</a>
+    <a href="https://x.com/YARNand__" target="_blank" rel="noopener">𝕏 公式</a>
+  </div>
+  <p class="footer-copy">© 2026 YARN& All rights reserved.</p>
+</footer>
+
+</body>
+</html>
