@@ -37,29 +37,9 @@ export default function LandingPage({ onLogin, onSignup }) {
         </button>
         <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginTop: '10px' }}>登録1分・完全無料</div>
 
-        {/* モックアップ */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '52px' }}>
-          <div style={{ width: '260px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: '32px', boxShadow: '0 16px 48px rgba(140,98,114,0.14)', overflow: 'hidden' }}>
-            <div style={{ background: 'var(--accent)', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '16px', fontWeight: 600, color: '#fff', letterSpacing: '0.06em' }}>Yarn&amp;</span>
-            </div>
-            <div style={{ padding: '16px' }}>
-              {[
-                { icon: '🧶', name: 'コットンラフィア・ナチュラル', sub: 'リッチモア · 生成り', tag: '残3玉' },
-                { icon: '🪡', name: 'メリノウール・ピンクベージュ', sub: 'ダルマ · ウール100%', tag: '残1玉' },
-                { icon: '✨', name: 'モヘアシルク・ラベンダー', sub: 'ランベルト · モヘア', tag: '残5玉' },
-              ].map((item) => (
-                <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '12px', padding: '10px 12px', marginBottom: '8px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--accent-light)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>{item.icon}</div>
-                  <div>
-                    <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.name}</div>
-                    <div style={{ fontSize: '10px', color: 'var(--text-tertiary)', marginTop: '2px' }}>{item.sub}</div>
-                    <span style={{ display: 'inline-block', background: 'var(--accent-light)', color: 'var(--accent)', borderRadius: '99px', padding: '2px 8px', fontSize: '9px', fontWeight: 500, marginTop: '4px' }}>{item.tag}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* イメージ */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '48px' }}>
+          <img src="/LPzukai.png" alt="YARN& アプリ画面" style={{ width: '100%', maxWidth: '360px', borderRadius: '20px', boxShadow: '0 16px 48px rgba(140,98,114,0.18)' }} />
         </div>
       </section>
 
