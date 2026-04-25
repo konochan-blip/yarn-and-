@@ -90,7 +90,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>
       ) : view === 'grid' ? (
-        <div style={{ background: '#EDE0CC', borderTop: '12px solid #C9A060', borderLeft: '12px solid #C9A060', borderRight: '12px solid #C9A060', boxShadow: 'inset 0 2px 0 #F0D8A8, inset 2px 0 0 #F0D8A8, inset -2px 0 0 #F0D8A8' }}>
+        <div style={{ background: '#EDE0CC', borderTop: '12px solid #E8E2D8', borderLeft: '12px solid #E8E2D8', borderRight: '12px solid #E8E2D8', boxShadow: 'inset 0 2px 0 #F8F5F0, inset 2px 0 0 #F8F5F0, inset -2px 0 0 #F8F5F0' }}>
           {chunk(sorted, 3).map((row, rowIdx) => (
             <div key={rowIdx}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
@@ -111,7 +111,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                 ))}
               </div>
               {/* 棚板 */}
-              <div style={{ height: '12px', background: 'linear-gradient(180deg, #E8C88A 0%, #C9A060 55%, #B08848 100%)', borderTop: '1.5px solid #F0D8A8', boxShadow: '0 4px 8px rgba(100,60,10,0.2)' }} />
+              <div style={{ height: '12px', background: 'linear-gradient(180deg, #F8F5F0 0%, #E8E2D8 55%, #D8D0C4 100%)', borderTop: '1.5px solid #FAFAF8', boxShadow: '0 4px 8px rgba(80,70,60,0.15)' }} />
             </div>
           ))}
         </div>
