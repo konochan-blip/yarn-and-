@@ -84,20 +84,25 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>
       ) : view === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', columnGap: '3px', rowGap: '16px', padding: '4px 0 8px' }}>
           {sorted.map((item) => (
             <div key={item.id} onClick={() => onOpenDetail(item)}
-              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
-              {item.img_url
-                ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
-              }
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
-                <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name || '名前なし'}</div>
-                {(item.count > 0 || item.count === 0) && (
-                  <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{item.count || 0}本</div>
-                )}
+              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
+              {/* 画像エリア */}
+              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative', borderRadius: '4px 4px 0 0' }}>
+                {item.img_url
+                  ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                  : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
+                }
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.42))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
+                  <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name || '名前なし'}</div>
+                  {(item.count > 0 || item.count === 0) && (
+                    <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{item.count || 0}本</div>
+                  )}
+                </div>
               </div>
+              {/* 棚板 */}
+              <div style={{ height: '10px', background: 'linear-gradient(180deg, #DEB98A 0%, #C49A6C 60%, #B08050 100%)', borderTop: '1.5px solid #EDD0A0', boxShadow: '0 4px 8px rgba(100,60,10,0.22)', flexShrink: 0 }} />
             </div>
           ))}
         </div>
