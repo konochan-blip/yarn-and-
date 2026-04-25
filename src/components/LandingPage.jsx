@@ -39,7 +39,12 @@ export default function LandingPage({ onLogin, onSignup }) {
 
         {/* イメージ */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '48px' }}>
-          <img src="/LPzukai.png" alt="YARN& アプリ画面" style={{ width: '100%', maxWidth: '360px', borderRadius: '20px', boxShadow: '0 16px 48px rgba(140,98,114,0.18)' }} />
+          <div style={{ position: 'relative', width: '100%', maxWidth: '360px' }}>
+            <img src="/LPzukai.png" alt="YARN& アプリ画面" style={{ width: '100%', borderRadius: '20px', boxShadow: '0 16px 48px rgba(140,98,114,0.18)', display: 'block' }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '18px 20px', background: 'linear-gradient(180deg, rgba(0,0,0,0.38) 0%, transparent 100%)', borderRadius: '20px 20px 0 0', pointerEvents: 'none' }}>
+              <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#fff', letterSpacing: '0.04em', textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>毛糸も作品も、スマホにまとめて。</p>
+            </div>
+          </div>
         </div>
       </section>
 
