@@ -235,6 +235,7 @@ export default function App() {
         .select('*')
         .eq('is_public', true)
         .neq('user_id', user.id)
+      console.log('[loadPublicWorks] profiles found:', pr?.length, pr)
       if (!pr || pr.length === 0) {
         setPublicWorks([])
         setPublicProfiles([])
@@ -247,7 +248,7 @@ export default function App() {
         .select('*')
         .in('user_id', publicUserIds)
         .limit(90)
-      console.log('[loadPublicWorks] profiles:', pr.length, 'works:', w?.length, 'error:', wErr)
+      console.log('[loadPublicWorks] works:', w?.length, 'error:', wErr)
       const shuffled = [...(w || [])].sort(() => Math.random() - 0.5)
       setPublicWorks(shuffled)
       setPublicProfiles(pr)
