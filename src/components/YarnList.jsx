@@ -14,6 +14,15 @@ function swatchOf(yarn) {
   return SWATCHES[Math.abs(h) % SWATCHES.length]
 }
 
+const WOOD_BG = `repeating-linear-gradient(
+  90deg,
+  transparent 0px, transparent 7px,
+  rgba(120,80,30,0.07) 7px, rgba(120,80,30,0.07) 9px,
+  transparent 9px, transparent 18px,
+  rgba(120,80,30,0.04) 18px, rgba(120,80,30,0.04) 19px
+),
+linear-gradient(180deg, #D4A86A 0%, #C09050 40%, #A87840 100%)`
+
 function chunk(arr, size) {
   const result = []
   for (let i = 0; i < arr.length; i += size) result.push(arr.slice(i, i + size))
@@ -90,7 +99,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>
       ) : view === 'grid' ? (
-        <div style={{ background: '#EDE0CC', borderTop: '12px solid #E8E2D8', borderLeft: '12px solid #E8E2D8', borderRight: '12px solid #E8E2D8', boxShadow: 'inset 0 2px 0 #F8F5F0, inset 2px 0 0 #F8F5F0, inset -2px 0 0 #F8F5F0' }}>
+        <div style={{ background: WOOD_BG, paddingTop: '10px', paddingLeft: '10px', paddingRight: '10px', boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.25), inset 3px 0 0 rgba(255,255,255,0.15), inset -3px 0 0 rgba(255,255,255,0.15)' }}>
           {chunk(sorted, 3).map((row, rowIdx) => (
             <div key={rowIdx}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
@@ -111,7 +120,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                 ))}
               </div>
               {/* 棚板 */}
-              <div style={{ height: '12px', background: 'linear-gradient(180deg, #F8F5F0 0%, #E8E2D8 55%, #D8D0C4 100%)', borderTop: '1.5px solid #FAFAF8', boxShadow: '0 4px 8px rgba(80,70,60,0.15)' }} />
+              <div style={{ height: '14px', background: WOOD_BG, borderTop: '1.5px solid rgba(255,255,255,0.4)', boxShadow: '0 5px 10px rgba(80,50,20,0.25)' }} />
             </div>
           ))}
         </div>
