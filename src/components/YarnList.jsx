@@ -96,7 +96,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
                 {row.map((item) => (
                   <div key={item.id} onClick={() => onOpenDetail(item)}
-                    style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+                    style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0CC', cursor: 'pointer', position: 'relative' }}>
                     {item.img_url
                       ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                       : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
