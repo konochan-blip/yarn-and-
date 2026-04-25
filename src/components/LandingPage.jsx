@@ -4,8 +4,8 @@ export default function LandingPage({ onLogin, onSignup }) {
 
       {/* HEADER */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(253,245,247,0.92)', backdropFilter: 'blur(8px)', borderBottom: '1px solid var(--border)', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 300, color: 'var(--accent)', letterSpacing: '0.04em' }}>
-          Yarn<b style={{ fontWeight: 300, color: 'var(--accent)' }}>&amp;</b>
+        <div style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: '22px', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+          Yarn<b style={{ fontStyle: 'normal', fontWeight: 300, color: 'var(--accent)' }}>&amp;</b>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button onClick={onLogin} style={{ background: 'none', border: '1.5px solid var(--border)', borderRadius: '99px', padding: '8px 18px', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit' }}>
