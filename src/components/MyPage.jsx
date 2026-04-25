@@ -37,7 +37,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
   const [copied, setCopied] = useState(false)
 
   const handleCopyUrl = useCallback(() => {
-    const url = `https://yarn-and.vercel.app/user/${profile?.handle || profile?.username || ''}`
+    const url = `https://yarn-and.com/user/${profile?.handle || profile?.username || ''}`
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
@@ -160,7 +160,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
               <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '8px', letterSpacing: '0.06em' }}>プロフィールURL</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ flex: 1, fontSize: '12px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-mono)' }}>
-                  yarn-and.vercel.app/user/{profile?.handle || username}
+                  yarn-and.com/user/{profile?.handle || username}
                 </div>
                 <button className="btn" onClick={handleCopyUrl}
                   style={{ fontSize: '12px', padding: '5px 12px', flexShrink: 0, background: copied ? 'var(--accent)' : '', color: copied ? '#fff' : '', borderColor: copied ? 'var(--accent)' : '' }}>
