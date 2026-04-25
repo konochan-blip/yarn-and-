@@ -4,8 +4,8 @@ export default function LandingPage({ onLogin, onSignup }) {
 
       {/* HEADER */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(253,245,247,0.92)', backdropFilter: 'blur(8px)', borderBottom: '1px solid var(--border)', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.04em' }}>
-          Yarn<b>&amp;</b>
+        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 300, color: 'var(--accent)', letterSpacing: '0.04em' }}>
+          Yarn<b style={{ fontWeight: 300, color: 'var(--accent)' }}>&amp;</b>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button onClick={onLogin} style={{ background: 'none', border: '1.5px solid var(--border)', borderRadius: '99px', padding: '8px 18px', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit' }}>
@@ -146,7 +146,7 @@ export default function LandingPage({ onLogin, onSignup }) {
 
       {/* FOOTER */}
       <footer style={{ background: 'var(--text-primary)', padding: '36px 24px', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 600, color: 'var(--accent-light)', letterSpacing: '0.06em', marginBottom: '14px' }}>Yarn&amp;</div>
+        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 300, color: 'var(--accent-light)', letterSpacing: '0.06em', marginBottom: '14px' }}>Yarn&amp;</div>
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '16px' }}>
           <a href="https://x.com/YARNand__" target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#A89298', textDecoration: 'none' }}>𝕏 公式アカウント</a>
           <button onClick={onLogin} style={{ background: 'none', border: 'none', fontSize: '12px', color: '#A89298', cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>ログイン</button>
