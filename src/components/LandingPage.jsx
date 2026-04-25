@@ -42,7 +42,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <div style={{ width: '100%', maxWidth: '360px', position: 'relative' }}>
             <img src="/LPzukai.png" alt="YARN& アプリ画面" style={{ width: '100%', borderRadius: '20px', boxShadow: '0 16px 48px rgba(140,98,114,0.18)', display: 'block' }} />
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, borderRadius: '20px 20px 0 0', padding: '20px 16px 40px', background: 'linear-gradient(to bottom, rgba(140,98,114,0.72) 0%, rgba(140,98,114,0.3) 60%, transparent 100%)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
-              <span style={{ fontSize: '13px', color: '#fff', fontWeight: 700, letterSpacing: '0.06em' }}>スマホひとつに。</span>
+              <span style={{ fontSize: '13px', color: '#fff', fontWeight: 700, letterSpacing: '0.06em' }}>毛糸も作品も、スマホひとつに。</span>
             </div>
           </div>
         </div>
