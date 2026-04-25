@@ -150,12 +150,13 @@ export default function App() {
 
   // Trigger feed load when switching to feed tab
   useEffect(() => {
+    if (!user) return
     if (tab === 'feed' && !feedLoaded && !loading) {
       setFeedLoading(true)
       loadFeed()
     }
     // フォロー0人でフィードを開いたら公開作品も先読みする
-    if (tab === 'feed' && !loading && user && follows.length === 0 && !publicWorksLoaded && !publicWorksLoading) {
+    if (tab === 'feed' && !loading && follows.length === 0 && !publicWorksLoaded && !publicWorksLoading) {
       loadPublicWorks()
     }
   }, [tab, feedLoaded, loading]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -208,6 +209,7 @@ export default function App() {
   }
 
   async function loadFeed() {
+    if (!user) return
     const currentFollows = await supabase.from('follows').select('*').eq('follower_id', user.id)
     const followingIds = (currentFollows.data || []).map((f) => f.following_id)
     if (followingIds.length === 0) {
