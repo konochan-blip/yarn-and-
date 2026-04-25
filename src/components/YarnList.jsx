@@ -15,11 +15,6 @@ function swatchOf(yarn) {
 }
 
 
-function chunk(arr, size) {
-  const result = []
-  for (let i = 0; i < arr.length; i += size) result.push(arr.slice(i, i + size))
-  return result
-}
 
 function getSorted(items, sort) {
   const list = [...items]
@@ -91,31 +86,19 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>
       ) : view === 'grid' ? (
-        <div style={{ background: '#F5EFE6' }}>
-          {chunk(sorted, 3).map((row, rowIdx) => (
-            <div key={rowIdx}>
-              {/* アイテム行 */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '4px', padding: '14px 4px 0' }}>
-                {row.map((item) => (
-                  <div key={item.id} onClick={() => onOpenDetail(item)}
-                    style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0CC', cursor: 'pointer', position: 'relative', boxShadow: '0 2px 4px rgba(0,0,0,0.10)' }}>
-                    {item.img_url
-                      ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
-                    }
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
-                      <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name || '名前なし'}</div>
-                      {(item.count > 0 || item.count === 0) && (
-                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{item.count || 0}本</div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {/* 棚板：上面＋前面の2段で立体感 */}
-              <div>
-                <div style={{ height: '5px', background: 'linear-gradient(180deg, #F0E4CC 0%, #E0CCA8 100%)' }} />
-                <div style={{ height: '8px', background: 'linear-gradient(180deg, #D8C090 0%, #C8AC78 100%)', boxShadow: '0 3px 6px rgba(100,70,20,0.15)' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+          {sorted.map((item) => (
+            <div key={item.id} onClick={() => onOpenDetail(item)}
+              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+              {item.img_url
+                ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
+              }
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
+                <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name || '名前なし'}</div>
+                {(item.count > 0 || item.count === 0) && (
+                  <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{item.count || 0}本</div>
+                )}
               </div>
             </div>
           ))}
