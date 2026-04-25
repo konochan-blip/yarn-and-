@@ -95,7 +95,7 @@ export default function LandingPage({ onLogin, onSignup }) {
               { icon: '🧶', title: '毛糸を管理する', desc: 'メーカー・色番号・素材・残量・購入店などを記録。写真も一緒に保存できるので、どんな毛糸か一目でわかります。' },
               { icon: '🧤', title: '作品を記録する', desc: '完成した作品や制作中のものを記録。使った毛糸・参考書籍・編み方・編み図URLまでまとめて残せます。カテゴリータグで整理も簡単。' },
               { icon: '🪡', title: '道具・書籍も一元管理', desc: 'かぎ針・棒針などの道具、編み図本・テキストもアプリ内で管理。「あの本、持ってたっけ？」がなくなります。' },
-              { icon: '✨', title: 'みんなの作品を見る・つながる', desc: 'プロフィールを公開すれば、他のユーザーの作品を見たり、自分の作品を見てもらえます。気に入った作品には「YARN」で応援の気持ちを。フォロー機能でお気に入りの作家さん・ユーザーさんをフォローしよう。' },
+              { icon: '✨', title: 'みんなの作品を見る・つながる', desc: '他のユーザーの作品を見たり、プロフィールを公開すれば自分の作品を見てもらえます。気に入った作品には「YARN」で応援の気持ちを。フォロー機能でお気に入りの作家さん・ユーザーさんをフォローしよう。' },
             ].map((f) => (
               <div key={f.title} style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
                 <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'var(--accent-light)', border: '1.5px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>{f.icon}</div>
