@@ -30,6 +30,7 @@ import PrivacyPolicyPage from './components/PrivacyPolicyPage'
 import WithdrawModal from './components/WithdrawModal'
 import ContactModal from './components/ContactModal'
 import FaqPage from './components/FaqPage'
+import TutorialModal, { shouldShowTutorial } from './components/TutorialModal'
 
 export default function App() {
   // ────────── URL-based public profile ──────────
@@ -59,6 +60,7 @@ export default function App() {
   const [faqOpen, setFaqOpen] = useState(false)
   const [showAuth, setShowAuth] = useState(false)
   const [authMode, setAuthMode] = useState('login')
+  const [showTutorial, setShowTutorial] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -68,6 +70,7 @@ export default function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
       if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true)
+      if (event === 'SIGNED_IN' && shouldShowTutorial()) setShowTutorial(true)
       if (!session) {
         setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([])
         setFollows([]); setFollowersCount(0); setFeedWorks([]); setFeedProfiles([]); setFeedLoaded(false)
@@ -618,6 +621,7 @@ export default function App() {
       {faqOpen && <FaqPage onClose={() => setFaqOpen(false)} />}
       <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSignOut={handleSignOut} />
       <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
+      {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
     </>
   )
 }
