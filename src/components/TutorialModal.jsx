@@ -96,12 +96,22 @@ export default function TutorialModal({ onClose }) {
           background: current.accent ? 'var(--accent)' : 'var(--accent-light)',
           border: '1.5px solid var(--border)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: (step === 0 || current.accent) ? '28px' : step === 2 ? '28px' : '32px',
+          fontSize: step === 2 ? '28px' : '32px',
           margin: '0 auto 18px',
-          fontWeight: (step === 2 || current.accent) ? '700' : 'normal',
-          color: current.accent ? '#fff' : step === 2 ? 'var(--accent)' : undefined,
+          fontWeight: step === 2 ? '700' : 'normal',
+          color: step === 2 ? 'var(--accent)' : undefined,
           fontFamily: 'inherit',
-        }}>{current.emoji}</div>
+        }}>
+          {current.accent ? (
+            <svg width="38" height="38" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="9" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" fill="rgba(255,255,255,0.15)"/>
+              <path d="M10 16 Q13 10 16 16 Q19 22 22 16" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+              <path d="M7 13 Q10 8 16 9" stroke="rgba(255,255,255,0.7)" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+              <path d="M25 19 Q22 24 16 23" stroke="rgba(255,255,255,0.7)" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+              <circle cx="16" cy="16" r="2.5" fill="#fff" opacity="0.6"/>
+            </svg>
+          ) : current.emoji}
+        </div>
 
         {/* タイトル */}
         <div style={{
