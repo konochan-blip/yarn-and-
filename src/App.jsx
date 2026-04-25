@@ -154,6 +154,10 @@ export default function App() {
       setFeedLoading(true)
       loadFeed()
     }
+    // フォロー0人でフィードを開いたら公開作品も先読みする
+    if (tab === 'feed' && !loading && follows.length === 0 && !publicWorksLoaded && !publicWorksLoading) {
+      loadPublicWorks()
+    }
   }, [tab, feedLoaded, loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function loadAll() {

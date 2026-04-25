@@ -13,8 +13,14 @@ export default function FeedPage({
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
-  const [feedTab, setFeedTab] = useState('following')
+  const [feedTab, setFeedTab] = useState(() => follows.length === 0 ? 'public' : 'following')
   const timerRef = useRef(null)
+
+  useEffect(() => {
+    if (feedLoaded && follows.length === 0 && feedTab === 'following') {
+      setFeedTab('public')
+    }
+  }, [feedLoaded, follows.length]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const followingIds = new Set(follows.map((f) => f.following_id))
 
