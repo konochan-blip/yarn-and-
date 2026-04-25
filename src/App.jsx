@@ -242,11 +242,12 @@ export default function App() {
         return
       }
       const publicUserIds = pr.map((p) => p.user_id)
-      const { data: w } = await supabase
+      const { data: w, error: wErr } = await supabase
         .from('works')
         .select('*')
         .in('user_id', publicUserIds)
         .limit(90)
+      console.log('[loadPublicWorks] profiles:', pr.length, 'works:', w?.length, 'error:', wErr)
       const shuffled = [...(w || [])].sort(() => Math.random() - 0.5)
       setPublicWorks(shuffled)
       setPublicProfiles(pr)
