@@ -90,7 +90,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>
       ) : view === 'grid' ? (
-        <div style={{ background: '#EDE0CC' }}>
+        <div style={{ background: '#EDE0CC', borderTop: '12px solid #C9A060', borderLeft: '12px solid #C9A060', borderRight: '12px solid #C9A060', boxShadow: 'inset 0 2px 0 #F0D8A8, inset 2px 0 0 #F0D8A8, inset -2px 0 0 #F0D8A8' }}>
           {chunk(sorted, 3).map((row, rowIdx) => (
             <div key={rowIdx}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
