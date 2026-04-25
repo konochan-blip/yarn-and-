@@ -87,9 +87,9 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', columnGap: '3px', rowGap: '16px', padding: '4px 0 8px' }}>
           {sorted.map((item) => (
             <div key={item.id} onClick={() => onOpenDetail(item)}
-              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
+              style={{ cursor: 'pointer', padding: '5px', background: 'linear-gradient(160deg, #EDD0A0 0%, #C49A6C 50%, #B08050 100%)', borderRadius: '6px', boxShadow: '0 3px 8px rgba(100,60,10,0.22), inset 0 1px 0 rgba(255,255,255,0.3)', position: 'relative' }}>
               {/* 画像エリア */}
-              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative', borderRadius: '4px 4px 0 0' }}>
+              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative', borderRadius: '3px' }}>
                 {item.img_url
                   ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                   : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
@@ -101,8 +101,6 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                   )}
                 </div>
               </div>
-              {/* 棚板 */}
-              <div style={{ height: '10px', background: 'linear-gradient(180deg, #DEB98A 0%, #C49A6C 60%, #B08050 100%)', borderTop: '1.5px solid #EDD0A0', boxShadow: '0 4px 8px rgba(100,60,10,0.22)', flexShrink: 0 }} />
             </div>
           ))}
         </div>
