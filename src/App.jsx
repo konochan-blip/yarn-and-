@@ -155,7 +155,7 @@ export default function App() {
       loadFeed()
     }
     // フォロー0人でフィードを開いたら公開作品も先読みする
-    if (tab === 'feed' && !loading && follows.length === 0 && !publicWorksLoaded && !publicWorksLoading) {
+    if (tab === 'feed' && !loading && user && follows.length === 0 && !publicWorksLoaded && !publicWorksLoading) {
       loadPublicWorks()
     }
   }, [tab, feedLoaded, loading]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -228,6 +228,7 @@ export default function App() {
   }
 
   async function loadPublicWorks() {
+    if (!user) return
     setPublicWorksLoading(true)
     try {
       const { data: pr } = await supabase
