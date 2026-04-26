@@ -73,20 +73,37 @@ JSONのみ返してください。マークダウン不要。`,
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
-        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1024, messages: [{ role: 'user', content }] }),
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1024,
+          messages: [
+            { role: 'user', content },
+            { role: 'assistant', content: '{' },
+          ],
+        }),
       })
       const data = await res.json()
-      const text = (data.content || []).map((i) => i.text || '').join('')
+      if (data.error) throw new Error(data.error.message || 'API error')
+      const text = '{' + (data.content || []).map((i) => i.text || '').join('')
       const clean = text.replace(/```json|```/g, '').trim()
       let parsed = {}
-      try { parsed = JSON.parse(clean) } catch {
+      try {
+        parsed = JSON.parse(clean)
+      } catch {
         const m = clean.match(/\{[\s\S]*\}/)
-        if (m) parsed = JSON.parse(m[0])
+        if (m) {
+          try { parsed = JSON.parse(m[0]) } catch { /* ignore */ }
+        }
+      }
+      const isEmpty = Object.values(parsed).every((v) => !v)
+      if (isEmpty) {
+        alert('ラベルの情報を読み取れませんでした😢\n写真をもっと明るく・ラベルに近づけて撮ってみてね')
+        return
       }
       onParsed(parsed)
       handleClose()
-    } catch {
-      alert('読み取りに失敗したよ😢 もう一度試してみてね')
+    } catch (err) {
+      alert(`読み取りに失敗したよ😢\n${err.message || 'もう一度試してみてね'}`)
     } finally {
       setReading(false)
     }
