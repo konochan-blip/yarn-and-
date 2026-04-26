@@ -65,7 +65,6 @@ export default function LabelReader({ open, onClose, onParsed }) {
         })),
         { text: prompt },
       ]
-      alert(`key末尾: ${GEMINI_KEY?.slice(-6)}`)
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_KEY}`,
         {
@@ -75,7 +74,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
         }
       )
       const data = await res.json()
-      if (data.error) throw new Error(data.error.message || 'API error')
+      if (data.error) throw new Error(`${data.error.code}: ${data.error.message}`)
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
       const clean = text.replace(/```json|```/g, '').trim()
       let parsed = {}
