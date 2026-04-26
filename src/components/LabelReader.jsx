@@ -65,6 +65,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
         })),
         { text: prompt },
       ]
+      alert(`key末尾: ${GEMINI_KEY?.slice(-6)}`)
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_KEY}`,
         {
