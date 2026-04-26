@@ -48,7 +48,20 @@ export default function LabelReader({ open, onClose, onParsed }) {
         })),
         {
           type: 'text',
-          text: 'これらは同じ毛糸のラベル画像です（複数枚）。全ての画像を合わせて情報を読み取りJSONのみ返してください。{"name":"メーカー名と品番","color":"色番号","colorname":"色名","material":"素材（例：ウール100%、ウール50%アクリル50%など正確に）","lot":"ロット番号","price":"定価（円表記で）"} 読み取れない項目は空文字。JSONのみ返してください。',
+          text: `毛糸のラベル画像です。画像内のテキストをすべて丁寧に読み取り、以下のJSONフォーマットのみで返してください。
+
+{
+  "name": "メーカー名＋品名または品番（例：ハマナカ ソノモノ、ダルマ iroiro）",
+  "color": "色番号（数字のみ、例：8、205）",
+  "colorname": "色名（例：ネイビー、ミントグリーン）",
+  "material": "素材構成（例：ウール100%、ウール70%アクリル30%）",
+  "lot": "ロット番号（LOT、ロットと書かれた番号）",
+  "price": "定価（円表記、例：550円）"
+}
+
+読み取れない・記載のない項目は空文字にしてください。
+日本語ラベルに多いメーカー：ハマナカ、ダルマ（横田）、リッチモア、パピー、ニッケビクター、ナスカ、オリムパスなど。
+JSONのみ返してください。マークダウン不要。`,
         },
       ]
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -59,7 +72,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
-        body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 1000, messages: [{ role: 'user', content }] }),
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1024, messages: [{ role: 'user', content }] }),
       })
       const data = await res.json()
       const text = (data.content || []).map((i) => i.text || '').join('')
