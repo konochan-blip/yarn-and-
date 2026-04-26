@@ -3,6 +3,17 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'supabase-vendor': ['@supabase/supabase-js'],
+          'dnd-vendor': ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
@@ -43,7 +54,7 @@ export default defineConfig({
         // 古いキャッシュを自動削除
         cleanupOutdatedCaches: true,
         // プリキャッシュ対象
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,ico,woff2}'],
         // ランタイムキャッシュ
         runtimeCaching: [
           {
