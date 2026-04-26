@@ -25,7 +25,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
     reader.onload = (ev) => {
       const img = new Image()
       img.onload = () => {
-        const MAX = 1200
+        const MAX = 800
         let { width, height } = img
         if (width > MAX || height > MAX) {
           if (width > height) { height = Math.round(height * MAX / width); width = MAX }
@@ -35,7 +35,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
         canvas.width = width
         canvas.height = height
         canvas.getContext('2d').drawImage(img, 0, 0, width, height)
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
         setImages((prev) => [...prev, { dataUrl, id: Date.now() + Math.random() }])
       }
       img.src = ev.target.result
@@ -89,17 +89,14 @@ JSONのみ返してください。マークダウン不要。`,
           'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1024,
-          messages: [
-            { role: 'user', content },
-            { role: 'assistant', content: '{' },
-          ],
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 512,
+          messages: [{ role: 'user', content }],
         }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error.message || 'API error')
-      const text = '{' + (data.content || []).map((i) => i.text || '').join('')
+      const text = (data.content || []).map((i) => i.text || '').join('')
       const clean = text.replace(/```json|```/g, '').trim()
       let parsed = {}
       try {
