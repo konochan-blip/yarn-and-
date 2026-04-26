@@ -19,6 +19,7 @@ function swatchOf(yarn) {
 function getSorted(items, sort) {
   const list = [...items]
   if (sort === 'default') return list
+  if (sort === 'new') return list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   if (sort === 'count-desc') return list.sort((a, b) => (Number(b.count) || 0) - (Number(a.count) || 0))
   if (sort === 'count-asc') return list.sort((a, b) => (Number(a.count) || 0) - (Number(b.count) || 0))
   if (sort === 'color') return list.sort((a, b) => (a.colorname || '').localeCompare(b.colorname || '', 'ja'))
@@ -61,6 +62,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
       <div className="toolbar">
         <label>並び替え</label>
         <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+          <option value="new">新しい順</option>
           <option value="default">登録順</option>
           <option value="count-desc">在庫多い順</option>
           <option value="count-asc">在庫少ない順</option>

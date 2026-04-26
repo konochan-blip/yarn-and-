@@ -16,7 +16,8 @@ function ViewToggle({ view, onViewChange }) {
 
 export default function ToolsList({ tools, sort, view, onSortChange, onViewChange, onOpenDetail, onReorder }) {
   const sorted = [...tools]
-  if (sort === 'name') sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
+  if (sort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  else if (sort === 'name') sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
   const canDrag = sort === 'default' && view === 'list'
 
   const sensors = useSensors(
@@ -37,6 +38,7 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
       <div className="toolbar">
         <label>並び替え</label>
         <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+          <option value="new">新しい順</option>
           <option value="default">登録順</option>
           <option value="name">名前順</option>
         </select>

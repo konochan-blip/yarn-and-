@@ -16,7 +16,8 @@ function ViewToggle({ view, onViewChange }) {
 
 export default function BooksList({ books, works, sort, view, onSortChange, onViewChange, onOpenDetail, onReorder }) {
   const sorted = [...books]
-  if (sort === 'title') sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ja'))
+  if (sort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  else if (sort === 'title') sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ja'))
   else if (sort === 'author') sorted.sort((a, b) => (a.author || '').localeCompare(b.author || '', 'ja'))
   const canDrag = sort === 'default' && view === 'list'
 
@@ -38,6 +39,7 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
       <div className="toolbar">
         <label>並び替え</label>
         <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+          <option value="new">新しい順</option>
           <option value="default">登録順</option>
           <option value="title">タイトル順</option>
           <option value="author">著者順</option>

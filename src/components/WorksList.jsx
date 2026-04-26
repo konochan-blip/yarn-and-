@@ -10,7 +10,8 @@ export default function WorksList({ works, yarns, sort, needleFilter, categoryFi
   let list = [...works]
   if (needleFilter) list = list.filter((w) => w.needle === needleFilter)
   if (categoryFilter) list = list.filter((w) => (w.categories || []).includes(categoryFilter))
-  if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
+  if (sort === 'new') list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  else if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
   else if (sort === 'yarn') list.sort((a, b) => (b.yarn_ids?.length || 0) - (a.yarn_ids?.length || 0))
   const canDrag = sort === 'default' && view === 'list' && !needleFilter && !categoryFilter
 
@@ -32,6 +33,7 @@ export default function WorksList({ works, yarns, sort, needleFilter, categoryFi
       <div className="toolbar">
         <label>並び替え</label>
         <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+          <option value="new">新しい順</option>
           <option value="default">登録順</option>
           <option value="name">名前順</option>
           <option value="yarn">YARN順</option>

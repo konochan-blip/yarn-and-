@@ -99,10 +99,10 @@ export default function App() {
   function changeTab(t) { setTab(t); localStorage.setItem('active_tab', t) }
 
   // Sort / filter
-  const [yarnSort,    setYarnSort]    = useState('default')
-  const [toolsSort,   setToolsSort]   = useState('default')
-  const [booksSort,   setBooksSort]   = useState('default')
-  const [worksSort,   setWorksSort]   = useState('default')
+  const [yarnSort,    setYarnSort]    = useState('new')
+  const [toolsSort,   setToolsSort]   = useState('new')
+  const [booksSort,   setBooksSort]   = useState('new')
+  const [worksSort,   setWorksSort]   = useState('new')
   const [yarnView,    setYarnView]    = useState(() => localStorage.getItem('view_yarn')  || 'list')
   const [toolsView,   setToolsView]   = useState(() => localStorage.getItem('view_tools') || 'list')
   const [booksView,   setBooksView]   = useState(() => localStorage.getItem('view_books') || 'list')
