@@ -97,7 +97,7 @@ JSONのみ返してください。マークダウン不要。`,
       }
       const isEmpty = Object.values(parsed).every((v) => !v)
       if (isEmpty) {
-        alert('ラベルの情報を読み取れませんでした😢\n写真をもっと明るく・ラベルに近づけて撮ってみてね')
+        alert(`読み取れませんでした。\nAIの返答：${clean.slice(0, 200)}`)
         return
       }
       onParsed(parsed)
