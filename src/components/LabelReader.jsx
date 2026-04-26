@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import Modal from './Modal'
 
-const ANTHROPIC_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY
+const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
 export default function LabelReader({ open, onClose, onParsed }) {
   const [images, setImages] = useState([]) // { dataUrl, id }
@@ -52,51 +52,30 @@ export default function LabelReader({ open, onClose, onParsed }) {
     if (!images.length) return
     setReading(true)
     try {
-      const content = [
+      const prompt = `毛糸のラベル画像です。画像内のテキストをすべて読み取り、JSONのみ返してください。
+{"name":"メーカー名と品名（例：ハマナカ ソノモノ、ダイソー ウール）","color":"色番号","colorname":"色名","material":"素材（例：ウール100%）","lot":"ロット番号","price":"定価（円表記）"}
+読み取れない項目は空文字。JSONのみ返してください。`
+
+      const parts = [
         ...images.map((img) => ({
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: img.dataUrl.split(';')[0].split(':')[1],
+          inline_data: {
+            mime_type: img.dataUrl.split(';')[0].split(':')[1],
             data: img.dataUrl.split(',')[1],
           },
         })),
-        {
-          type: 'text',
-          text: `毛糸のラベル画像です。画像内のテキストをすべて丁寧に読み取り、以下のJSONフォーマットのみで返してください。
-
-{
-  "name": "メーカー名＋品名または品番（例：ハマナカ ソノモノ、ダルマ iroiro）",
-  "color": "色番号（数字のみ、例：8、205）",
-  "colorname": "色名（例：ネイビー、ミントグリーン）",
-  "material": "素材構成（例：ウール100%、ウール70%アクリル30%）",
-  "lot": "ロット番号（LOT、ロットと書かれた番号）",
-  "price": "定価（円表記、例：550円）"
-}
-
-読み取れない・記載のない項目は空文字にしてください。
-メーカー例：ハマナカ、ダルマ（横田）、リッチモア、パピー、ニッケビクター、ナスカ、オリムパス、ダイソー、セリア、キャンドゥなど100均ブランドも含む。
-シンプルなラベルでも読み取れる情報をすべて抽出してください。
-JSONのみ返してください。マークダウン不要。`,
-        },
+        { text: prompt },
       ]
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': ANTHROPIC_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 512,
-          messages: [{ role: 'user', content }],
-        }),
-      })
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts }] }),
+        }
+      )
       const data = await res.json()
       if (data.error) throw new Error(data.error.message || 'API error')
-      const text = (data.content || []).map((i) => i.text || '').join('')
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
       const clean = text.replace(/```json|```/g, '').trim()
       let parsed = {}
       try {
