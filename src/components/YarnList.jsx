@@ -91,16 +91,16 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
           {sorted.map((item) => (
             <div key={item.id} onClick={() => onOpenDetail(item)}
-              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
-              {item.img_url
-                ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
-              }
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
-                <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name || '名前なし'}</div>
-                {(item.count > 0 || item.count === 0) && (
-                  <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{item.count || 0}本</div>
-                )}
+              style={{ cursor: 'pointer', background: 'var(--surface)', overflow: 'hidden' }}>
+              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5' }}>
+                {item.img_url
+                  ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                  : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
+                }
+              </div>
+              <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
               </div>
             </div>
           ))}
