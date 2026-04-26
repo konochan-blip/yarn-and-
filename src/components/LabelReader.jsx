@@ -59,14 +59,14 @@ export default function LabelReader({ open, onClose, onParsed }) {
       const parts = [
         ...images.map((img) => ({
           inline_data: {
-            mime_type: img.dataUrl.split(';')[0].split(':')[1],
+            mime_type: 'image/jpeg',
             data: img.dataUrl.split(',')[1],
           },
         })),
         { text: prompt },
       ]
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -88,7 +88,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
       }
       const isEmpty = Object.values(parsed).every((v) => !v)
       if (isEmpty) {
-        alert(`読み取れませんでした。\nAIの返答：${clean.slice(0, 200)}`)
+        alert(`読み取れませんでした。もう一度試してみてね`)
         return
       }
       onParsed(parsed)
