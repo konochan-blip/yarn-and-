@@ -23,7 +23,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           毛糸沼の人に、ぴったりのアプリ
         </div>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(26px, 6vw, 42px)', fontWeight: 600, lineHeight: 1.45, color: 'var(--text-primary)', marginBottom: '18px' }}>
-          あの毛糸、どこだっけ？<br /><span style={{ color: 'var(--accent)' }}>もう迷わない。</span>
+          あの毛糸、どこだっけ？<br /><span style={{ color: 'var(--accent)' }}>もう迷わない。</span><br /><span style={{ fontSize: '0.55em', color: 'var(--text-tertiary)', fontWeight: 400, letterSpacing: '0.08em' }}>いつでも、ここに。</span>
         </h1>
         <p style={{ fontSize: '15px', color: 'var(--text-secondary)', maxWidth: '440px', margin: '0 auto 12px', lineHeight: 1.9 }}>
           毛糸・作品・道具・書籍をひとまとめに。<br />
