@@ -29,7 +29,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           毛糸・作品・道具・書籍をひとまとめに。<br />
           編み物好きのための、<br />やさしい管理ノートアプリです。
         </p>
-        <p style={{ fontSize: '15px', color: 'var(--accent)', fontWeight: 600, marginBottom: '40px', marginTop: '24px' }}>
+        <p style={{ fontSize: '15px', color: 'var(--accent)', fontWeight: 600, marginBottom: '40px', marginTop: '40px' }}>
           SNSじゃない。でも、つながれる。
         </p>
         <button onClick={onSignup} style={{ display: 'inline-block', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '99px', padding: '16px 40px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 20px rgba(140,98,114,0.28)' }}>
