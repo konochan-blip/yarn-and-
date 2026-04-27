@@ -45,7 +45,7 @@ export default function LandingPage({ onLogin, onSignup }) {
               <span style={{ fontSize: '13px', color: '#fff', fontWeight: 700, letterSpacing: '0.06em' }}>毛糸も作品も、スマホひとつに。</span>
             </div>
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, borderRadius: '0 0 20px 20px', padding: '40px 16px 20px', background: 'linear-gradient(to top, rgba(140,98,114,0.72) 0%, rgba(140,98,114,0.3) 60%, transparent 100%)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-              <span style={{ fontSize: '13px', color: '#fff', fontWeight: 700, letterSpacing: '0.06em' }}>お気に入りを眺めるしあわせ💖</span>
+              <span style={{ fontSize: '13px', color: '#fff', fontWeight: 700, letterSpacing: '0.06em' }}>お気に入りを、眺めるしあわせ♡</span>
             </div>
           </div>
         </div>
