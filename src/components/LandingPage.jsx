@@ -22,8 +22,8 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div style={{ display: 'inline-block', fontSize: '11px', letterSpacing: '0.14em', color: '#C9A0B0', fontWeight: 500, background: 'var(--accent-light)', border: '1px solid var(--border)', borderRadius: '99px', padding: '4px 14px', marginBottom: '20px' }}>
           毛糸沼の人に、ぴったりのアプリ
         </div>
-        <h1 style={{ fontFamily: 'Fraunces, var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(28px, 6vw, 44px)', fontWeight: 300, lineHeight: 1.55, color: 'var(--text-primary)', marginBottom: '36px' }}>
-          また、<span style={{ color: 'var(--accent)' }}>買っちゃった</span><br /><span style={{ fontSize: '0.58em', color: 'var(--text-secondary)', fontWeight: 300, letterSpacing: '0.04em' }}>増え続ける毛糸も、<span style={{ fontSize: '1.1em', color: 'var(--text-primary)', fontWeight: 400 }}>ぜんぶここに。</span></span>
+        <h1 style={{ fontFamily: 'Fraunces, var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(28px, 6vw, 44px)', fontWeight: 300, lineHeight: 1.6, color: 'var(--text-primary)', marginBottom: '36px' }}>
+          <span style={{ fontSize: '0.58em', color: 'var(--text-secondary)', fontWeight: 300 }}>また、買っちゃった</span><br />増え続ける毛糸も、<span style={{ color: 'var(--accent)' }}>ぜんぶここに。</span>
         </h1>
         <p style={{ fontSize: '15px', color: 'var(--text-secondary)', maxWidth: '440px', margin: '0 auto 12px', lineHeight: 1.9 }}>
           毛糸・作品・道具・書籍をひとまとめに。<br />
