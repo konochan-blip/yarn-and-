@@ -83,7 +83,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>使うほど、編み物が楽しくなる</h2>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.9, marginBottom: '36px' }}>毛糸まわりのぜんぶを、ひとつのアプリにまとめて。</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            [
+            {[
               {
                 icon: '🧶',
                 title: '毛糸の迷子がなくなる',
@@ -129,7 +129,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>あなたのための、ノートアプリ</h2>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.8 }}>かぎ針でも棒針でも。初心者でも作家さんでも。</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            [
+            {[
               '毛糸、どこに何があるか自分でもわからなくなってきた',
               'あの作品に使ったもの、ちゃんと残しておきたかった',
               '「これ持ってたっけ」で同じものを買ったことがある',
