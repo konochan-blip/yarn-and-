@@ -59,10 +59,10 @@ export default function LandingPage({ onLogin, onSignup }) {
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '28px', lineHeight: 1.8 }}>全部、YARN&amp; で解決できます。</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
             {[
-              { icon: '😔', title: 'どこで買ったか忘れた', desc: 'メーカーも品番も思い出せない。あの色、もう一度欲しいのに…' },
-              { icon: '🤯', title: '在庫が把握できていない', desc: '棚に積み上がった毛糸、実は何玉あるかわからない' },
-              { icon: '📷', title: '作品の記録がバラバラ', desc: '写真はカメラロール、メモは別アプリ。探すのが大変…' },
-              { icon: '📚', title: '同じ本を二冊買った', desc: '「これ持ってたっけ？」で失敗したことがある' },
+              { icon: '😔', title: 'あの色、どこで買ったっけ…', desc: 'メーカーも品番も思い出せない。また同じ毛糸に出会えても、気づけないかも。' },
+              { icon: '🤯', title: '気づいたら、また増えてた', desc: '「これどのくらいあるんだろう」。数えるのが面倒で、結局また買っちゃう。' },
+              { icon: '📷', title: '思い出が、カメラロールに埋もれていく', desc: '写真は撮った。でも何の糸で編んだか、もう思い出せない。' },
+              { icon: '📚', title: '同じ本を二冊買った', desc: '帰ったら同じのが本棚に。あの悔しさ、もう味わいたくない。' },
             ].map((item) => (
               <div key={item.title} style={{ background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: '16px', padding: '18px 20px', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <div style={{ fontSize: '22px', flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
@@ -83,30 +83,30 @@ export default function LandingPage({ onLogin, onSignup }) {
           <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>使うほど、編み物が楽しくなる</h2>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.9, marginBottom: '36px' }}>毛糸まわりのぜんぶを、ひとつのアプリにまとめて。</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            {[
+            [
               {
                 icon: '🧶',
                 title: '毛糸の迷子がなくなる',
-                benefit: '色・メーカー・残量をまとめて記録',
-                desc: '写真・購入店・素材・残量をひとまとめに。「あの毛糸どこだっけ」がなくなります。',
+                benefit: '「あの色どこだっけ」が、もう怖くない',
+                desc: '写真・購入店・素材・残量まで記録しておけば、ほしいときすぐ見つかる。',
               },
               {
                 icon: '🧤',
                 title: '作品の思い出を残せる',
-                benefit: '使った毛糸・道具・編み図URLまで紐づけ',
-                desc: '完成作品も制作中のものも記録できます。カテゴリータグで整理もかんたん。',
+                benefit: '糸も道具も編み図も、ぜんぶ一緒に',
+                desc: '「この作品、何の糸で編んだっけ」って後悔しなくていい。使ったものをまとめて記録できます。',
               },
               {
                 icon: '🪡',
                 title: '道具・書籍の重複買いがなくなる',
-                benefit: 'かぎ針・棒針・編み図本もまとめて管理',
-                desc: '「これ持ってたっけ？」が一発で確認できます。',
+                benefit: 'かぎ針・棒針・編み図本も、スマホで確認',
+                desc: '外出先でも「これ持ってたっけ？」が一発でわかる。あの帰宅後のがっかりが、なくなります。',
               },
               {
                 icon: '✨',
                 title: 'ゆるくつながれる、SNSじゃない場所',
                 benefit: '見せたいときだけ公開。プレッシャーなし',
-                desc: '他のユーザーの作品を見たり、自分の作品を公開したり。「YARN」で応援の気持ちを送ることも。フォローして、お気に入りの作家さんの投稿を追いかけよう。',
+                desc: '映えなくていい。好きで編んだものを、ただ残しておきたい。そんな気持ちのまま、使える場所です。',
               },
             ].map((f) => (
               <div key={f.title} style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
@@ -129,11 +129,11 @@ export default function LandingPage({ onLogin, onSignup }) {
           <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>あなたのための、ノートアプリ</h2>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.8 }}>かぎ針でも棒針でも。初心者でも作家さんでも。</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {[
-              '毛糸が増えすぎて在庫管理に困っている',
-              '作品の記録をきれいに残したい',
-              '編み図本や道具の管理がぐちゃぐちゃ',
-              '編み物作家・ハンドメイド作家として活動している',
+            [
+              '毛糸、どこに何があるか自分でもわからなくなってきた',
+              'あの作品に使ったもの、ちゃんと残しておきたかった',
+              '「これ持ってたっけ」で同じものを買ったことがある',
+              '編み物・ハンドメイド作家として、作品を整理したい',
               'SNSは疲れるけど、同じ趣味の人とゆるくつながりたい',
             ].map((text) => (
               <div key={text} style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: '12px', padding: '14px 18px', fontSize: '14px', color: 'var(--text-primary)', fontWeight: 500 }}>
