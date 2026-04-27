@@ -55,7 +55,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       <section style={{ background: 'var(--surface)', padding: '64px 24px' }}>
         <div style={{ maxWidth: '680px', margin: '0 auto' }}>
           <div style={{ fontSize: '11px', letterSpacing: '0.14em', color: '#C9A0B0', fontWeight: 600, marginBottom: '10px' }}>こんなこと、ありませんか？</div>
-          <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>毛糸沼あるある</h2>
+          <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>毛糸沼あるある</h2>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '28px', lineHeight: 1.8 }}>全部、YARN&amp; で解決できます。</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
             {[
@@ -80,7 +80,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       <section style={{ background: 'var(--bg)', padding: '64px 24px' }}>
         <div style={{ maxWidth: '680px', margin: '0 auto' }}>
           <div style={{ fontSize: '11px', letterSpacing: '0.14em', color: '#C9A0B0', fontWeight: 600, marginBottom: '10px' }}>できること</div>
-          <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>使うほど、編み物が楽しくなる</h2>
+          <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>使うほど、編み物が楽しくなる</h2>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.9, marginBottom: '36px' }}>毛糸まわりのぜんぶを、ひとつのアプリにまとめて。</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             {[
@@ -126,7 +126,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       <section style={{ background: 'var(--surface)', padding: '64px 24px' }}>
         <div style={{ maxWidth: '680px', margin: '0 auto' }}>
           <div style={{ fontSize: '11px', letterSpacing: '0.14em', color: '#C9A0B0', fontWeight: 600, marginBottom: '10px' }}>こんな方におすすめ</div>
-          <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>あなたのための、ノートアプリ</h2>
+          <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>あなたのための、ノートアプリ</h2>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.8 }}>かぎ針でも棒針でも。初心者でも作家さんでも。</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {[
@@ -147,7 +147,7 @@ export default function LandingPage({ onLogin, onSignup }) {
 
       {/* CTA */}
       <section style={{ background: 'linear-gradient(135deg, #8C6272 0%, #C9A0B0 100%)', textAlign: 'center', padding: '80px 24px' }}>
-        <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(22px, 5vw, 34px)', fontWeight: 600, color: '#fff', marginBottom: '14px', lineHeight: 1.5 }}>
+        <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(22px, 5vw, 34px)', fontWeight: 600, color: '#fff', marginBottom: '14px', lineHeight: 1.5 }}>
           毛糸沼、もっと<br />楽しんでいいんだよ。
         </h2>
         <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.82)', marginBottom: '8px', lineHeight: 1.8 }}>
