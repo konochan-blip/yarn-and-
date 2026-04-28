@@ -118,8 +118,6 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                 const tags = [
                   item.colorname ? <span key="cn" className="tag color-name">{item.colorname}</span> : null,
                   item.material ? <span key="mt" className="tag">{item.material}</span> : null,
-                  item.color ? <span key="cl" className="meta-text">No.{item.color}</span> : null,
-                  item.lot ? <span key="lt" className="meta-text">Lot.{item.lot}</span> : null,
                 ].filter(Boolean)
                 const shopTags = (item.shops || []).map((s) => <span key={s} className="tag shop">{s}</span>)
                 const workTags = works
@@ -141,9 +139,9 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                         </div>
                         <div className="yarn-info">
                           <div className="yarn-name">{item.name || '名前なし'}</div>
-                          {(item.color || item.lot || item.material) && (
+                          {(item.color || item.lot) && (
                             <div className="yarn-meta">
-                              {[item.color && `No.${item.color}`, item.lot && `Lot.${item.lot}`, item.material].filter(Boolean).join(' · ')}
+                              {[item.color && `No.${item.color}`, item.lot && `Lot.${item.lot}`].filter(Boolean).join(' · ')}
                             </div>
                           )}
                           <div className="yarn-tags">{tags}</div>
