@@ -19,6 +19,8 @@ import WorkDetail from './components/WorkDetail'
 import LabelSearch from './components/LabelSearch'
 import ShopSettings from './components/ShopSettings'
 import CategorySettings from './components/CategorySettings'
+import PurchaseForm from './components/PurchaseForm'
+import PurchaseDetail from './components/PurchaseDetail'
 import Dock from './components/Dock'
 import MyPage from './components/MyPage'
 import ProfileForm from './components/ProfileForm'
@@ -73,7 +75,7 @@ export default function App() {
       if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true)
       if (event === 'SIGNED_IN' && shouldShowTutorial()) setShowTutorial(true)
       if (!session) {
-        setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([]); setWorkCategories([])
+        setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([]); setPurchases([]); setWorkCategories([])
         setFollows([]); setFollowersCount(0); setFeedWorks([]); setFeedProfiles([]); setFeedLoaded(false)
       }
     })
@@ -83,11 +85,12 @@ export default function App() {
   useEffect(() => { if (user) loadAll() }, [user])
 
   // ────────── Data ───────────────────────────────
-  const [yarns,  setYarns]  = useState([])
-  const [tools,  setTools]  = useState([])
-  const [books,  setBooks]  = useState([])
-  const [works,  setWorks]  = useState([])
-  const [shops,  setShops]  = useState([])
+  const [yarns,      setYarns]      = useState([])
+  const [tools,      setTools]      = useState([])
+  const [books,      setBooks]      = useState([])
+  const [works,      setWorks]      = useState([])
+  const [shops,      setShops]      = useState([])
+  const [purchases,  setPurchases]  = useState([])
   const [workCategories, setWorkCategories] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -133,6 +136,9 @@ export default function App() {
   const [labelSearchOpen,      setLabelSearchOpen]      = useState(false)
   const [settingsOpen,         setSettingsOpen]         = useState(false)
   const [categorySettingsOpen, setCategorySettingsOpen] = useState(false)
+  const [purchaseFormOpen,     setPurchaseFormOpen]     = useState(false)
+  const [editingPurchase,      setEditingPurchase]      = useState(null)
+  const [detailPurchase,       setDetailPurchase]       = useState(null)
   const [myPageOpen,       setMyPageOpen]       = useState(false)
   const [profileFormOpen,  setProfileFormOpen]  = useState(false)
   const [profile,          setProfile]          = useState(null)
@@ -169,7 +175,7 @@ export default function App() {
     try {
       const [
         { data: y }, { data: t }, { data: b }, { data: w }, { data: s }, { data: p },
-        { data: f }, { count: fc }, { data: yc }, { data: wc },
+        { data: f }, { count: fc }, { data: yc }, { data: wc }, { data: pur },
       ] = await Promise.all([
         supabase.from('yarns').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('tools').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
@@ -181,6 +187,7 @@ export default function App() {
         supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
         supabase.from('work_yarns').select('work_id'),
         supabase.from('work_categories').select('name').eq('user_id', user.id).order('created_at', { ascending: true }),
+        supabase.from('purchases').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
       ])
       const countsMap = {}
       yc?.forEach(({ work_id }) => { countsMap[work_id] = (countsMap[work_id] || 0) + 1 })
@@ -202,6 +209,7 @@ export default function App() {
         setShops(shopNames)
       }
       setWorkCategories((wc || []).map((row) => row.name))
+      setPurchases(pur || [])
       setProfile(p || null)
       setFollows(f || [])
       setFollowersCount(fc ?? 0)
@@ -437,6 +445,23 @@ export default function App() {
     setShops((prev) => prev.filter((s) => s !== name))
   }
 
+  async function savePurchase(data, imgFile) {
+    const img_url = await resolveImgUrl(data, imgFile)
+    const record = { user_id: user.id, name: data.name, seller: data.seller, price: data.price, memo: data.memo, img_url }
+    if (data.id) {
+      const { data: updated } = await supabase.from('purchases').update(record).eq('id', data.id).select().single()
+      setPurchases((prev) => prev.map((p) => p.id === data.id ? updated : p))
+    } else {
+      const { data: inserted } = await supabase.from('purchases').insert([record]).select().single()
+      if (inserted) setPurchases((prev) => [inserted, ...prev])
+    }
+  }
+
+  async function deletePurchase(id) {
+    await supabase.from('purchases').delete().eq('id', id)
+    setPurchases((prev) => prev.filter((p) => p.id !== id))
+  }
+
   async function addWorkCategory(name) {
     const { error } = await supabase.from('work_categories').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
     if (error) throw new Error(error.message || 'カテゴリーの追加に失敗しました')
@@ -589,14 +614,22 @@ export default function App() {
         onClose={() => setSettingsOpen(false)} onAdd={addShop} onDelete={deleteShop} />
       <CategorySettings open={categorySettingsOpen} categories={workCategories}
         onClose={() => setCategorySettingsOpen(false)} onAdd={addWorkCategory} onDelete={deleteWorkCategory} />
-      <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works}
+      <PurchaseForm open={purchaseFormOpen} editingPurchase={editingPurchase}
+        onSave={savePurchase} onClose={() => setPurchaseFormOpen(false)} />
+      <PurchaseDetail purchase={detailPurchase}
+        onClose={() => setDetailPurchase(null)}
+        onEdit={(p) => { setDetailPurchase(null); setEditingPurchase(p); setPurchaseFormOpen(true) }}
+        onDelete={deletePurchase} />
+      <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works} purchases={purchases}
         followsCount={follows.length} followersCount={followersCount}
         follows={follows} feedProfiles={feedProfiles}
         onClose={() => setMyPageOpen(false)}
         onEdit={() => { setMyPageOpen(false); setProfileFormOpen(true) }}
         onOpenProfile={(p) => { setMyPageOpen(false); setViewingProfile(p) }}
         onChangePassword={() => { setMyPageOpen(false); setChangePasswordOpen(true) }}
-        onChangeHandle={() => { setMyPageOpen(false); setChangeHandleOpen(true) }} />
+        onChangeHandle={() => { setMyPageOpen(false); setChangeHandleOpen(true) }}
+        onAddPurchase={() => { setEditingPurchase(null); setPurchaseFormOpen(true) }}
+        onOpenPurchaseDetail={setDetailPurchase} />
       <ChangePasswordModal open={changePasswordOpen || passwordRecovery} onClose={() => { setChangePasswordOpen(false); setPasswordRecovery(false) }} />
       <ChangeHandleModal open={changeHandleOpen} currentHandle={profile?.handle} userId={user?.id}
         onClose={() => setChangeHandleOpen(false)}

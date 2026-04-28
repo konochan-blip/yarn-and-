@@ -32,7 +32,7 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   )
 }
 
-export default function MyPage({ open, profile, yarns, tools, books, works, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle }) {
+export default function MyPage({ open, profile, yarns, tools, books, works, purchases, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail }) {
   const [sheet, setSheet] = useState(null)
   const [copied, setCopied] = useState(false)
 
@@ -153,6 +153,10 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
               <span className="mypage-stat-num">{works.length}</span>
               <span className="mypage-stat-label">作品</span>
             </div>
+            <div className="mypage-stat">
+              <span className="mypage-stat-num">{(purchases || []).length}</span>
+              <span className="mypage-stat-label">購入品</span>
+            </div>
           </div>
 
           {isPublic && (
@@ -201,6 +205,28 @@ export default function MyPage({ open, profile, yarns, tools, books, works, foll
               </div>
             </div>
           )}
+
+          {/* 購入品グリッド */}
+          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>購入品</div>
+              <button onClick={onAddPurchase} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>
+            </div>
+            {(purchases || []).length === 0
+              ? <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
+              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+                  {(purchases || []).map((p) => (
+                    <div key={p.id} onClick={() => onOpenPurchaseDetail(p)}
+                      style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)' }}>
+                      {p.img_url
+                        ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🛍️</div>
+                      }
+                    </div>
+                  ))}
+                </div>
+            }
+          </div>
 
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '4px 12px' }}>
             <button onClick={onChangeHandle} style={{ width: '100%', background: 'none', border: 'none', padding: '12px 0', fontSize: '14px', color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)' }}>
