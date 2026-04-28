@@ -125,7 +125,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       {/* WHO */}
       <section style={{ background: 'var(--surface)', padding: '64px 24px' }}>
         <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-          <div style={{ fontSize: '11px', letterSpacing: '0.14em', color: '#C9A0B0', fontWeight: 600, marginBottom: '10px' }}>こんな方におすすめ🐰</div>
+          <div style={{ fontSize: '11px', letterSpacing: '0.14em', color: '#C9A0B0', fontWeight: 600, marginBottom: '10px' }}>こんな方におすすめ<span style={{ display: 'inline-block', animation: 'pyon 1.2s ease-in-out infinite' }}>🐰</span></div>
           <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>あなたのための、ノートアプリ</h2>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.8 }}>かぎ針でも棒針でも。初心者でも作家さんでも。</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
