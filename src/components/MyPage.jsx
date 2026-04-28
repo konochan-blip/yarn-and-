@@ -150,12 +150,12 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
               <span className="mypage-stat-label">書籍</span>
             </div>
             <div className="mypage-stat">
-              <span className="mypage-stat-num">{works.length}</span>
-              <span className="mypage-stat-label">作品</span>
-            </div>
-            <div className="mypage-stat">
               <span className="mypage-stat-num">{(purchases || []).length}</span>
               <span className="mypage-stat-label">購入品</span>
+            </div>
+            <div className="mypage-stat">
+              <span className="mypage-stat-num">{works.length}</span>
+              <span className="mypage-stat-label">作品</span>
             </div>
           </div>
 

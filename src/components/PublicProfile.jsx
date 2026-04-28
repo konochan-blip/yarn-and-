@@ -5,6 +5,7 @@ import YarnDetail from './YarnDetail'
 import ToolDetail from './ToolDetail'
 import BookDetail from './BookDetail'
 import WorkDetail from './WorkDetail'
+import PurchaseDetail from './PurchaseDetail'
 
 function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   return (
@@ -48,12 +49,14 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
   const [profileTools, setProfileTools] = useState([])
   const [profileBooks, setProfileBooks] = useState([])
   const [profileWorks, setProfileWorks] = useState([])
+  const [profilePurchases, setProfilePurchases] = useState([])
   const [dataLoading, setDataLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('work')
   const [detailYarn, setDetailYarn] = useState(null)
   const [detailTool, setDetailTool] = useState(null)
   const [detailBook, setDetailBook] = useState(null)
   const [detailWork, setDetailWork] = useState(null)
+  const [detailPurchase, setDetailPurchase] = useState(null)
 
   useEffect(() => {
     if (!profile) return
@@ -63,10 +66,12 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
     setProfileTools([])
     setProfileBooks([])
     setProfileWorks([])
+    setProfilePurchases([])
     setDetailYarn(null)
     setDetailTool(null)
     setDetailBook(null)
     setDetailWork(null)
+    setDetailPurchase(null)
 
     if (!profile.is_public) {
       Promise.all([
@@ -87,13 +92,15 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
       supabase.from('tools').select('*').eq('user_id', profile.user_id).order('created_at'),
       supabase.from('books').select('*').eq('user_id', profile.user_id).order('created_at'),
       supabase.from('works').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
-    ]).then(([{ count: fc }, { count: ing }, { data: y }, { data: t }, { data: b }, { data: w }]) => {
+      supabase.from('purchases').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
+    ]).then(([{ count: fc }, { count: ing }, { data: y }, { data: t }, { data: b }, { data: w }, { data: pur }]) => {
       setFollowersCount(fc ?? 0)
       setFollowingCount(ing ?? 0)
       setProfileYarns(y || [])
       setProfileTools(t || [])
       setProfileBooks(b || [])
       setProfileWorks(w || [])
+      setProfilePurchases(pur || [])
       setDataLoading(false)
     })
   }, [profile?.user_id])
@@ -125,10 +132,11 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
   if (!profile) return null
 
   const TABS = [
-    { key: 'work', label: '作品', count: profileWorks.length },
-    { key: 'yarn', label: '毛糸', count: profileYarns.length },
-    { key: 'tool', label: '道具', count: profileTools.length },
-    { key: 'book', label: '書籍', count: profileBooks.length },
+    { key: 'work',     label: '作品',  count: profileWorks.length },
+    { key: 'yarn',     label: '毛糸',  count: profileYarns.length },
+    { key: 'tool',     label: '道具',  count: profileTools.length },
+    { key: 'book',     label: '書籍',  count: profileBooks.length },
+    { key: 'purchase', label: '購入品', count: profilePurchases.length },
   ]
 
   return (
@@ -150,6 +158,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
         onOpenWorkDetail={(w) => { setDetailYarn(null); setDetailWork(w) }}
       />
       <ToolDetail tool={detailTool} onClose={() => setDetailTool(null)} />
+      <PurchaseDetail purchase={detailPurchase} onClose={() => setDetailPurchase(null)} />
       <BookDetail
         book={detailBook}
         works={profileWorks}
@@ -365,6 +374,29 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
                               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{book.author}</div>
                             )}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                )}
+
+                {activeTab === 'purchase' && (
+                  profilePurchases.length === 0 ? (
+                    <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ購入品が登録されていません</div>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+                      {profilePurchases.map((p) => (
+                        <div key={p.id} onClick={() => setDetailPurchase(p)}
+                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+                          {p.img_url
+                            ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🛍️</div>
+                          }
+                          {p.name && (
+                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
+                              <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
