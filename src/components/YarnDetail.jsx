@@ -31,6 +31,7 @@ export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onO
         {yarn.img_url ? <img src={yarn.img_url} alt="" /> : <YarnSvgLg />}
       </div>
 
+      {yarn.label && <div className="detail-row"><span className="dl">ラベル</span><span className="dv" style={{ background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 600, borderRadius: '6px', padding: '2px 10px', fontSize: '12px' }}>{yarn.label}</span></div>}
       <div className="detail-row"><span className="dl">色番号</span><span className="dv">{yarn.color || '—'}</span></div>
       <div className="detail-row"><span className="dl">色</span><span className="dv">{yarn.colorname || '—'}</span></div>
       <div className="detail-row"><span className="dl">素材</span><span className="dv">{yarn.material || '—'}</span></div>

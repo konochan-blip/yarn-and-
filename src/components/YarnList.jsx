@@ -92,11 +92,16 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           {sorted.map((item) => (
             <div key={item.id} onClick={() => onOpenDetail(item)}
               style={{ cursor: 'pointer', background: 'var(--surface)', overflow: 'hidden' }}>
-              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5' }}>
+              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
                 {item.img_url
                   ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                   : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
                 }
+                {item.label && (
+                  <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {item.label}
+                  </div>
+                )}
               </div>
               <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
                 <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
