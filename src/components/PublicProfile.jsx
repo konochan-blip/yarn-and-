@@ -168,7 +168,6 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
 
       <div className="mypage-topbar">
         <button className="btn" style={{ padding: '6px 14px', fontSize: '13px' }} onClick={onClose}>← 戻る</button>
-        <span className="mypage-topbar-title">{profile.username || 'プロフィール'}</span>
         {isFollowing ? (
           <button className="btn" style={{ padding: '6px 14px', fontSize: '13px' }} onClick={() => onUnfollow(profile.user_id)}>フォロー中</button>
         ) : onFollow && profile.is_public ? (
