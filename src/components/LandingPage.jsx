@@ -22,7 +22,7 @@ export default function LandingPage({ onLogin, onSignup }) {
         <div style={{ display: 'inline-block', fontSize: '11px', letterSpacing: '0.14em', color: '#C9A0B0', fontWeight: 500, background: 'var(--accent-light)', border: '1px solid var(--border)', borderRadius: '99px', padding: '4px 14px', marginBottom: '20px' }}>
           毛糸沼の人に、ぴったりのアプリ
         </div>
-        <h1 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(28px, 6vw, 44px)', fontWeight: 400, lineHeight: 1.6, color: 'var(--text-primary)', marginBottom: '36px', animation: 'fadeSlideIn 1s ease both' }}>
+        <h1 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(28px, 6vw, 44px)', fontWeight: 400, lineHeight: 1.6, color: 'var(--text-primary)', marginBottom: '36px', opacity: 0, animation: 'heroFadeIn 1.2s ease 0.2s forwards' }}>
           気付いたら、増えてる。<br /><span style={{ color: 'var(--accent)', fontWeight: 600 }}>ぜんぶ、ここに</span>
         </h1>
         <p style={{ fontSize: '15px', color: 'var(--text-secondary)', maxWidth: '440px', margin: '0 auto 12px', lineHeight: 1.9 }}>
