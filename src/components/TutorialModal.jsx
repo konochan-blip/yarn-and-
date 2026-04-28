@@ -78,12 +78,12 @@ function IconDone() {
 }
 
 const STEPS = [
-  { icon: <IconWelcome />, title: 'YARN& へようこそ！', desc: '毛糸・作品・道具・書籍をまとめて管理できるアプリです。\nまずは毛糸の登録方法を説明します。' },
-  { icon: <IconTab />,     title: 'STEP 1｜毛糸タブを開く', desc: '画面下のタブバーから「毛糸」を選びます。\n毛糸の一覧ページが開きます。' },
-  { icon: <IconAdd />,     title: 'STEP 2｜毛糸追加ボタンをタップ', desc: '画面右下の「＋ 毛糸追加」ボタンをタップすると、\n登録フォームが開きます。' },
-  { icon: <IconAI />,      title: 'STEP 3｜写真でAI自動入力', desc: '毛糸のラベル写真を撮ると、AIが情報を自動で読み取ります。\n名前・色・素材・メーカーなどを自動入力！\nあとから手動で編集もできます。', accent: true },
-  { icon: <IconEdit />,    title: 'STEP 4｜内容を確認して保存', desc: 'AI入力の内容を確認・修正して「保存」をタップ。\n在庫数やお店の情報も追加できます。' },
-  { icon: <IconDone />,    title: '準備完了！', desc: '登録した毛糸は一覧でいつでも確認できます。\n作品や道具も同じように登録できますよ。' },
+  { icon: <IconWelcome />, title: 'YARN& へようこそ！', desc: '毛糸・作品・道具・書籍をまとめて管理できるアプリです。まずは毛糸の登録方法を説明します。' },
+  { icon: <IconTab />,     title: 'STEP 1｜毛糸タブを開く', desc: '画面下のタブバーから「毛糸」を選びます。毛糸の一覧ページが開きます。' },
+  { icon: <IconAdd />,     title: 'STEP 2｜毛糸追加ボタンをタップ', desc: '画面右下の「＋ 毛糸追加」ボタンをタップすると、登録フォームが開きます。' },
+  { icon: <IconAI />,      title: 'STEP 3｜写真でAI自動入力', desc: '毛糸のラベル写真を撮ると、AIが情報を自動で読み取ります。名前・色・素材・メーカーなどを自動入力！あとから手動で編集もできます。', accent: true },
+  { icon: <IconEdit />,    title: 'STEP 4｜内容を確認して保存', desc: 'AI入力の内容を確認・修正して「保存」をタップ。在庫数やお店の情報も追加できます。' },
+  { icon: <IconDone />,    title: '準備完了！', desc: '登録した毛糸は一覧でいつでも確認できます。作品や道具も同じように登録できますよ。' },
 ]
 
 export function shouldShowTutorial() {
@@ -158,7 +158,7 @@ export default function TutorialModal({ onClose }) {
           fontSize: '13px', color: 'var(--text-secondary)',
           textAlign: 'center', lineHeight: 1.85,
           marginBottom: '28px',
-          whiteSpace: 'pre-line',
+          whiteSpace: 'normal',
         }}>{current.desc}</div>
 
         <div style={{ display: 'flex', gap: '8px' }}>
