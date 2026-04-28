@@ -520,10 +520,10 @@ body {
 .mypage-badge.public { background: var(--tag-shop-bg); color: var(--tag-shop-text); }
 .mypage-badge.private { background: var(--accent-light); color: var(--accent); }
 .mypage-bio { font-size: 13px; color: var(--text-secondary); text-align: center; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
-.mypage-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-.mypage-stat { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); padding: 14px 8px; text-align: center; }
-.mypage-stat-num { font-family: var(--font-serif); font-weight: 600; font-size: 26px; color: var(--accent); line-height: 1; display: block; margin-bottom: 4px; }
-.mypage-stat-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; }
+.mypage-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
+.mypage-stat { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 10px 4px; text-align: center; }
+.mypage-stat-num { font-family: var(--font-serif); font-weight: 600; font-size: 20px; color: var(--accent); line-height: 1; display: block; margin-bottom: 4px; }
+.mypage-stat-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-tertiary); letter-spacing: 0.05em; text-transform: uppercase; }
 
 /* ── Toggle ──────────────────────────────── */
 .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
