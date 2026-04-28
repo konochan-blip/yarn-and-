@@ -322,8 +322,8 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
                           }
                           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
                             <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{yarn.name || '名前なし'}</div>
-                            {(yarn.colorname || yarn.material) && (
-                              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{[yarn.colorname, yarn.material].filter(Boolean).join(' · ')}</div>
+                            {yarn.material && (
+                              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{yarn.material}</div>
                             )}
                           </div>
                         </div>
