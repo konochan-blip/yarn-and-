@@ -51,7 +51,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
   const [profileWorks, setProfileWorks] = useState([])
   const [profilePurchases, setProfilePurchases] = useState([])
   const [dataLoading, setDataLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState('work')
+  const [activeTab, setActiveTab] = useState('yarn')
   const [detailYarn, setDetailYarn] = useState(null)
   const [detailTool, setDetailTool] = useState(null)
   const [detailBook, setDetailBook] = useState(null)
@@ -132,10 +132,10 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
   if (!profile) return null
 
   const TABS = [
-    { key: 'work',     label: '作品',  count: profileWorks.length },
     { key: 'yarn',     label: '毛糸',  count: profileYarns.length },
     { key: 'tool',     label: '道具',  count: profileTools.length },
     { key: 'book',     label: '書籍',  count: profileBooks.length },
+    { key: 'work',     label: '作品',  count: profileWorks.length },
     { key: 'purchase', label: '購入品', count: profilePurchases.length },
   ]
 
