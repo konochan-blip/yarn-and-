@@ -175,7 +175,7 @@ export default function App() {
     try {
       const [
         { data: y }, { data: t }, { data: b }, { data: w }, { data: s }, { data: p },
-        { data: f }, { count: fc }, { data: yc }, { data: wc }, { data: pur },
+        { data: f }, { count: fc }, { data: yc },
       ] = await Promise.all([
         supabase.from('yarns').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('tools').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
@@ -186,8 +186,6 @@ export default function App() {
         supabase.from('follows').select('*').eq('follower_id', user.id),
         supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
         supabase.from('work_yarns').select('work_id'),
-        supabase.from('work_categories').select('name').eq('user_id', user.id).order('created_at', { ascending: true }),
-        supabase.from('purchases').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
       ])
       const countsMap = {}
       yc?.forEach(({ work_id }) => { countsMap[work_id] = (countsMap[work_id] || 0) + 1 })
@@ -208,8 +206,13 @@ export default function App() {
       } else {
         setShops(shopNames)
       }
-      setWorkCategories((wc || []).map((row) => row.name))
-      setPurchases(pur || [])
+      // テーブルが未作成でも他データに影響しないよう個別取得
+      supabase.from('work_categories').select('name').eq('user_id', user.id).order('created_at', { ascending: true })
+        .then(({ data: wc }) => setWorkCategories((wc || []).map((row) => row.name)))
+        .catch(() => {})
+      supabase.from('purchases').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+        .then(({ data: pur }) => setPurchases(pur || []))
+        .catch(() => {})
       setProfile(p || null)
       setFollows(f || [])
       setFollowersCount(fc ?? 0)
