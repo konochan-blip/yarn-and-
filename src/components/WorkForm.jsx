@@ -4,14 +4,13 @@ import { YarnSvgSm, BookSvgSm } from '../lib/svgs'
 
 const NEEDLES = ['かぎ針', '棒針', '輪針', 'その他']
 
-export default function WorkForm({ open, editingWork, yarns, books, onSave, onClose }) {
+export default function WorkForm({ open, editingWork, yarns, books, workCategories, onSave, onClose, onOpenCategorySettings }) {
   const [name, setName] = useState('')
   const [needle, setNeedle] = useState('')
   const [memo, setMemo] = useState('')
   const [privateMemo, setPrivateMemo] = useState('')
   const [ref, setRef] = useState('')
   const [categories, setCategories] = useState([])
-  const [categoryInput, setCategoryInput] = useState('')
   const [selectedYarnIds, setSelectedYarnIds] = useState([])
   const [selectedBookIds, setSelectedBookIds] = useState([])
   const [imgFile, setImgFile] = useState(null)
@@ -20,7 +19,6 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
   const [saving, setSaving] = useState(false)
   const imgInputRef = useRef()
   const patternInputRef = useRef()
-  const categoryInputRef = useRef()
 
   useEffect(() => {
     if (!open) return
@@ -38,29 +36,14 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
       setPatternItems((editingWork.pattern_imgs || []).map((url) => ({ preview: url, file: null })))
     } else {
       setName(''); setNeedle(''); setMemo(''); setPrivateMemo(''); setRef('')
-      setCategories([]); setCategoryInput('')
+      setCategories([])
       setSelectedYarnIds([]); setSelectedBookIds([])
       setImgFile(null); setImgPreview(null); setPatternItems([])
     }
-    setCategoryInput('')
   }, [open, editingWork])
 
-  function addCategory() {
-    const val = categoryInput.trim()
-    if (!val || categories.includes(val)) { setCategoryInput(''); return }
-    setCategories((prev) => [...prev, val])
-    setCategoryInput('')
-  }
-
-  function handleCategoryKeyDown(e) {
-    if (e.key === 'Enter') { e.preventDefault(); addCategory() }
-    if (e.key === 'Backspace' && !categoryInput && categories.length > 0) {
-      setCategories((prev) => prev.slice(0, -1))
-    }
-  }
-
-  function removeCategory(cat) {
-    setCategories((prev) => prev.filter((c) => c !== cat))
+  function toggleCategory(c) {
+    setCategories((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c])
   }
 
   function handleImgChange(e) {
@@ -119,30 +102,26 @@ export default function WorkForm({ open, editingWork, yarns, books, onSave, onCl
       <div className="field"><label>作品名</label><input type="text" value={name} placeholder="例：フリルスカート、帽子など" onChange={(e) => setName(e.target.value)} /></div>
 
       <div className="field">
-        <label>カテゴリー</label>
-        <div
-          onClick={() => categoryInputRef.current?.focus()}
-          style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', minHeight: '42px', padding: '6px 10px', border: '1px solid var(--border)', borderRadius: '10px', background: 'var(--bg)', cursor: 'text' }}
-        >
-          {categories.map((cat) => (
-            <span key={cat} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'var(--accent-light)', border: '1px solid var(--border)', borderRadius: '99px', padding: '3px 10px 3px 10px', fontSize: '13px', color: 'var(--accent)', fontWeight: 500 }}>
-              {cat}
-              <button type="button" onClick={(e) => { e.stopPropagation(); removeCategory(cat) }}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: '14px', lineHeight: 1, padding: '0 0 0 2px', display: 'flex', alignItems: 'center' }}>×</button>
-            </span>
-          ))}
-          <input
-            ref={categoryInputRef}
-            type="text"
-            value={categoryInput}
-            onChange={(e) => setCategoryInput(e.target.value)}
-            onKeyDown={handleCategoryKeyDown}
-            onBlur={addCategory}
-            placeholder={categories.length === 0 ? 'タグを入力してEnter' : ''}
-            style={{ border: 'none', outline: 'none', background: 'transparent', fontSize: '13px', color: 'var(--text-primary)', fontFamily: 'inherit', minWidth: '120px', flex: 1, padding: '2px 0' }}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+          <label style={{ margin: 0 }}>カテゴリー</label>
+          {onOpenCategorySettings && (
+            <button type="button" onClick={onOpenCategorySettings}
+              style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0' }}>
+              ＋ カテゴリーを編集
+            </button>
+          )}
         </div>
-        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>例：セーター・プレゼント・春夏　Enterで追加</div>
+        {workCategories?.length === 0
+          ? <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', padding: '6px 0' }}>「カテゴリーを編集」から追加してね</div>
+          : <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {[...(workCategories || []), 'その他'].map((c) => (
+                <button key={c} type="button" onClick={() => toggleCategory(c)}
+                  style={{ padding: '7px 14px', borderRadius: '99px', border: categories.includes(c) ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: categories.includes(c) ? 'var(--accent)' : 'var(--surface)', color: categories.includes(c) ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', transition: 'all 0.15s', fontWeight: categories.includes(c) ? 600 : 400 }}>
+                  {c}
+                </button>
+              ))}
+            </div>
+        }
       </div>
 
       <div className="field">

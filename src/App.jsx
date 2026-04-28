@@ -18,6 +18,7 @@ import BookDetail from './components/BookDetail'
 import WorkDetail from './components/WorkDetail'
 import LabelSearch from './components/LabelSearch'
 import ShopSettings from './components/ShopSettings'
+import CategorySettings from './components/CategorySettings'
 import Dock from './components/Dock'
 import MyPage from './components/MyPage'
 import ProfileForm from './components/ProfileForm'
@@ -72,7 +73,7 @@ export default function App() {
       if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true)
       if (event === 'SIGNED_IN' && shouldShowTutorial()) setShowTutorial(true)
       if (!session) {
-        setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([])
+        setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([]); setWorkCategories([])
         setFollows([]); setFollowersCount(0); setFeedWorks([]); setFeedProfiles([]); setFeedLoaded(false)
       }
     })
@@ -87,6 +88,7 @@ export default function App() {
   const [books,  setBooks]  = useState([])
   const [works,  setWorks]  = useState([])
   const [shops,  setShops]  = useState([])
+  const [workCategories, setWorkCategories] = useState([])
   const [loading, setLoading] = useState(false)
 
   // ログイン済みユーザーが /user/:handle で来た場合、データ読込後にプロフィールを開く
@@ -128,8 +130,9 @@ export default function App() {
   const [detailBook,       setDetailBook]       = useState(null)
   const [detailWork,       setDetailWork]       = useState(null)
   const [detailWorkAuthor, setDetailWorkAuthor] = useState(null)
-  const [labelSearchOpen,  setLabelSearchOpen]  = useState(false)
-  const [settingsOpen,     setSettingsOpen]     = useState(false)
+  const [labelSearchOpen,      setLabelSearchOpen]      = useState(false)
+  const [settingsOpen,         setSettingsOpen]         = useState(false)
+  const [categorySettingsOpen, setCategorySettingsOpen] = useState(false)
   const [myPageOpen,       setMyPageOpen]       = useState(false)
   const [profileFormOpen,  setProfileFormOpen]  = useState(false)
   const [profile,          setProfile]          = useState(null)
@@ -166,7 +169,7 @@ export default function App() {
     try {
       const [
         { data: y }, { data: t }, { data: b }, { data: w }, { data: s }, { data: p },
-        { data: f }, { count: fc }, { data: yc },
+        { data: f }, { count: fc }, { data: yc }, { data: wc },
       ] = await Promise.all([
         supabase.from('yarns').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('tools').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
@@ -177,6 +180,7 @@ export default function App() {
         supabase.from('follows').select('*').eq('follower_id', user.id),
         supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
         supabase.from('work_yarns').select('work_id'),
+        supabase.from('work_categories').select('name').eq('user_id', user.id).order('created_at', { ascending: true }),
       ])
       const countsMap = {}
       yc?.forEach(({ work_id }) => { countsMap[work_id] = (countsMap[work_id] || 0) + 1 })
@@ -197,6 +201,7 @@ export default function App() {
       } else {
         setShops(shopNames)
       }
+      setWorkCategories((wc || []).map((row) => row.name))
       setProfile(p || null)
       setFollows(f || [])
       setFollowersCount(fc ?? 0)
@@ -432,6 +437,17 @@ export default function App() {
     setShops((prev) => prev.filter((s) => s !== name))
   }
 
+  async function addWorkCategory(name) {
+    const { error } = await supabase.from('work_categories').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
+    if (error) throw new Error(error.message || 'カテゴリーの追加に失敗しました')
+    setWorkCategories((prev) => prev.includes(name) ? prev : [...prev, name])
+  }
+
+  async function deleteWorkCategory(name) {
+    await supabase.from('work_categories').delete().eq('user_id', user.id).eq('name', name)
+    setWorkCategories((prev) => prev.filter((c) => c !== name))
+  }
+
   function handleYarnChange(workId, delta) {
     setYarnCountsMap((prev) => ({ ...prev, [workId]: Math.max(0, (prev[workId] || 0) + delta) }))
   }
@@ -538,7 +554,9 @@ export default function App() {
       <BookForm open={bookFormOpen} editingBook={editingBook}
         onSave={saveBook} onClose={() => setBookFormOpen(false)} />
       <WorkForm open={workFormOpen} editingWork={editingWork} yarns={yarns} books={books}
-        onSave={saveWork} onClose={() => setWorkFormOpen(false)} />
+        workCategories={workCategories}
+        onSave={saveWork} onClose={() => setWorkFormOpen(false)}
+        onOpenCategorySettings={() => setCategorySettingsOpen(true)} />
 
       {/* Details */}
       <YarnDetail yarn={detailYarn} works={works}
@@ -569,6 +587,8 @@ export default function App() {
         onClose={() => setLabelSearchOpen(false)} onOpenDetail={setDetailYarn} />
       <ShopSettings open={settingsOpen} shops={shops}
         onClose={() => setSettingsOpen(false)} onAdd={addShop} onDelete={deleteShop} />
+      <CategorySettings open={categorySettingsOpen} categories={workCategories}
+        onClose={() => setCategorySettingsOpen(false)} onAdd={addWorkCategory} onDelete={deleteWorkCategory} />
       <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works}
         followsCount={follows.length} followersCount={followersCount}
         follows={follows} feedProfiles={feedProfiles}
