@@ -37,10 +37,8 @@ function IconTab() {
 function IconAdd() {
   return (
     <svg width="38" height="38" viewBox="0 0 32 32" fill="none">
-      <rect x="4" y="20" width="24" height="8" rx="4" fill={SL} stroke={SM} strokeWidth="1.2"/>
-      <path d="M13 24h6M16 21v6" stroke={S} strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="16" cy="13" r="7" fill={SL} stroke={SM} strokeWidth="1.2"/>
-      <path d="M13 13h6M16 10v6" stroke={S} strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="16" cy="16" r="10" fill={SL} stroke={SM} strokeWidth="1.2"/>
+      <path d="M11 16h10M16 11v10" stroke={S} strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   )
 }
