@@ -148,7 +148,7 @@ export default function LandingPage({ onLogin, onSignup }) {
       {/* CTA */}
       <section style={{ background: 'linear-gradient(135deg, #8C6272 0%, #C9A0B0 100%)', textAlign: 'center', padding: '80px 24px' }}>
         <h2 style={{ fontFamily: "'Klee One', var(--font-serif)", fontSize: 'clamp(22px, 5vw, 34px)', fontWeight: 600, color: '#fff', marginBottom: '14px', lineHeight: 1.5 }}>
-          毛糸沼、もっと<br />楽しんでいいんだよ。
+          毛糸沼、もっと楽しんでいい。
         </h2>
         <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.82)', marginBottom: '8px', lineHeight: 1.8 }}>
           記録するだけで、ぐんと使いやすくなる。
