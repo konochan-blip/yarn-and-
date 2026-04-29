@@ -101,18 +101,6 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
       </div>
 
       <div className="field">
-        <label>ID（半角英数字・アンダースコアのみ）</label>
-        <div style={{ position: 'relative' }}>
-          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', fontSize: '14px' }}>@</span>
-          <input type="text" value={handle} placeholder="例：knitting_lover" style={{ paddingLeft: '26px' }}
-            onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} />
-        </div>
-        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>
-          プロフィールURL: yarn-and.vercel.app/user/{handle || '（ID）'}
-        </div>
-      </div>
-
-      <div className="field">
         <label>自己紹介</label>
         <textarea value={bio} placeholder="好きな毛糸や得意な編み方など…" rows={4} onChange={(e) => setBio(e.target.value)} />
       </div>

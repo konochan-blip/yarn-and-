@@ -65,7 +65,10 @@ export default function ChangeHandleModal({ open, currentHandle, userId, onClose
                 autoCorrect="off"
               />
             </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>英数字・_・-・. が使えます。プロフィールURLに使われます。</div>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+              英数字・_・-・. が使えます<br />
+              yarn-and.com/user/{handle || '（ID）'}
+            </div>
           </div>
           {error && (
             <div style={{ background: 'var(--danger-light)', border: '1px solid #E8C4C4', borderRadius: '8px', padding: '10px 12px', fontSize: '13px', color: 'var(--danger)', marginBottom: '14px' }}>
