@@ -208,7 +208,23 @@ export default function App() {
       }
       // テーブルが未作成でも他データに影響しないよう個別取得
       supabase.from('work_categories').select('name').eq('user_id', user.id).order('created_at', { ascending: true })
-        .then(({ data: wc }) => setWorkCategories((wc || []).map((row) => row.name)))
+        .then(({ data: wc }) => {
+          const cats = (wc || []).map((row) => row.name)
+          setWorkCategories(cats)
+          const valid = new Set([...cats, 'その他'])
+          const toFix = (w || []).filter((work) => (work.categories || []).some((c) => !valid.has(c)))
+          toFix.forEach((work) => {
+            const categories = (work.categories || []).filter((c) => valid.has(c))
+            supabase.from('works').update({ categories }).eq('id', work.id).then(() => {})
+          })
+          if (toFix.length > 0) {
+            setWorks((prev) => prev.map((work) =>
+              toFix.find((f) => f.id === work.id)
+                ? { ...work, categories: (work.categories || []).filter((c) => valid.has(c)) }
+                : work
+            ))
+          }
+        })
         .catch(() => {})
       supabase.from('purchases').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
         .then(({ data: pur }) => setPurchases(pur || []))
