@@ -209,11 +209,9 @@ export default function App() {
       const shopNames = (s || []).map((row) => row.name)
       if (shopNames.length === 0) {
         const defaults = ['ユザワヤ', '楽天', 'Amazon']
-        try {
-          await Promise.all(
-            defaults.map((n) => supabase.from('shops').upsert({ user_id: user.id, name: n }, { onConflict: 'user_id,name' }))
-          )
-        } catch { /* seeding failure is non-fatal */ }
+        Promise.all(
+          defaults.map((n) => supabase.from('shops').upsert({ user_id: user.id, name: n }, { onConflict: 'user_id,name' }))
+        ).catch(() => {})
         setShops(defaults)
       } else {
         setShops(shopNames)
