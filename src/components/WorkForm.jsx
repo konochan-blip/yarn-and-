@@ -111,17 +111,20 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
             </button>
           )}
         </div>
-        {workCategories?.length === 0
-          ? <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', padding: '6px 0' }}>「カテゴリーを編集」から追加してね</div>
-          : <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {[...(workCategories || []), 'その他'].map((c) => (
-                <button key={c} type="button" onClick={() => toggleCategory(c)}
-                  style={{ padding: '7px 14px', borderRadius: '99px', border: categories.includes(c) ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: categories.includes(c) ? 'var(--accent)' : 'var(--surface)', color: categories.includes(c) ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', transition: 'all 0.15s', fontWeight: categories.includes(c) ? 600 : 400 }}>
-                  {c}
-                </button>
-              ))}
-            </div>
-        }
+        {(() => {
+          const orphaned = categories.filter((c) => c !== 'その他' && !(workCategories || []).includes(c))
+          const displayCategories = [...(workCategories || []), ...orphaned, 'その他']
+          return workCategories?.length === 0 && orphaned.length === 0
+            ? <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', padding: '6px 0' }}>「カテゴリーを編集」から追加してね</div>
+            : <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {displayCategories.map((c) => (
+                  <button key={c} type="button" onClick={() => toggleCategory(c)}
+                    style={{ padding: '7px 14px', borderRadius: '99px', border: categories.includes(c) ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: categories.includes(c) ? 'var(--accent)' : 'var(--surface)', color: categories.includes(c) ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', transition: 'all 0.15s', fontWeight: categories.includes(c) ? 600 : 400 }}>
+                    {c}
+                  </button>
+                ))}
+              </div>
+        })()}
       </div>
 
       <div className="field">
