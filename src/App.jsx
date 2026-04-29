@@ -173,19 +173,25 @@ export default function App() {
   async function loadAll() {
     setLoading(true)
     try {
-      const [
-        { data: y }, { data: t }, { data: b }, { data: w }, { data: s }, { data: p },
-        { data: f }, { count: fc },
-      ] = await Promise.all([
+      const results = await Promise.allSettled([
         supabase.from('yarns').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('tools').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('books').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('works').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
-        supabase.from('shops').select('name').order('created_at', { ascending: true }),
+        supabase.from('shops').select('name').eq('user_id', user.id).order('created_at', { ascending: true }),
         supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
         supabase.from('follows').select('*').eq('follower_id', user.id),
         supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
       ])
+      const val = (i) => results[i].status === 'fulfilled' ? results[i].value : {}
+      const y = val(0).data
+      const t = val(1).data
+      const b = val(2).data
+      const w = val(3).data
+      const s = val(4).data
+      const p = val(5).data
+      const f = val(6).data
+      const fc = val(7).count
       supabase.from('work_yarns').select('work_id')
         .then(({ data: yc }) => {
           const countsMap = {}
