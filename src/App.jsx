@@ -337,11 +337,13 @@ export default function App() {
     const img_url = await resolveImgUrl(data, imgFile)
     const record = { user_id: user.id, name: data.name, color: data.color, colorname: data.colorname, material: data.material, lot: data.lot, count: data.count, price: data.price, needle: data.needle, label: data.label, memo: data.memo, shops: data.shops, img_url }
     if (data.id) {
-      const { data: updated } = await supabase.from('yarns').update(record).eq('id', data.id).select().single()
-      setYarns((prev) => prev.map((y) => y.id === data.id ? updated : y))
+      const { data: updated, error } = await supabase.from('yarns').update(record).eq('id', data.id).select().single()
+      if (error) throw new Error(error.message)
+      if (updated) setYarns((prev) => prev.map((y) => y.id === data.id ? updated : y))
     } else {
       const maxOrder = yarns.reduce((m, y) => Math.max(m, y.sort_order || 0), 0)
-      const { data: inserted } = await supabase.from('yarns').insert([{ ...record, sort_order: maxOrder + 1 }]).select().single()
+      const { data: inserted, error } = await supabase.from('yarns').insert([{ ...record, sort_order: maxOrder + 1 }]).select().single()
+      if (error) throw new Error(error.message)
       if (inserted) setYarns((prev) => [...prev, inserted])
     }
   }
