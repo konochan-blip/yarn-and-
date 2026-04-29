@@ -73,6 +73,10 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   }
 
   async function handleSave() {
+    if (!profile?.handle && handle && !/^[a-zA-Z0-9_.-]+$/.test(handle)) {
+      setError('IDは英数字・_・-・. のみ使えます')
+      return
+    }
     setSaving(true)
     setError('')
     try {
@@ -99,6 +103,22 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
         <label>ユーザー名（表示名）</label>
         <input type="text" value={username} placeholder="例：にわとり編み物部" onChange={(e) => setUsername(e.target.value)} />
       </div>
+
+      {!profile?.handle && (
+        <div className="field">
+          <label>ID</label>
+          <div style={{ position: 'relative' }}>
+            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', fontSize: '14px' }}>@</span>
+            <input type="text" value={handle} placeholder="例：knitting_lover" style={{ paddingLeft: '26px' }}
+              autoCapitalize="none" autoCorrect="off"
+              onChange={(e) => setHandle(e.target.value.replace(/\s/g, ''))} />
+          </div>
+          <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+            英数字・_・-・. が使えます<br />
+            yarn-and.com/user/{handle || '（ID）'}
+          </div>
+        </div>
+      )}
 
       <div className="field">
         <label>自己紹介</label>
