@@ -474,6 +474,16 @@ export default function App() {
   async function deleteWorkCategory(name) {
     await supabase.from('work_categories').delete().eq('user_id', user.id).eq('name', name)
     setWorkCategories((prev) => prev.filter((c) => c !== name))
+    const affected = works.filter((w) => (w.categories || []).includes(name))
+    await Promise.all(affected.map((w) => {
+      const categories = (w.categories || []).filter((c) => c !== name)
+      return supabase.from('works').update({ categories }).eq('id', w.id)
+    }))
+    setWorks((prev) => prev.map((w) =>
+      (w.categories || []).includes(name)
+        ? { ...w, categories: (w.categories || []).filter((c) => c !== name) }
+        : w
+    ))
   }
 
   function handleYarnChange(workId, delta) {
