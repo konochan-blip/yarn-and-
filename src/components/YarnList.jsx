@@ -118,6 +118,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                 const tags = [
                   item.colorname ? <span key="cn" className="tag color-name">{item.colorname}</span> : null,
                   item.material ? <span key="mt" className="tag">{item.material}</span> : null,
+                  item.needle ? <span key="nd" className="tag">🪡 {item.needle}</span> : null,
                 ].filter(Boolean)
                 const shopTags = (item.shops || []).map((s) => <span key={s} className="tag shop">{s}</span>)
                 const workTags = works
