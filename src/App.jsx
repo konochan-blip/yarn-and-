@@ -579,7 +579,7 @@ export default function App() {
             onViewChange={changeBooksView} onOpenDetail={setDetailBook} onReorder={reorderBooks} />
         )}
         {tab === 'works' && (
-          <WorksList works={works} yarns={yarns} sort={worksSort} needleFilter={needleFilter} categoryFilter={categoryFilter} view={worksView}
+          <WorksList works={works} yarns={yarns} workCategories={workCategories} sort={worksSort} needleFilter={needleFilter} categoryFilter={categoryFilter} view={worksView}
             yarnCounts={yarnCountsMap}
             onSortChange={setWorksSort} onNeedleFilterChange={setNeedleFilter} onCategoryFilterChange={setCategoryFilter}
             onViewChange={changeWorksView} onOpenDetail={setDetailWork} onReorder={reorderWorks} />

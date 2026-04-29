@@ -4,8 +4,8 @@ import SortableItem, { DragHandle } from './SortableItem'
 import { WorkSvgSm, YarnSvgSm } from '../lib/svgs'
 import { MiniYarnBall } from './WorkDetail'
 
-export default function WorksList({ works, yarns, sort, needleFilter, categoryFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onCategoryFilterChange, onViewChange, onOpenDetail, onReorder }) {
-  const allCategories = [...new Set(works.flatMap((w) => w.categories || []))].sort((a, b) => a.localeCompare(b, 'ja'))
+export default function WorksList({ works, yarns, workCategories, sort, needleFilter, categoryFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onCategoryFilterChange, onViewChange, onOpenDetail, onReorder }) {
+  const allCategories = [...new Set([...(workCategories || []), 'その他'].filter((c) => works.some((w) => (w.categories || []).includes(c))))]
 
   let list = [...works]
   if (needleFilter) list = list.filter((w) => w.needle === needleFilter)
