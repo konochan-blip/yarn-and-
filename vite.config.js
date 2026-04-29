@@ -67,14 +67,9 @@ export default defineConfig({
             },
           },
           {
-            // Supabase API (データ) — ネットワーク優先、オフライン時はキャッシュ
+            // Supabase API (データ) — キャッシュなし、常にネットワークから取得
             urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'supabase-api',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
-              networkTimeoutSeconds: 10,
-            },
+            handler: 'NetworkOnly',
           },
         ],
       },
