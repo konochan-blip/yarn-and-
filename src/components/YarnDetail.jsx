@@ -36,6 +36,7 @@ export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onO
       <div className="detail-row"><span className="dl">色</span><span className="dv">{yarn.colorname || '—'}</span></div>
       <div className="detail-row"><span className="dl">素材</span><span className="dv">{yarn.material || '—'}</span></div>
       <div className="detail-row"><span className="dl">ロット</span><span className="dv">{yarn.lot || '—'}</span></div>
+      {yarn.needle ? <div className="detail-row"><span className="dl">適合針</span><span className="dv">{yarn.needle}</span></div> : null}
       {yarn.price ? <div className="detail-row"><span className="dl">定価</span><span className="dv">{yarn.price}</span></div> : null}
       <div className="detail-row"><span className="dl">本数</span><span className="dv">{yarn.count || 0} 本</span></div>
 
