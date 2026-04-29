@@ -85,7 +85,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
     }
 
     setDataLoading(true)
-    Promise.all([
+    Promise.allSettled([
       supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', profile.user_id),
       supabase.from('follows').select('id', { count: 'exact', head: true }).eq('follower_id', profile.user_id),
       supabase.from('yarns').select('*').eq('user_id', profile.user_id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
@@ -93,14 +93,15 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
       supabase.from('books').select('*').eq('user_id', profile.user_id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
       supabase.from('works').select('*').eq('user_id', profile.user_id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
       supabase.from('purchases').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
-    ]).then(([{ count: fc }, { count: ing }, { data: y }, { data: t }, { data: b }, { data: w }, { data: pur }]) => {
-      setFollowersCount(fc ?? 0)
-      setFollowingCount(ing ?? 0)
-      setProfileYarns(y || [])
-      setProfileTools(t || [])
-      setProfileBooks(b || [])
-      setProfileWorks(w || [])
-      setProfilePurchases(pur || [])
+    ]).then((results) => {
+      const v = (i) => results[i].status === 'fulfilled' ? results[i].value : {}
+      setFollowersCount(v(0).count ?? 0)
+      setFollowingCount(v(1).count ?? 0)
+      setProfileYarns(v(2).data || [])
+      setProfileTools(v(3).data || [])
+      setProfileBooks(v(4).data || [])
+      setProfileWorks(v(5).data || [])
+      setProfilePurchases(v(6).data || [])
       setDataLoading(false)
     })
   }, [profile?.user_id])
