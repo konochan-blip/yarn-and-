@@ -192,13 +192,16 @@ export default function App() {
       const p = val(5).data
       const f = val(6).data
       const fc = val(7).count
-      supabase.from('work_yarns').select('work_id')
-        .then(({ data: yc }) => {
-          const countsMap = {}
-          yc?.forEach(({ work_id }) => { countsMap[work_id] = (countsMap[work_id] || 0) + 1 })
-          setYarnCountsMap(countsMap)
-        })
-        .catch(() => {})
+      const workIds = (w || []).map((work) => work.id)
+      if (workIds.length > 0) {
+        supabase.from('work_yarns').select('work_id').in('work_id', workIds)
+          .then(({ data: yc }) => {
+            const countsMap = {}
+            yc?.forEach(({ work_id }) => { countsMap[work_id] = (countsMap[work_id] || 0) + 1 })
+            setYarnCountsMap(countsMap)
+          })
+          .catch(() => {})
+      }
       setYarns(y || [])
       setTools(t || [])
       setBooks(b || [])
