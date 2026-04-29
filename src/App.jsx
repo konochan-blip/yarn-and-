@@ -175,7 +175,7 @@ export default function App() {
     try {
       const [
         { data: y }, { data: t }, { data: b }, { data: w }, { data: s }, { data: p },
-        { data: f }, { count: fc }, { data: yc },
+        { data: f }, { count: fc },
       ] = await Promise.all([
         supabase.from('yarns').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('tools').select('*').eq('user_id', user.id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
@@ -185,11 +185,14 @@ export default function App() {
         supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
         supabase.from('follows').select('*').eq('follower_id', user.id),
         supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
-        supabase.from('work_yarns').select('work_id'),
       ])
-      const countsMap = {}
-      yc?.forEach(({ work_id }) => { countsMap[work_id] = (countsMap[work_id] || 0) + 1 })
-      setYarnCountsMap(countsMap)
+      supabase.from('work_yarns').select('work_id')
+        .then(({ data: yc }) => {
+          const countsMap = {}
+          yc?.forEach(({ work_id }) => { countsMap[work_id] = (countsMap[work_id] || 0) + 1 })
+          setYarnCountsMap(countsMap)
+        })
+        .catch(() => {})
       setYarns(y || [])
       setTools(t || [])
       setBooks(b || [])
