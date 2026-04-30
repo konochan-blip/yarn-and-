@@ -7,6 +7,19 @@ import BookDetail from './BookDetail'
 import WorkDetail from './WorkDetail'
 import PurchaseDetail from './PurchaseDetail'
 
+function knittingAge(since) {
+  if (!since) return null
+  const [y, m] = since.split('-').map(Number)
+  const now = new Date()
+  let years = now.getFullYear() - y
+  let months = now.getMonth() + 1 - m
+  if (months < 0) { years--; months += 12 }
+  if (years === 0 && months === 0) return '1ヶ月未満'
+  if (years === 0) return `${months}ヶ月`
+  if (months === 0) return `${years}年`
+  return `${years}年${months}ヶ月`
+}
+
 function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 300, display: 'flex', flexDirection: 'column' }}>
@@ -213,6 +226,9 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
               </>
             )}
           </div>
+          {profile.knitting_since && (
+            <div style={{ fontSize: '12px', color: 'var(--accent)', marginBottom: '6px' }}>編み物歴 {knittingAge(profile.knitting_since)}</div>
+          )}
           {profile.bio ? (
             <div className="mypage-bio">{profile.bio}</div>
           ) : (

@@ -15,6 +15,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   const [shopUrlInput, setShopUrlInput] = useState('')
   const [imgFile, setImgFile] = useState(null)
   const [imgPreview, setImgPreview] = useState(null)
+  const [knittingSince, setKnittingSince] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const imgInputRef = useRef()
@@ -34,6 +35,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setFavoriteShops(profile?.favorite_shops || [])
     setShopNameInput('')
     setShopUrlInput('')
+    setKnittingSince(profile?.knitting_since || '')
     setImgFile(null)
     setImgPreview(profile?.avatar_url || null)
   }, [open, profile])
@@ -80,7 +82,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setSaving(true)
     setError('')
     try {
-      await onSave({ username, handle, bio, is_public: isPublic, avatar_url: imgPreview || '', social_links: socialLinks, favorite_shops: favoriteShops }, imgFile)
+      await onSave({ username, handle, bio, is_public: isPublic, avatar_url: imgPreview || '', social_links: socialLinks, favorite_shops: favoriteShops, knitting_since: knittingSince || null }, imgFile)
       onClose()
     } catch (e) {
       setError(e.message || 'プロフィールの保存に失敗しました')
@@ -119,6 +121,30 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
           </div>
         </div>
       )}
+
+      <div className="field">
+        <label>編み物を始めた年月</label>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <select value={knittingSince ? knittingSince.split('-')[0] : ''} onChange={(e) => {
+            const m = knittingSince ? knittingSince.split('-')[1] : '01'
+            setKnittingSince(e.target.value ? `${e.target.value}-${m}` : '')
+          }} style={{ flex: 1 }}>
+            <option value="">年</option>
+            {Array.from({ length: new Date().getFullYear() - 1969 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+              <option key={y} value={y}>{y}年</option>
+            ))}
+          </select>
+          <select value={knittingSince ? knittingSince.split('-')[1] : ''} onChange={(e) => {
+            const y = knittingSince ? knittingSince.split('-')[0] : ''
+            if (y) setKnittingSince(`${y}-${e.target.value}`)
+          }} style={{ flex: 1 }} disabled={!knittingSince}>
+            {[...Array(12)].map((_, i) => (
+              <option key={i + 1} value={String(i + 1).padStart(2, '0')}>{i + 1}月</option>
+            ))}
+          </select>
+          {knittingSince && <button type="button" onClick={() => setKnittingSince('')} style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '16px', padding: '0 4px' }}>×</button>}
+        </div>
+      </div>
 
       <div className="field">
         <label>自己紹介</label>

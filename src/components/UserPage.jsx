@@ -34,6 +34,19 @@ function UserListSheet({ title, users, loading, onClose }) {
   )
 }
 
+function knittingAge(since) {
+  if (!since) return null
+  const [y, m] = since.split('-').map(Number)
+  const now = new Date()
+  let years = now.getFullYear() - y
+  let months = now.getMonth() + 1 - m
+  if (months < 0) { years--; months += 12 }
+  if (years === 0 && months === 0) return '1ヶ月未満'
+  if (years === 0) return `${months}ヶ月`
+  if (months === 0) return `${years}年`
+  return `${years}年${months}ヶ月`
+}
+
 export default function UserPage({ username }) {
   const [profile, setProfile] = useState(null)
   const [works, setWorks] = useState([])
@@ -145,7 +158,8 @@ export default function UserPage({ username }) {
               {profile.avatar_url ? <img src={profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <PersonSvg />}
             </div>
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '20px', color: 'var(--text-primary)', marginBottom: '4px' }}>{profile.username}</div>
-            {profile.handle && <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>@{profile.handle}</div>}
+            {profile.handle && <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>@{profile.handle}</div>}
+            {profile.knitting_since && <div style={{ fontSize: '11px', color: 'var(--accent)', marginBottom: '8px' }}>編み物歴 {knittingAge(profile.knitting_since)}</div>}
             {profile.bio && <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '16px', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{profile.bio}</div>}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
               <button onClick={openFollowers} style={{ textAlign: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: '8px' }}>

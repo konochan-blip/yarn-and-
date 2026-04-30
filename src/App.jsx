@@ -296,7 +296,7 @@ export default function App() {
   // ────────── Profile CRUD ──────────────────────
   async function saveProfile(data, imgFile) {
     const avatar_url = await resolveImgUrl({ img_url: data.avatar_url }, imgFile)
-    const record = { user_id: user.id, username: data.username, handle: data.handle || null, bio: data.bio, is_public: data.is_public, avatar_url, social_links: data.social_links || [], favorite_shops: data.favorite_shops || [] }
+    const record = { user_id: user.id, username: data.username, handle: data.handle || null, bio: data.bio, is_public: data.is_public, avatar_url, social_links: data.social_links || [], favorite_shops: data.favorite_shops || [], knitting_since: data.knitting_since || null }
     const { data: upserted, error } = await supabase.from('profiles').upsert(record, { onConflict: 'user_id' }).select().single()
     if (error) {
       if (error.message?.includes('profiles_handle_unique') || (error.message?.includes('duplicate key') && error.message?.includes('handle')))
