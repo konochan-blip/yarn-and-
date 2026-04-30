@@ -146,7 +146,7 @@ export default function UserPage({ username }) {
             </div>
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '20px', color: 'var(--text-primary)', marginBottom: '4px' }}>{profile.username}</div>
             {profile.handle && <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>@{profile.handle}</div>}
-            {profile.bio && <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '16px' }}>{profile.bio}</div>}
+            {profile.bio && <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '16px', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{profile.bio}</div>}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
               <button onClick={openFollowers} style={{ textAlign: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: '8px' }}>
                 <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 600, fontSize: '22px', color: 'var(--accent)' }}>{counts.followers ?? '…'}</div>
