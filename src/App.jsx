@@ -660,7 +660,7 @@ export default function App() {
         onClose={() => setChangeHandleOpen(false)}
         onSaved={(updated) => { setProfile(updated); setChangeHandleOpen(false) }} />
       <ProfileForm open={profileFormOpen} profile={profile}
-        onSave={saveProfile} onClose={() => setProfileFormOpen(false)} />
+        onSave={saveProfile} onClose={() => { setProfileFormOpen(false); setMyPageOpen(true) }} />
       <PublicProfile
         profile={viewingProfile}
         currentUserId={user?.id}
