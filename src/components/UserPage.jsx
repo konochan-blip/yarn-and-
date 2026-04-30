@@ -40,6 +40,7 @@ export default function UserPage({ username }) {
   const [yarns, setYarns] = useState([])
   const [tools, setTools] = useState([])
   const [books, setBooks] = useState([])
+  const [purchases, setPurchases] = useState([])
   const [counts, setCounts] = useState({ followers: null, following: null })
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
@@ -60,26 +61,22 @@ export default function UserPage({ username }) {
         .maybeSingle()
       if (!p) { setNotFound(true); setLoading(false); return }
       setProfile(p)
-      const [
-        { data: w },
-        { data: y },
-        { data: t },
-        { data: b },
-        { count: fc },
-        { count: ing },
-      ] = await Promise.all([
+      const results = await Promise.allSettled([
         supabase.from('works').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
         supabase.from('yarns').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
         supabase.from('tools').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
         supabase.from('books').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
         supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', p.user_id),
         supabase.from('follows').select('id', { count: 'exact', head: true }).eq('follower_id', p.user_id),
+        supabase.from('purchases').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
       ])
-      setWorks(w || [])
-      setYarns(y || [])
-      setTools(t || [])
-      setBooks(b || [])
-      setCounts({ followers: fc ?? 0, following: ing ?? 0 })
+      const v = (i) => results[i].status === 'fulfilled' ? results[i].value : {}
+      setWorks(v(0).data || [])
+      setYarns(v(1).data || [])
+      setTools(v(2).data || [])
+      setBooks(v(3).data || [])
+      setCounts({ followers: v(4).count ?? 0, following: v(5).count ?? 0 })
+      setPurchases(v(6).data || [])
       setLoading(false)
     }
     load()
@@ -123,10 +120,11 @@ export default function UserPage({ username }) {
   )
 
   const TABS = [
-    { key: 'work', label: '作品', count: works.length },
-    { key: 'yarn', label: '毛糸', count: yarns.length },
-    { key: 'tool', label: '道具', count: tools.length },
-    { key: 'book', label: '書籍', count: books.length },
+    { key: 'yarn',     label: '毛糸',   count: yarns.length },
+    { key: 'tool',     label: '道具',   count: tools.length },
+    { key: 'book',     label: '書籍',   count: books.length },
+    { key: 'work',     label: '作品',   count: works.length },
+    { key: 'purchase', label: '購入品', count: purchases.length },
   ]
 
   return (
@@ -289,6 +287,26 @@ export default function UserPage({ username }) {
                           <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{book.author}</div>
                         )}
                       </div>
+                    </div>
+                  ))}
+                </div>
+          )}
+
+          {activeTab === 'purchase' && (
+            purchases.length === 0
+              ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ購入品が登録されていません</div>
+              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
+                  {purchases.map((p) => (
+                    <div key={p.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                      {p.img_url
+                        ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🛍️</div>
+                      }
+                      {p.name && (
+                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
+                          <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
