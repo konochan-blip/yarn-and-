@@ -1,23 +1,27 @@
 import { useState, useEffect } from 'react'
 import { NOTICES } from '../lib/notices'
+import { PersonSvg } from '../lib/svgs'
 
 const STORAGE_KEY = 'notices_last_read'
 
-export default function Header({ profile, onOpenMyPage, onOpenSettings, onSignOut }) {
+export default function Header({ profile, onOpenMyPage, onOpenSettings, onSignOut, followNotifications = [], onMarkNotificationsRead, onOpenProfile }) {
   const [open, setOpen] = useState(false)
   const [hasUnread, setHasUnread] = useState(false)
+
+  const unreadFollows = followNotifications.filter((n) => !n.read).length
 
   useEffect(() => {
     const lastRead = localStorage.getItem(STORAGE_KEY) || ''
     const latest = NOTICES[0]?.date || ''
-    setHasUnread(latest > lastRead)
-  }, [])
+    setHasUnread(latest > lastRead || unreadFollows > 0)
+  }, [unreadFollows])
 
   function openNotices() {
     setOpen(true)
     const latest = NOTICES[0]?.date || ''
     localStorage.setItem(STORAGE_KEY, latest)
     setHasUnread(false)
+    if (onMarkNotificationsRead) onMarkNotificationsRead()
   }
 
   return (
@@ -42,12 +46,14 @@ export default function Header({ profile, onOpenMyPage, onOpenSettings, onSignOu
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            {hasUnread && (
+            {(hasUnread || unreadFollows > 0) && (
               <span style={{
-                position: 'absolute', top: '2px', right: '2px',
-                width: '8px', height: '8px', borderRadius: '50%',
+                position: 'absolute', top: '-3px', right: '-3px',
+                minWidth: '16px', height: '16px', borderRadius: '99px',
                 background: '#E05A5A', border: '1.5px solid var(--bg)',
-              }} />
+                fontSize: '9px', color: '#fff', fontWeight: 700,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px',
+              }}>{unreadFollows > 0 ? unreadFollows : ''}</span>
             )}
           </button>
 
@@ -92,7 +98,27 @@ export default function Header({ profile, onOpenMyPage, onOpenSettings, onSignOu
               <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', fontSize: '20px', color: 'var(--text-tertiary)', cursor: 'pointer', lineHeight: 1, padding: '4px' }}>×</button>
             </div>
             <div style={{ overflowY: 'auto', flex: 1, paddingBottom: '16px' }}>
-              {NOTICES.length === 0 ? (
+              {followNotifications.length > 0 && (
+                <>
+                  <div style={{ padding: '10px 20px 6px', fontSize: '11px', color: 'var(--text-tertiary)', letterSpacing: '0.06em' }}>フォロー通知</div>
+                  {followNotifications.map((n) => (
+                    <div key={n.id}
+                      onClick={() => { if (n.from_profile && onOpenProfile) { onOpenProfile(n.from_profile); setOpen(false) } }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 20px', borderBottom: '1px solid var(--border-light)', cursor: n.from_profile ? 'pointer' : 'default', background: n.read ? 'transparent' : 'var(--accent-light)' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: 'var(--accent-light)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid var(--border)' }}>
+                        {n.from_profile?.avatar_url ? <img src={n.from_profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <PersonSvg />}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{n.from_profile?.username || 'ユーザー'}</span>
+                        <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}> さんがフォローしました</span>
+                        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '2px' }}>{new Date(n.created_at).toLocaleDateString('ja-JP')}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {NOTICES.length > 0 && <div style={{ padding: '10px 20px 6px', fontSize: '11px', color: 'var(--text-tertiary)', letterSpacing: '0.06em' }}>アップデート情報</div>}
+                </>
+              )}
+              {NOTICES.length === 0 && followNotifications.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '32px', fontSize: '13px', color: 'var(--text-tertiary)' }}>お知らせはありません</div>
               ) : NOTICES.map((n, i) => (
                 <div key={i} style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-light)' }}>

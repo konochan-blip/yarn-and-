@@ -146,6 +146,7 @@ export default function App() {
   // ────────── Social ─────────────────────────────
   const [follows,             setFollows]             = useState([])   // who I follow
   const [followersCount,      setFollowersCount]      = useState(0)    // my follower count
+  const [followNotifications, setFollowNotifications] = useState([])
   const [feedWorks,           setFeedWorks]           = useState([])
   const [feedProfiles,        setFeedProfiles]        = useState([])
   const [feedLoaded,          setFeedLoaded]          = useState(false)
@@ -220,6 +221,14 @@ export default function App() {
       supabase.from('work_categories').select('name').eq('user_id', user.id).order('created_at', { ascending: true })
         .then(({ data: wc }) => setWorkCategories((wc || []).map((row) => row.name)))
         .catch(() => {})
+      supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30)
+        .then(async ({ data: notifs }) => {
+          if (!notifs || notifs.length === 0) { setFollowNotifications([]); return }
+          const fromIds = [...new Set(notifs.map((n) => n.from_user_id).filter(Boolean))]
+          const { data: profs } = await supabase.from('profiles').select('*').in('user_id', fromIds)
+          const pm = {}; profs?.forEach((p) => { pm[p.user_id] = p })
+          setFollowNotifications(notifs.map((n) => ({ ...n, from_profile: pm[n.from_user_id] || null })))
+        }).catch(() => {})
       supabase.from('purchases').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
         .then(({ data: pur }) => setPurchases(pur || []))
         .catch(() => {})
@@ -310,6 +319,7 @@ export default function App() {
   async function followUser(userId) {
     const { data } = await supabase.from('follows').insert([{ follower_id: user.id, following_id: userId }]).select().single()
     if (!data) return
+    supabase.from('notifications').insert({ user_id: userId, type: 'follow', from_user_id: user.id, read: false }).then(() => {}).catch(() => {})
     setFollows((prev) => [...prev, data])
     // fetch their profile + works and add to feed
     const [{ data: pr }, { data: w }] = await Promise.all([
@@ -498,6 +508,13 @@ export default function App() {
     ))
   }
 
+  async function markNotificationsRead() {
+    const unreadIds = followNotifications.filter((n) => !n.read).map((n) => n.id)
+    if (unreadIds.length === 0) return
+    await supabase.from('notifications').update({ read: true }).in('id', unreadIds)
+    setFollowNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+  }
+
   function handleYarnChange(workId, delta) {
     setYarnCountsMap((prev) => ({ ...prev, [workId]: Math.max(0, (prev[workId] || 0) + delta) }))
   }
@@ -550,7 +567,8 @@ export default function App() {
   if (loading) {
     return (
       <>
-        <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut} />
+        <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut}
+          followNotifications={followNotifications} onMarkNotificationsRead={markNotificationsRead} onOpenProfile={setViewingProfile} />
         <main className="main"><div className="loading">読み込み中…</div></main>
         <Dock tab={tab} onChange={changeTab} />
       </>
@@ -559,7 +577,8 @@ export default function App() {
 
   return (
     <>
-      <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut} />
+      <Header profile={profile} onOpenMyPage={() => setMyPageOpen(true)} onOpenSettings={() => setSettingsOpen(true)} onSignOut={handleSignOut}
+        followNotifications={followNotifications} onMarkNotificationsRead={markNotificationsRead} onOpenProfile={setViewingProfile} />
       <main className="main">
         {tab === 'yarn' && (
           <YarnList yarns={yarns} works={works} sort={yarnSort} view={yarnView} onSortChange={setYarnSort}
