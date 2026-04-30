@@ -1,4 +1,17 @@
 import { useState, useCallback } from 'react'
+
+function knittingAge(since) {
+  if (!since) return null
+  const [y, m] = since.split('-').map(Number)
+  const now = new Date()
+  let years = now.getFullYear() - y
+  let months = now.getMonth() + 1 - m
+  if (months < 0) { years--; months += 12 }
+  if (years === 0 && months === 0) return '1ヶ月未満'
+  if (years === 0) return `${months}ヶ月`
+  if (months === 0) return `${years}年`
+  return `${years}年${months}ヶ月`
+}
 import { supabase } from '../lib/supabase'
 import { PersonSvg } from '../lib/svgs'
 
@@ -98,6 +111,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
             </div>
             <div className="mypage-username">{username}</div>
             {profile?.handle && <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>@{profile.handle}</div>}
+            {profile?.knitting_since && <div style={{ fontSize: '12px', color: 'var(--accent)', marginBottom: '6px' }}>編み物歴 {knittingAge(profile.knitting_since)}</div>}
             <div className={`mypage-badge ${isPublic ? 'public' : 'private'}`}>
               {isPublic ? (
                 <>
