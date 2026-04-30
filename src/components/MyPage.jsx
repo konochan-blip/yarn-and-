@@ -112,6 +112,13 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
             <div className="mypage-username">{username}</div>
             {profile?.handle && <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>@{profile.handle}</div>}
             {profile?.knitting_since && <div style={{ fontSize: '12px', color: 'var(--accent)', marginBottom: '6px' }}>編み物歴 {knittingAge(profile.knitting_since)}</div>}
+            {profile?.needle_types?.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4px', marginBottom: '8px' }}>
+                {profile.needle_types.map((t) => (
+                  <span key={t} style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '99px', background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 500 }}>{t}</span>
+                ))}
+              </div>
+            )}
             <div className={`mypage-badge ${isPublic ? 'public' : 'private'}`}>
               {isPublic ? (
                 <>

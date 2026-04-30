@@ -16,6 +16,8 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   const [imgFile, setImgFile] = useState(null)
   const [imgPreview, setImgPreview] = useState(null)
   const [knittingSince, setKnittingSince] = useState('')
+  const [needleTypes, setNeedleTypes] = useState([])
+  const [needleInput, setNeedleInput] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const imgInputRef = useRef()
@@ -36,6 +38,8 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setShopNameInput('')
     setShopUrlInput('')
     setKnittingSince(profile?.knitting_since || '')
+    setNeedleTypes(profile?.needle_types || [])
+    setNeedleInput('')
     setImgFile(null)
     setImgPreview(profile?.avatar_url || null)
   }, [open, profile])
@@ -82,7 +86,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
     setSaving(true)
     setError('')
     try {
-      await onSave({ username, handle, bio, is_public: isPublic, avatar_url: imgPreview || '', social_links: socialLinks, favorite_shops: favoriteShops, knitting_since: knittingSince || null }, imgFile)
+      await onSave({ username, handle, bio, is_public: isPublic, avatar_url: imgPreview || '', social_links: socialLinks, favorite_shops: favoriteShops, knitting_since: knittingSince || null, needle_types: needleTypes }, imgFile)
       onClose()
     } catch (e) {
       setError(e.message || 'プロフィールの保存に失敗しました')
@@ -143,6 +147,32 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
             ))}
           </select>
           {knittingSince && <button type="button" onClick={() => setKnittingSince('')} style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '16px', padding: '0 4px' }}>×</button>}
+        </div>
+      </div>
+
+      <div className="field">
+        <label>使う針</label>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+          {['かぎ針', '棒針', '輪針'].map((t) => (
+            <button key={t} type="button" onClick={() => setNeedleTypes((prev) => prev.includes(t) ? prev.filter((n) => n !== t) : [...prev, t])}
+              style={{ padding: '5px 12px', borderRadius: '99px', border: '1px solid var(--border)', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit',
+                background: needleTypes.includes(t) ? 'var(--accent)' : 'var(--surface)',
+                color: needleTypes.includes(t) ? '#fff' : 'var(--text-secondary)' }}>
+              {t}
+            </button>
+          ))}
+        </div>
+        {needleTypes.filter((t) => !['かぎ針','棒針','輪針'].includes(t)).map((t) => (
+          <div key={t} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'var(--accent)', color: '#fff', borderRadius: '99px', padding: '4px 10px', fontSize: '12px', marginRight: '6px', marginBottom: '6px' }}>
+            {t}
+            <button type="button" onClick={() => setNeedleTypes((prev) => prev.filter((n) => n !== t))} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '14px', lineHeight: 1, padding: 0 }}>×</button>
+          </div>
+        ))}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <input type="text" value={needleInput} placeholder="その他（例：レース針）" onChange={(e) => setNeedleInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); const v = needleInput.trim(); if (v && !needleTypes.includes(v)) { setNeedleTypes((prev) => [...prev, v]); setNeedleInput('') } } }}
+            style={{ flex: 1 }} />
+          <button type="button" className="btn primary" style={{ padding: '8px 14px', flexShrink: 0 }} onClick={() => { const v = needleInput.trim(); if (v && !needleTypes.includes(v)) { setNeedleTypes((prev) => [...prev, v]); setNeedleInput('') } }}>追加</button>
         </div>
       </div>
 
