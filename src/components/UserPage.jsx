@@ -159,7 +159,7 @@ export default function UserPage({ username }) {
             </div>
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '20px', color: 'var(--text-primary)', marginBottom: '4px' }}>{profile.username}</div>
             {profile.handle && <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>@{profile.handle}</div>}
-            {profile.knitting_since && <div style={{ fontSize: '11px', color: 'var(--text-primary)', marginBottom: '6px', textDecoration: 'underline wavy', textDecorationColor: 'var(--accent)', textUnderlineOffset: '3px' }}>🧶 編み物歴 {knittingAge(profile.knitting_since)}</div>}
+            {profile.knitting_since && <div style={{ fontSize: '11px', color: 'var(--text-primary)', marginBottom: '6px' }}>🧶 <span style={{ textDecoration: 'underline wavy', textDecorationColor: 'var(--accent)', textUnderlineOffset: '3px' }}>編み物歴 {knittingAge(profile.knitting_since)}</span></div>}
             {profile.needle_types?.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4px', marginBottom: '8px' }}>
                 {profile.needle_types.map((t, i) => {
