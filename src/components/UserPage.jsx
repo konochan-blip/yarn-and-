@@ -169,7 +169,7 @@ export default function UserPage({ username }) {
                     { bg: '#EAF0FF', color: '#4455CC' },
                     { bg: '#FFF0E0', color: '#C06520' },
                     { bg: '#F2EAFF', color: '#7040C0' },
-                    { bg: '#E0F5F5', color: '#2A7575' },
+                    { bg: '#FFFCE0', color: '#9A7010' },
                   ]
                   const c = palette[i % palette.length]
                   return <span key={t} style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '99px', background: c.bg, color: c.color, fontWeight: 500 }}>{t}</span>
