@@ -162,9 +162,18 @@ export default function UserPage({ username }) {
             {profile.knitting_since && <div style={{ fontSize: '11px', color: 'var(--accent)', marginBottom: '6px' }}>編み物歴 {knittingAge(profile.knitting_since)}</div>}
             {profile.needle_types?.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4px', marginBottom: '8px' }}>
-                {profile.needle_types.map((t) => (
-                  <span key={t} style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '99px', background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 500 }}>{t}</span>
-                ))}
+                {profile.needle_types.map((t, i) => {
+                  const palette = [
+                    { bg: '#FDE8EF', color: '#C04070' },
+                    { bg: '#E8F4EE', color: '#3A7A55' },
+                    { bg: '#EAF0FF', color: '#4455CC' },
+                    { bg: '#FFF0E0', color: '#C06520' },
+                    { bg: '#F2EAFF', color: '#7040C0' },
+                    { bg: '#E0F5F5', color: '#2A7575' },
+                  ]
+                  const c = palette[i % palette.length]
+                  return <span key={t} style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '99px', background: c.bg, color: c.color, fontWeight: 500 }}>{t}</span>
+                })}
               </div>
             )}
             {profile.bio && <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '16px', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{profile.bio}</div>}
