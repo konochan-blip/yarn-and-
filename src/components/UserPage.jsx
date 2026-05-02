@@ -66,31 +66,36 @@ export default function UserPage({ username }) {
     if (!username) return
     async function load() {
       setLoading(true)
-      const { data: p } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('is_public', true)
-        .or(`handle.eq.${username},username.eq.${username}`)
-        .maybeSingle()
-      if (!p) { setNotFound(true); setLoading(false); return }
-      setProfile(p)
-      const results = await Promise.allSettled([
-        supabase.from('works').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
-        supabase.from('yarns').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
-        supabase.from('tools').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
-        supabase.from('books').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
-        supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', p.user_id),
-        supabase.from('follows').select('id', { count: 'exact', head: true }).eq('follower_id', p.user_id),
-        supabase.from('purchases').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
-      ])
-      const v = (i) => results[i].status === 'fulfilled' ? results[i].value : {}
-      setWorks(v(0).data || [])
-      setYarns(v(1).data || [])
-      setTools(v(2).data || [])
-      setBooks(v(3).data || [])
-      setCounts({ followers: v(4).count ?? 0, following: v(5).count ?? 0 })
-      setPurchases(v(6).data || [])
-      setLoading(false)
+      try {
+        const { data: p } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('is_public', true)
+          .or(`handle.eq.${username},username.eq.${username}`)
+          .maybeSingle()
+        if (!p) { setNotFound(true); setLoading(false); return }
+        setProfile(p)
+        const results = await Promise.allSettled([
+          supabase.from('works').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
+          supabase.from('yarns').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
+          supabase.from('tools').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
+          supabase.from('books').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
+          supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', p.user_id),
+          supabase.from('follows').select('id', { count: 'exact', head: true }).eq('follower_id', p.user_id),
+          supabase.from('purchases').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
+        ])
+        const v = (i) => results[i].status === 'fulfilled' ? results[i].value : {}
+        setWorks(v(0).data || [])
+        setYarns(v(1).data || [])
+        setTools(v(2).data || [])
+        setBooks(v(3).data || [])
+        setCounts({ followers: v(4).count ?? 0, following: v(5).count ?? 0 })
+        setPurchases(v(6).data || [])
+      } catch {
+        setNotFound(true)
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [username])
