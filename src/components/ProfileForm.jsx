@@ -121,7 +121,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>
             英数字・_・-・. が使えます<br />
-            yarn-and.com/user/{handle || '（ID）'}
+            www.yarn-and.com/user/{handle || '（ID）'}
           </div>
         </div>
       )}

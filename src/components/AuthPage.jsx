@@ -40,7 +40,7 @@ export default function AuthPage({ initialMode = 'login', onBack }) {
         setSignedUp(true)
       } else if (mode === 'forgot') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: 'https://yarn-and.com/',
+          redirectTo: 'https://www.yarn-and.com/',
         })
         if (error) throw error
         setResetSent(true)
