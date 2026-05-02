@@ -107,10 +107,10 @@ export default function App() {
   function changeTab(t) { setTab(t); localStorage.setItem('active_tab', t) }
 
   // Sort / filter
-  const [yarnSort,    setYarnSort]    = useState('new')
-  const [toolsSort,   setToolsSort]   = useState('new')
-  const [booksSort,   setBooksSort]   = useState('new')
-  const [worksSort,   setWorksSort]   = useState('new')
+  const [yarnSort,    setYarnSort]    = useState(() => localStorage.getItem('sort_yarn')  || 'new')
+  const [toolsSort,   setToolsSort]   = useState(() => localStorage.getItem('sort_tools') || 'new')
+  const [booksSort,   setBooksSort]   = useState(() => localStorage.getItem('sort_books') || 'new')
+  const [worksSort,   setWorksSort]   = useState(() => localStorage.getItem('sort_works') || 'new')
   const [yarnView,    setYarnView]    = useState(() => localStorage.getItem('view_yarn')  || 'list')
   const [toolsView,   setToolsView]   = useState(() => localStorage.getItem('view_tools') || 'list')
   const [booksView,   setBooksView]   = useState(() => localStorage.getItem('view_books') || 'list')
@@ -119,6 +119,10 @@ export default function App() {
   function changeToolsView(v) { setToolsView(v); localStorage.setItem('view_tools', v) }
   function changeBooksView(v) { setBooksView(v); localStorage.setItem('view_books', v) }
   function changeWorksView(v) { setWorksView(v); localStorage.setItem('view_works', v) }
+  function changeYarnSort(v)  { setYarnSort(v);  localStorage.setItem('sort_yarn',  v) }
+  function changeToolsSort(v) { setToolsSort(v); localStorage.setItem('sort_tools', v) }
+  function changeBooksSort(v) { setBooksSort(v); localStorage.setItem('sort_books', v) }
+  function changeWorksSort(v) { setWorksSort(v); localStorage.setItem('sort_works', v) }
   const [needleFilter, setNeedleFilter] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
 
@@ -584,22 +588,22 @@ export default function App() {
         followNotifications={followNotifications} onMarkNotificationsRead={markNotificationsRead} onOpenProfile={setViewingProfile} />
       <main className="main">
         {tab === 'yarn' && (
-          <YarnList yarns={yarns} works={works} sort={yarnSort} view={yarnView} onSortChange={setYarnSort}
+          <YarnList yarns={yarns} works={works} sort={yarnSort} view={yarnView} onSortChange={changeYarnSort}
             onViewChange={changeYarnView} onOpenDetail={setDetailYarn} onOpenLabelSearch={() => setLabelSearchOpen(true)}
             onReorder={reorderYarns} />
         )}
         {tab === 'tools' && (
-          <ToolsList tools={tools} sort={toolsSort} view={toolsView} onSortChange={setToolsSort}
+          <ToolsList tools={tools} sort={toolsSort} view={toolsView} onSortChange={changeToolsSort}
             onViewChange={changeToolsView} onOpenDetail={setDetailTool} onReorder={reorderTools} />
         )}
         {tab === 'books' && (
-          <BooksList books={books} works={works} sort={booksSort} view={booksView} onSortChange={setBooksSort}
+          <BooksList books={books} works={works} sort={booksSort} view={booksView} onSortChange={changeBooksSort}
             onViewChange={changeBooksView} onOpenDetail={setDetailBook} onReorder={reorderBooks} />
         )}
         {tab === 'works' && (
           <WorksList works={works} yarns={yarns} workCategories={workCategories} sort={worksSort} needleFilter={needleFilter} categoryFilter={categoryFilter} view={worksView}
             yarnCounts={yarnCountsMap}
-            onSortChange={setWorksSort} onNeedleFilterChange={setNeedleFilter} onCategoryFilterChange={setCategoryFilter}
+            onSortChange={changeWorksSort} onNeedleFilterChange={setNeedleFilter} onCategoryFilterChange={setCategoryFilter}
             onViewChange={changeWorksView} onOpenDetail={setDetailWork} onReorder={reorderWorks} />
         )}
         {tab === 'feed' && (
