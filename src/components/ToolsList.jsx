@@ -1,5 +1,5 @@
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortableItem, { DragHandle } from './SortableItem'
 import { ToolSvgSm } from '../lib/svgs'
 
@@ -18,7 +18,7 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
   const sorted = [...tools]
   if (sort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'name') sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
-  const canDrag = sort === 'default' && view === 'list'
+  const canDrag = sort === 'default'
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -53,25 +53,30 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
           </svg>
           まだ道具が登録されていないよ<br />「＋ 道具追加」から登録してみてね
         </div>
-      ) : view === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-          {sorted.map((tool) => (
-            <div key={tool.id} onClick={() => onOpenDetail(tool)}
-              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
-              {tool.img_url
-                ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
-              }
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
-                <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{tool.name || '名前なし'}</div>
-                {tool.size && <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{tool.size}</div>}
-              </div>
-            </div>
-          ))}
-        </div>
       ) : canDrag ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sorted.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          <SortableContext items={sorted.map((i) => i.id)} strategy={view === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
+            {view === 'grid' ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+                {sorted.map((tool) => (
+                  <SortableItem key={tool.id} id={tool.id}>
+                    {({ handleProps }) => (
+                      <div {...handleProps} onClick={() => onOpenDetail(tool)}
+                        style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative', touchAction: 'none' }}>
+                        {tool.img_url
+                          ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
+                        }
+                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
+                          <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{tool.name || '名前なし'}</div>
+                          {tool.size && <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{tool.size}</div>}
+                        </div>
+                      </div>
+                    )}
+                  </SortableItem>
+                ))}
+              </div>
+            ) : (
             <div className="list">
               {sorted.map((tool) => (
                 <SortableItem key={tool.id} id={tool.id}>
@@ -98,8 +103,25 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
                 </SortableItem>
               ))}
             </div>
+            )}
           </SortableContext>
         </DndContext>
+      ) : view === 'grid' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+          {sorted.map((tool) => (
+            <div key={tool.id} onClick={() => onOpenDetail(tool)}
+              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+              {tool.img_url
+                ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
+              }
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
+                <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{tool.name || '名前なし'}</div>
+                {tool.size && <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{tool.size}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="list">
           {sorted.map((tool) => (

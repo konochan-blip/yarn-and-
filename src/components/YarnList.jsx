@@ -1,5 +1,5 @@
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortableItem, { DragHandle } from './SortableItem'
 import { YarnSvgSm } from '../lib/svgs'
 
@@ -42,7 +42,7 @@ function ViewToggle({ view, onViewChange }) {
 
 export default function YarnList({ yarns, works, sort, view, onSortChange, onViewChange, onOpenDetail, onOpenLabelSearch, onReorder }) {
   const sorted = getSorted(yarns, sort)
-  const canDrag = sort === 'default' && view === 'list'
+  const canDrag = sort === 'default'
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -87,32 +87,37 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           </svg>
           まだ毛糸が登録されていないよ<br />「＋ 毛糸追加」から登録してみてね
         </div>
-      ) : view === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
-          {sorted.map((item) => (
-            <div key={item.id} onClick={() => onOpenDetail(item)}
-              style={{ cursor: 'pointer', background: 'var(--surface)', overflow: 'hidden' }}>
-              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
-                {item.img_url
-                  ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                  : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
-                }
-                {item.label && (
-                  <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {item.label}
-                  </div>
-                )}
-              </div>
-              <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
-                <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
-                <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
-              </div>
-            </div>
-          ))}
-        </div>
       ) : canDrag ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sorted.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          <SortableContext items={sorted.map((i) => i.id)} strategy={view === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
+            {view === 'grid' ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
+                {sorted.map((item) => (
+                  <SortableItem key={item.id} id={item.id}>
+                    {({ handleProps }) => (
+                      <div {...handleProps} onClick={() => onOpenDetail(item)}
+                        style={{ cursor: 'grab', background: 'var(--surface)', overflow: 'hidden', touchAction: 'none' }}>
+                        <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                          {item.img_url
+                            ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
+                          }
+                          {item.label && (
+                            <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {item.label}
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
+                          <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
+                          <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
+                        </div>
+                      </div>
+                    )}
+                  </SortableItem>
+                ))}
+              </div>
+            ) : (
             <div className="list">
               {sorted.map((item) => {
                 const tags = [
@@ -158,8 +163,32 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                 )
               })}
             </div>
+            )}
           </SortableContext>
         </DndContext>
+      ) : view === 'grid' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
+          {sorted.map((item) => (
+            <div key={item.id} onClick={() => onOpenDetail(item)}
+              style={{ cursor: 'pointer', background: 'var(--surface)', overflow: 'hidden' }}>
+              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                {item.img_url
+                  ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                  : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
+                }
+                {item.label && (
+                  <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {item.label}
+                  </div>
+                )}
+              </div>
+              <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="list">
           {sorted.map((item) => {

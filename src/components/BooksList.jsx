@@ -1,5 +1,5 @@
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortableItem, { DragHandle } from './SortableItem'
 import { BookSvgSm } from '../lib/svgs'
 
@@ -19,7 +19,7 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
   if (sort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'title') sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ja'))
   else if (sort === 'author') sorted.sort((a, b) => (a.author || '').localeCompare(b.author || '', 'ja'))
-  const canDrag = sort === 'default' && view === 'list'
+  const canDrag = sort === 'default'
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -56,25 +56,30 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
           </svg>
           まだ書籍が登録されていないよ<br />「＋ 書籍追加」から登録してみてね
         </div>
-      ) : view === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-          {sorted.map((book) => (
-            <div key={book.id} onClick={() => onOpenDetail(book)}
-              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
-              {book.img_url
-                ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
-              }
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
-                <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{book.title || '無題'}</div>
-                {book.author && <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{book.author}</div>}
-              </div>
-            </div>
-          ))}
-        </div>
       ) : canDrag ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sorted.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          <SortableContext items={sorted.map((i) => i.id)} strategy={view === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
+            {view === 'grid' ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+                {sorted.map((book) => (
+                  <SortableItem key={book.id} id={book.id}>
+                    {({ handleProps }) => (
+                      <div {...handleProps} onClick={() => onOpenDetail(book)}
+                        style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative', touchAction: 'none' }}>
+                        {book.img_url
+                          ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
+                        }
+                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
+                          <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{book.title || '無題'}</div>
+                          {book.author && <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{book.author}</div>}
+                        </div>
+                      </div>
+                    )}
+                  </SortableItem>
+                ))}
+              </div>
+            ) : (
             <div className="list">
               {sorted.map((book) => {
                 const workCount = works.filter((w) => (w.book_ids || []).includes(book.id)).length
@@ -112,8 +117,25 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
                 )
               })}
             </div>
+            )}
           </SortableContext>
         </DndContext>
+      ) : view === 'grid' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+          {sorted.map((book) => (
+            <div key={book.id} onClick={() => onOpenDetail(book)}
+              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+              {book.img_url
+                ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
+              }
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '16px 6px 5px', pointerEvents: 'none' }}>
+                <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, lineHeight: 1.2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{book.title || '無題'}</div>
+                {book.author && <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>{book.author}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="list">
           {sorted.map((book) => {
