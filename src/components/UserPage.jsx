@@ -153,7 +153,6 @@ export default function UserPage({ username }) {
           <div style={{ fontFamily: "'Fraunces', serif", fontStyle: 'italic', fontWeight: 300, fontSize: '22px', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
             Yarn<b style={{ fontStyle: 'normal', color: 'var(--accent)' }}>&</b>
           </div>
-          <a href="/" style={{ fontSize: '12px', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text-secondary)', textDecoration: 'none', fontFamily: 'var(--font-sans)' }}>アプリを使う</a>
         </div>
 
         <div style={{ background: 'var(--accent)', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
