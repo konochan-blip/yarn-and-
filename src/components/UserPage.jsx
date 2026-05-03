@@ -156,6 +156,11 @@ export default function UserPage({ username }) {
           <a href="/" style={{ fontSize: '12px', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text-secondary)', textDecoration: 'none', fontFamily: 'var(--font-sans)' }}>アプリを使う</a>
         </div>
 
+        <div style={{ background: 'var(--accent)', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          <span style={{ fontSize: '13px', color: '#fff' }}>YARN&に登録してフォローしよう</span>
+          <a href="/" style={{ background: '#fff', border: 'none', borderRadius: '99px', padding: '6px 14px', fontSize: '12px', fontWeight: 600, color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0, textDecoration: 'none' }}>登録 / ログイン</a>
+        </div>
+
         <div style={{ padding: '24px 20px' }}>
           {/* Profile card */}
           <div style={{ background: 'var(--surface)', borderRadius: '18px', border: '1px solid var(--border)', padding: '24px 20px', textAlign: 'center', marginBottom: '16px' }}>
