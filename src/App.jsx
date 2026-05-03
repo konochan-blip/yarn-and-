@@ -350,7 +350,7 @@ export default function App() {
   // ────────── Yarn CRUD ──────────────────────────
   async function saveYarn(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, name: data.name, color: data.color, colorname: data.colorname, material: data.material, lot: data.lot, count: data.count, price: data.price, needle: data.needle, label: data.label, memo: data.memo, shops: data.shops, img_url }
+    const record = { user_id: user.id, name: data.name, product_number: data.product_number, color: data.color, colorname: data.colorname, material: data.material, lot: data.lot, count: data.count, price: data.price, needle: data.needle, weight_g: data.weight_g, length_m: data.length_m, label: data.label, memo: data.memo, shops: data.shops, img_url }
     if (data.id) {
       const { data: updated, error } = await supabase.from('yarns').update(record).eq('id', data.id).select().single()
       if (error) throw new Error(error.message)
@@ -382,7 +382,7 @@ export default function App() {
   // ────────── Tool CRUD ──────────────────────────
   async function saveTool(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, name: data.name, type: data.type, size: data.size, memo: data.memo, img_url }
+    const record = { user_id: user.id, name: data.name, type: data.type, size: data.size, price: data.price, memo: data.memo, img_url }
     if (data.id) {
       const { data: updated } = await supabase.from('tools').update(record).eq('id', data.id).select().single()
       setTools((prev) => prev.map((t) => t.id === data.id ? updated : t))
@@ -401,7 +401,7 @@ export default function App() {
   // ────────── Book CRUD ──────────────────────────
   async function saveBook(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, title: data.title, author: data.author, publisher: data.publisher, memo: data.memo, link: data.link, img_url }
+    const record = { user_id: user.id, title: data.title, author: data.author, publisher: data.publisher, price: data.price, memo: data.memo, link: data.link, img_url }
     if (data.id) {
       const { data: updated } = await supabase.from('books').update(record).eq('id', data.id).select().single()
       setBooks((prev) => prev.map((b) => b.id === data.id ? updated : b))

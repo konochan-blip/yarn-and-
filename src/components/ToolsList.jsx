@@ -18,7 +18,7 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
   const sorted = [...tools]
   if (sort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'name') sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
-  const canDrag = sort === 'default'
+  const canDrag = sort === 'default' && view === 'grid'
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),

@@ -5,6 +5,7 @@ export default function BookForm({ open, editingBook, onSave, onClose }) {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [publisher, setPublisher] = useState('')
+  const [price, setPrice] = useState('')
   const [memo, setMemo] = useState('')
   const [link, setLink] = useState('')
   const [imgFile, setImgFile] = useState(null)
@@ -18,12 +19,13 @@ export default function BookForm({ open, editingBook, onSave, onClose }) {
       setTitle(editingBook.title || '')
       setAuthor(editingBook.author || '')
       setPublisher(editingBook.publisher || '')
+      setPrice(editingBook.price || '')
       setMemo(editingBook.memo || '')
       setLink(editingBook.link || '')
       setImgFile(null)
       setImgPreview(editingBook.img_url || null)
     } else {
-      setTitle(''); setAuthor(''); setPublisher(''); setMemo(''); setLink('')
+      setTitle(''); setAuthor(''); setPublisher(''); setPrice(''); setMemo(''); setLink('')
       setImgFile(null); setImgPreview(null)
     }
   }, [open, editingBook])
@@ -41,7 +43,7 @@ export default function BookForm({ open, editingBook, onSave, onClose }) {
   async function handleSave() {
     setSaving(true)
     try {
-      const data = { title, author, publisher, memo, link, img_url: imgPreview || '' }
+      const data = { title, author, publisher, price, memo, link, img_url: imgPreview || '' }
       if (editingBook) data.id = editingBook.id
       await onSave(data, imgFile)
       onClose()
@@ -62,6 +64,7 @@ export default function BookForm({ open, editingBook, onSave, onClose }) {
       <div className="field"><label>タイトル</label><input type="text" value={title} placeholder="例：かぎ針で編むあみぐるみ" onChange={(e) => setTitle(e.target.value)} /></div>
       <div className="field"><label>著者</label><input type="text" value={author} placeholder="例：山田 花子" onChange={(e) => setAuthor(e.target.value)} /></div>
       <div className="field"><label>出版社</label><input type="text" value={publisher} placeholder="例：日本ヴォーグ社" onChange={(e) => setPublisher(e.target.value)} /></div>
+      <div className="field"><label>価格</label><input type="text" value={price} placeholder="例：1,650円" onChange={(e) => setPrice(e.target.value)} /></div>
       <div className="field"><label>リンク（Amazon など）</label><input type="url" value={link} placeholder="https://www.amazon.co.jp/..." onChange={(e) => setLink(e.target.value)} /></div>
       <div className="field"><label>メモ</label><textarea value={memo} placeholder="お気に入りのページ・感想など" onChange={(e) => setMemo(e.target.value)} /></div>
 

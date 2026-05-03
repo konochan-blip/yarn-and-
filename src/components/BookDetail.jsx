@@ -38,6 +38,7 @@ export default function BookDetail({ book, works, onClose, onEdit, onDelete, onO
 
       {book.author    ? <div className="detail-row"><span className="dl">著者</span><span className="dv">{book.author}</span></div> : null}
       {book.publisher ? <div className="detail-row"><span className="dl">出版社</span><span className="dv">{book.publisher}</span></div> : null}
+      {book.price     ? <div className="detail-row"><span className="dl">価格</span><span className="dv">{book.price}</span></div> : null}
 
       {book.link ? (
         <div className="detail-row">

@@ -5,6 +5,7 @@ import { YarnSvgSm } from '../lib/svgs'
 
 export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onClose, onMergeCount, onOpenShopSettings }) {
   const [name, setName] = useState('')
+  const [productNumber, setProductNumber] = useState('')
   const [color, setColor] = useState('')
   const [colorname, setColorname] = useState('')
   const [material, setMaterial] = useState('')
@@ -12,6 +13,8 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
   const [count, setCount] = useState('')
   const [price, setPrice] = useState('')
   const [needle, setNeedle] = useState('')
+  const [weightG, setWeightG] = useState('')
+  const [lengthM, setLengthM] = useState('')
   const [label, setLabel] = useState('')
   const [memo, setMemo] = useState('')
   const [selectedShops, setSelectedShops] = useState([])
@@ -27,6 +30,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
     if (!open) return
     if (editingYarn) {
       setName(editingYarn.name || '')
+      setProductNumber(editingYarn.product_number || '')
       setColor(editingYarn.color || '')
       setColorname(editingYarn.colorname || '')
       setMaterial(editingYarn.material || '')
@@ -34,14 +38,16 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
       setCount(String(editingYarn.count || ''))
       setPrice(editingYarn.price || '')
       setNeedle(editingYarn.needle || '')
+      setWeightG(String(editingYarn.weight_g || ''))
+      setLengthM(String(editingYarn.length_m || ''))
       setLabel(editingYarn.label || '')
       setMemo(editingYarn.memo || '')
       setSelectedShops(editingYarn.shops || [])
       setImgFile(null)
       setImgPreview(editingYarn.img_url || null)
     } else {
-      setName(''); setColor(''); setColorname(''); setMaterial(''); setLot('')
-      setCount(''); setPrice(''); setNeedle(''); setLabel(''); setMemo(''); setSelectedShops([])
+      setName(''); setProductNumber(''); setColor(''); setColorname(''); setMaterial(''); setLot('')
+      setCount(''); setPrice(''); setNeedle(''); setWeightG(''); setLengthM(''); setLabel(''); setMemo(''); setSelectedShops([])
       setImgFile(null); setImgPreview(null)
     }
     setSimilar([])
@@ -111,7 +117,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
 
     setSaving(true)
     try {
-      const data = { name, color, colorname, material, lot, count: Number(count) || 0, price, needle, label, memo, shops: selectedShops, img_url: imgPreview || '' }
+      const data = { name, product_number: productNumber, color, colorname, material, lot, count: Number(count) || 0, price, needle, weight_g: weightG ? Number(weightG) : null, length_m: lengthM ? Number(lengthM) : null, label, memo, shops: selectedShops, img_url: imgPreview || '' }
       if (editingYarn) data.id = editingYarn.id
       await onSave(data, imgFile)
       onClose()
@@ -143,9 +149,13 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
         </div>
 
         <div className="field">
-          <label>名前・品番</label>
+          <label>名前</label>
           <input type="text" value={name} placeholder="例：ハマナカ ボニー"
             onChange={(e) => { setName(e.target.value); checkSimilar(e.target.value, color) }} />
+        </div>
+        <div className="field">
+          <label>品番</label>
+          <input type="text" value={productNumber} placeholder="例：802" onChange={(e) => setProductNumber(e.target.value)} />
         </div>
         <div className="field">
           <label>色番号</label>
@@ -179,6 +189,10 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
         <div className="field"><label>素材</label><input type="text" value={material} placeholder="例：ウール50% コットン50%" onChange={(e) => setMaterial(e.target.value)} /></div>
         <div className="field"><label>ロット番号</label><input type="text" value={lot} placeholder="例：L204" onChange={(e) => setLot(e.target.value)} /></div>
         <div className="field"><label>本数</label><input type="number" value={count} placeholder="例：5" min="0" onChange={(e) => setCount(e.target.value)} /></div>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <div className="field" style={{ flex: 1 }}><label>グラム (g)</label><input type="number" value={weightG} placeholder="例：40" min="0" onChange={(e) => setWeightG(e.target.value)} /></div>
+          <div className="field" style={{ flex: 1 }}><label>長さ (m)</label><input type="number" value={lengthM} placeholder="例：80" min="0" onChange={(e) => setLengthM(e.target.value)} /></div>
+        </div>
         <div className="field"><label>定価</label><input type="text" value={price} placeholder="例：550円" onChange={(e) => setPrice(e.target.value)} /></div>
         <div className="field"><label>適合針サイズ</label><input type="text" value={needle} placeholder="例：5/0号、8号棒針" onChange={(e) => setNeedle(e.target.value)} /></div>
         <div className="field">

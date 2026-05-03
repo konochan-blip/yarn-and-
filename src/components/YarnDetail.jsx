@@ -32,6 +32,7 @@ export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onO
       </div>
 
       {yarn.label && <div className="detail-row"><span className="dl">ラベル</span><span className="dv" style={{ background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 600, borderRadius: '6px', padding: '2px 10px', fontSize: '12px' }}>{yarn.label}</span></div>}
+      {yarn.product_number && <div className="detail-row"><span className="dl">品番</span><span className="dv">{yarn.product_number}</span></div>}
       <div className="detail-row"><span className="dl">色番号</span><span className="dv">{yarn.color || '—'}</span></div>
       <div className="detail-row"><span className="dl">色</span><span className="dv">{yarn.colorname || '—'}</span></div>
       <div className="detail-row"><span className="dl">素材</span><span className="dv">{yarn.material || '—'}</span></div>
@@ -39,6 +40,16 @@ export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onO
       {yarn.needle ? <div className="detail-row"><span className="dl">適合針</span><span className="dv">{yarn.needle}</span></div> : null}
       {yarn.price ? <div className="detail-row"><span className="dl">定価</span><span className="dv">{yarn.price}</span></div> : null}
       <div className="detail-row"><span className="dl">本数</span><span className="dv">{yarn.count || 0} 本</span></div>
+      {(yarn.weight_g || yarn.length_m) && (
+        <div className="detail-row">
+          <span className="dl">規格</span>
+          <span className="dv">
+            {yarn.weight_g ? `${yarn.weight_g}g` : ''}
+            {yarn.weight_g && yarn.length_m ? ' / ' : ''}
+            {yarn.length_m ? `${yarn.length_m}m` : ''}
+          </span>
+        </div>
+      )}
 
       {memoHtml && (
         <div className="detail-row" style={{ flexDirection: 'column', gap: '4px' }}>

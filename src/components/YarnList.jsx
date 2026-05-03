@@ -42,7 +42,7 @@ function ViewToggle({ view, onViewChange }) {
 
 export default function YarnList({ yarns, works, sort, view, onSortChange, onViewChange, onOpenDetail, onOpenLabelSearch, onReorder }) {
   const sorted = getSorted(yarns, sort)
-  const canDrag = sort === 'default'
+  const canDrag = sort === 'default' && view === 'grid'
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),

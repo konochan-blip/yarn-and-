@@ -19,7 +19,7 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
   if (sort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'title') sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ja'))
   else if (sort === 'author') sorted.sort((a, b) => (a.author || '').localeCompare(b.author || '', 'ja'))
-  const canDrag = sort === 'default'
+  const canDrag = sort === 'default' && view === 'grid'
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),

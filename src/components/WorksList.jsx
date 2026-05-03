@@ -13,7 +13,7 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
   if (sort === 'new') list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
   else if (sort === 'yarn') list.sort((a, b) => (b.yarn_ids?.length || 0) - (a.yarn_ids?.length || 0))
-  const canDrag = sort === 'default' && !needleFilter && !categoryFilter
+  const canDrag = sort === 'default' && !needleFilter && !categoryFilter && view === 'grid'
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
