@@ -216,11 +216,7 @@ export default function App() {
       setWorks(w || [])
       const shopNames = (s || []).map((row) => row.name)
       if (shopNames.length === 0) {
-        const defaults = ['ユザワヤ', '楽天', 'Amazon']
-        Promise.all(
-          defaults.map((n) => supabase.from('shops').upsert({ user_id: user.id, name: n }, { onConflict: 'user_id,name' }))
-        ).catch(() => {})
-        setShops(defaults)
+        setShops([])
       } else {
         setShops(shopNames)
       }
@@ -382,7 +378,7 @@ export default function App() {
   // ────────── Tool CRUD ──────────────────────────
   async function saveTool(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, name: data.name, type: data.type, size: data.size, price: data.price, memo: data.memo, img_url }
+    const record = { user_id: user.id, name: data.name, type: data.type, needle_size: data.needle_size, size: data.size, price: data.price, memo: data.memo, img_url }
     if (data.id) {
       const { data: updated } = await supabase.from('tools').update(record).eq('id', data.id).select().single()
       setTools((prev) => prev.map((t) => t.id === data.id ? updated : t))

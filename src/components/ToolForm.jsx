@@ -5,6 +5,7 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
   const [name, setName] = useState('')
   const [type, setType] = useState('')
   const [size, setSize] = useState('')
+  const [needleSize, setNeedleSize] = useState('')
   const [price, setPrice] = useState('')
   const [memo, setMemo] = useState('')
   const [imgFile, setImgFile] = useState(null)
@@ -17,13 +18,14 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
     if (editingTool) {
       setName(editingTool.name || '')
       setType(editingTool.type || '')
+      setNeedleSize(editingTool.needle_size || '')
       setSize(editingTool.size || '')
       setPrice(editingTool.price || '')
       setMemo(editingTool.memo || '')
       setImgFile(null)
       setImgPreview(editingTool.img_url || null)
     } else {
-      setName(''); setType(''); setSize(''); setPrice(''); setMemo('')
+      setName(''); setType(''); setNeedleSize(''); setSize(''); setPrice(''); setMemo('')
       setImgFile(null); setImgPreview(null)
     }
   }, [open, editingTool])
@@ -41,7 +43,7 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
   async function handleSave() {
     setSaving(true)
     try {
-      const data = { name, type, size, price, memo, img_url: imgPreview || '' }
+      const data = { name, type, needle_size: needleSize, size, price, memo, img_url: imgPreview || '' }
       if (editingTool) data.id = editingTool.id
       await onSave(data, imgFile)
       onClose()
@@ -59,7 +61,7 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
       </div>
       <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
 
-      <div className="field"><label>名前・メーカー</label><input type="text" value={name} placeholder="例：クロバー かぎ針 3号" onChange={(e) => setName(e.target.value)} /></div>
+      <div className="field"><label>メーカー</label><input type="text" value={name} placeholder="例：クロバー" onChange={(e) => setName(e.target.value)} /></div>
       <div className="field">
         <label>種類</label>
         <select value={type} onChange={(e) => setType(e.target.value)}>
@@ -68,7 +70,10 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
           <option>とじ針</option><option>段数マーカー</option><option>その他</option>
         </select>
       </div>
-      <div className="field"><label>サイズ・号数</label><input type="text" value={size} placeholder="例：3号 / 2.3mm" onChange={(e) => setSize(e.target.value)} /></div>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <div className="field" style={{ flex: 1 }}><label>号数</label><input type="text" value={needleSize} placeholder="例：3号" onChange={(e) => setNeedleSize(e.target.value)} /></div>
+        <div className="field" style={{ flex: 1 }}><label>サイズ</label><input type="text" value={size} placeholder="例：2.3mm" onChange={(e) => setSize(e.target.value)} /></div>
+      </div>
       <div className="field"><label>価格</label><input type="text" value={price} placeholder="例：550円" onChange={(e) => setPrice(e.target.value)} /></div>
       <div className="field"><label>メモ</label><textarea value={memo} placeholder="使い心地・購入店・メモなど" onChange={(e) => setMemo(e.target.value)} /></div>
 
