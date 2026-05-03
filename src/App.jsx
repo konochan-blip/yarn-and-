@@ -40,8 +40,6 @@ export default function App() {
   const [urlHandle] = useState(() => window.location.pathname.match(/^\/user\/([^/]+)$/)?.[1] || null)
   const [urlProfile, setUrlProfile] = useState(null)
   const [urlProfileLoading, setUrlProfileLoading] = useState(!!window.location.pathname.match(/^\/user\/([^/]+)$/))
-  const [urlModeExited, setUrlModeExited] = useState(false)
-
   useEffect(() => {
     if (!urlHandle) return
     supabase.from('profiles').select('*').eq('is_public', true)
@@ -538,27 +536,6 @@ export default function App() {
       <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div className="loading">読み込み中…</div>
       </div>
-    )
-  }
-
-  // URL-based public profile — show without login
-  if (urlHandle && !urlModeExited && !user) {
-    if (!urlProfile) {
-      return (
-        <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
-          <div style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>プロフィールが見つかりませんでした</div>
-          <button className="btn primary" onClick={() => setUrlModeExited(true)}>トップへ戻る</button>
-        </div>
-      )
-    }
-    return (
-      <PublicProfile
-        profile={urlProfile}
-        currentUserId={null}
-        isFollowing={false}
-        onClose={() => setUrlModeExited(true)}
-        onLoginClick={() => setUrlModeExited(true)}
-      />
     )
   }
 
