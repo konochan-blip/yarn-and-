@@ -391,7 +391,7 @@ body {
 /* ── Modal / Overlay ─────────────────────── */
 .overlay { display: none; position: fixed; inset: 0; background: rgba(74,52,64,0.4); z-index: 300; align-items: flex-end; justify-content: center; }
 .overlay.active { display: flex; }
-.modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 20px 32px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.22s ease; }
+.modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 20px 32px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; overscroll-behavior: contain; animation: slideUp 0.22s ease; }
 @media (min-width: 520px) { .overlay { align-items: center; padding: 20px; } .modal { border-radius: 16px; max-height: 88vh; } }
 @keyframes slideUp { from { transform: translateY(30px); opacity: 0.5; } to { transform: translateY(0); opacity: 1; } }
 .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 99px; margin: 0 auto 16px; }
