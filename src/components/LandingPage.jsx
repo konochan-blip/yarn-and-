@@ -53,10 +53,6 @@ export default function LandingPage({ onLogin, onSignup }) {
         <p className="anim-fade-up anim-d3" style={{ fontSize: '15px', color: 'var(--accent)', fontWeight: 600, marginBottom: '40px', marginTop: '40px' }}>
           SNSじゃない。でも、つながれる。
         </p>
-        <button className="lp-btn-hero anim-pop anim-d4" onClick={onSignup} style={{ display: 'inline-block', background: 'var(--accent-mid)', color: '#fff', border: 'none', borderRadius: '99px', padding: '16px 40px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 20px rgba(140,98,114,0.15)' }}>
-          無料で始める
-        </button>
-
         {/* イメージ */}
         <div className="anim-fade-up anim-d5" style={{ display: 'flex', justifyContent: 'center', marginTop: '48px' }}>
           <div className="lp-hero-img-inner" style={{ width: '100%', maxWidth: '360px', position: 'relative' }}>
