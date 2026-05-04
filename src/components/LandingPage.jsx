@@ -50,7 +50,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           毛糸・作品・道具・書籍をひとまとめに。<br />
           編み物好きのための、<br />やさしい管理ノートアプリです。
         </p>
-        <p className="anim-fade-up anim-d3" style={{ fontSize: '18px', color: 'var(--accent)', fontWeight: 600, marginBottom: '40px', marginTop: '40px' }}>
+        <p className="anim-fade-up anim-d3" style={{ fontSize: '17px', color: 'var(--accent)', fontWeight: 600, marginBottom: '40px', marginTop: '40px' }}>
           SNSじゃない。でも、つながれる。
         </p>
         {/* イメージ */}
