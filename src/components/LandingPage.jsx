@@ -59,7 +59,6 @@ export default function LandingPage({ onLogin, onSignup }) {
         <button className="lp-btn-hero anim-pop anim-d4" onClick={onSignup} style={{ display: 'inline-block', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '99px', padding: '16px 40px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 20px rgba(140,98,114,0.28)' }}>
           無料で始める
         </button>
-        <div className="anim-fade-up anim-d5" style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginTop: '10px' }}>登録1分・完全無料</div>
 
         {/* イメージ */}
         <div className="anim-fade-up anim-d5" style={{ display: 'flex', justifyContent: 'center', marginTop: '48px' }}>
@@ -158,7 +157,7 @@ export default function LandingPage({ onLogin, onSignup }) {
           記録するだけで、ぐんと使いやすくなる。
         </p>
         <p className="anim-fade-up anim-d2" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', marginBottom: '36px' }}>
-          無料・登録1分・スマホからすぐ使えます
+          スマホからすぐ使えます
         </p>
         <button className="lp-btn-cta anim-pop anim-d3" onClick={onSignup} style={{ display: 'inline-block', background: '#fff', color: 'var(--accent)', border: 'none', borderRadius: '99px', padding: '16px 44px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
           今すぐ無料で始める
