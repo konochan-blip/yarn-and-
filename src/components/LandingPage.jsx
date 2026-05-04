@@ -103,7 +103,7 @@ export default function LandingPage({ onLogin, onSignup }) {
               { icon: '🧶', title: '毛糸の迷子がなくなる', benefit: '「あの毛糸どこで買ったっけ？」が、すぐわかる', desc: '写真・購入店・素材・残量まで記録しておけば、ほしいときすぐ見つかる。', d: 'anim-d1', delay: '0s' },
               { icon: '🧤', title: '作品の思い出を残せる', benefit: '糸も道具も編み図も、ぜんぶ一緒に', desc: '「何の毛糸で編んだっけ」って考えなくていい。使ったものを一緒に残せる。', d: 'anim-d2', delay: '0.8s' },
               { icon: '🪡', title: '道具・書籍の重複買いがなくなる', benefit: 'かぎ針・棒針・編み図本も、スマホで確認', desc: '外出先でも「これ持ってたっけ？」が一発でわかる。あの帰宅後のがっかりが、なくなる。', d: 'anim-d3', delay: '1.6s' },
-              { icon: '✨', title: 'ゆるくつながれる、SNSじゃない場所', benefit: '見せたいときだけ公開。プレッシャーなし', desc: '映えなくていい。好きで編んだものを、ただ残しておきたい。そんな気持ちのまま、使える場所。', d: 'anim-d4', delay: '2.4s' },
+              { icon: '✨', title: 'ゆるくつながれる、SNSじゃない場所', benefit: '見せたいときだけ公開。プレッシャーなし', desc: '映えなくていい。好きで編んだものを、ただ残しておきたい。そんな気持ちでゆるく使える。', d: 'anim-d4', delay: '2.4s' },
             ].map((f) => (
               <div key={f.title} className={`lp-feature-item anim-slide-left ${f.d}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
                 <div className="lp-feature-icon" style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'var(--accent-light)', border: '1.5px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0, animationDelay: f.delay }}>{f.icon}</div>
