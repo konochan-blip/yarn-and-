@@ -32,11 +32,8 @@ export default function LandingPage({ onLogin, onSignup }) {
           Yarn<b style={{ fontStyle: 'normal', fontWeight: 300, color: 'var(--accent)' }}>&amp;</b>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={onLogin} style={{ background: 'none', border: '1.5px solid var(--border)', borderRadius: '99px', padding: '8px 18px', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit' }}>
-            ログイン
-          </button>
           <button onClick={onSignup} style={{ background: 'var(--accent)', border: 'none', borderRadius: '99px', padding: '8px 18px', fontSize: '13px', fontWeight: 700, color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}>
-            無料で始める
+            ログイン・登録
           </button>
         </div>
       </header>
