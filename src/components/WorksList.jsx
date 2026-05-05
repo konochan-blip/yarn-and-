@@ -92,10 +92,10 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                               </div>
                             )}
                           </div>
-                          <div style={{ padding: '3px 4px 4px', background: 'rgba(140,98,114,0.82)' }}>
-                            <div style={{ fontSize: '9px', color: '#fff', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {work.name || ' '}
-                            </div>
+                          <div style={{ height: '19px', background: 'rgba(140,98,114,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                            <span style={{ fontSize: '9px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+                              {work.name || ''}
+                            </span>
                           </div>
                         </div>
                       )}
@@ -157,10 +157,10 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                     </div>
                   )}
                 </div>
-                <div style={{ padding: '3px 4px 4px', background: 'rgba(140,98,114,0.82)' }}>
-                  <div style={{ fontSize: '9px', color: '#fff', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {work.name || ' '}
-                  </div>
+                <div style={{ height: '19px', background: 'rgba(140,98,114,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                  <span style={{ fontSize: '9px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+                    {work.name || ''}
+                  </span>
                 </div>
               </div>
             )
