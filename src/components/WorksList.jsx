@@ -4,6 +4,36 @@ import SortableItem, { DragHandle } from './SortableItem'
 import { WorkSvgSm, YarnSvgSm } from '../lib/svgs'
 import { MiniYarnBall } from './WorkDetail'
 
+const LABEL_H = 19
+
+function WorkGridItem({ work, count, onOpenDetail, dragHandleProps, isDrag }) {
+  return (
+    <div
+      {...(dragHandleProps || {})}
+      onClick={() => onOpenDetail(work)}
+      style={{ cursor: isDrag ? 'grab' : 'pointer', touchAction: isDrag ? 'none' : undefined, overflow: 'hidden' }}
+    >
+      <div style={{ position: 'relative', width: '100%', paddingBottom: '100%', background: '#EDE0E5', overflow: 'hidden' }}>
+        {work.img_url
+          ? <img src={work.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+          : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
+        }
+        {count > 0 && (
+          <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+            <MiniYarnBall />
+            <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
+          </div>
+        )}
+      </div>
+      <div style={{ height: `${LABEL_H}px`, background: 'rgba(140,98,114,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+        <span style={{ fontSize: '9px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+          {work.name || ''}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 export default function WorksList({ works, yarns, workCategories, sort, needleFilter, categoryFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onCategoryFilterChange, onViewChange, onOpenDetail, onReorder }) {
   const allCategories = [...new Set([...(workCategories || []), 'その他'].filter((c) => works.some((w) => (w.categories || []).includes(c))))]
 
@@ -74,34 +104,13 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
           <SortableContext items={list.map((i) => i.id)} strategy={view === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
             {view === 'grid' ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-                {list.map((work) => {
-                  const count = yarnCounts[work.id] || 0
-                  return (
-                    <SortableItem key={work.id} id={work.id}>
-                      {({ handleProps }) => (
-                        <div {...handleProps} onClick={() => onOpenDetail(work)} style={{ cursor: 'grab', touchAction: 'none', overflow: 'hidden' }}>
-                          <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
-                            {work.img_url
-                              ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                              : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
-                            }
-                            {count > 0 && (
-                              <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                                <MiniYarnBall />
-                                <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
-                              </div>
-                            )}
-                          </div>
-                          <div style={{ height: '19px', background: 'rgba(140,98,114,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
-                            <span style={{ fontSize: '9px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
-                              {work.name || ''}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                    </SortableItem>
-                  )
-                })}
+                {list.map((work) => (
+                  <SortableItem key={work.id} id={work.id}>
+                    {({ handleProps }) => (
+                      <WorkGridItem work={work} count={yarnCounts[work.id] || 0} onOpenDetail={onOpenDetail} dragHandleProps={handleProps} isDrag />
+                    )}
+                  </SortableItem>
+                ))}
               </div>
             ) : (
             <div className="list">
@@ -141,30 +150,9 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
         </DndContext>
       ) : view === 'grid' ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-          {list.map((work) => {
-            const count = yarnCounts[work.id] || 0
-            return (
-              <div key={work.id} onClick={() => onOpenDetail(work)} style={{ cursor: 'pointer', overflow: 'hidden' }}>
-                <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
-                  {work.img_url
-                    ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
-                  }
-                  {count > 0 && (
-                    <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                      <MiniYarnBall />
-                      <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
-                    </div>
-                  )}
-                </div>
-                <div style={{ height: '19px', background: 'rgba(140,98,114,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
-                  <span style={{ fontSize: '9px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
-                    {work.name || ''}
-                  </span>
-                </div>
-              </div>
-            )
-          })}
+          {list.map((work) => (
+            <WorkGridItem key={work.id} work={work} count={yarnCounts[work.id] || 0} onOpenDetail={onOpenDetail} />
+          ))}
         </div>
       ) : (
         <div className="list">
