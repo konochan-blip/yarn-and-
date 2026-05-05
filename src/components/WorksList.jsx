@@ -45,7 +45,7 @@ function SortableWorkGridCard({ work, count, onOpenDetail }) {
         transition,
         opacity: isDragging ? 0.5 : 1,
         cursor: 'grab',
-        touchAction: isDragging ? 'none' : 'auto',
+        touchAction: 'none',
         overflow: 'hidden',
         position: 'relative',
         zIndex: isDragging ? 999 : 'auto',

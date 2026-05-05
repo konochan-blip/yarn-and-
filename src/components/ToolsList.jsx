@@ -62,7 +62,7 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
                   <SortableItem key={tool.id} id={tool.id}>
                     {({ handleProps }) => (
                       <div {...handleProps} onClick={() => onOpenDetail(tool)}
-                        style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative' }}>
+                        style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative', touchAction: 'none' }}>
                         {tool.img_url
                           ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                           : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
