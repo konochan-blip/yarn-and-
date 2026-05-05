@@ -122,9 +122,9 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
                 {tool.img_url ? <img src={tool.img_url} alt="" /> : <ToolSvgSm />}
               </div>
               <div className="yarn-info">
-                <div className="yarn-name">{tool.name || '名前なし'}</div>
+                <div className="yarn-name">{tool.type || tool.name || '名前なし'}</div>
                 <div className="yarn-tags">
-                  {tool.type ? <span className="tag">{tool.type}</span> : null}
+                  {tool.name ? <span className="tag">{tool.name}</span> : null}
                   {tool.size ? <span className="meta-text">{tool.size}</span> : null}
                 </div>
                 {tool.memo ? (

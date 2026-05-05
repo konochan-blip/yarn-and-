@@ -17,13 +17,14 @@ export default function ToolDetail({ tool, onClose, onEdit, onDelete }) {
 
   return (
     <Modal open={!!tool} onClose={onClose}>
-      <div className="modal-title">{tool.name || '名前なし'}</div>
+      <div className="modal-title">{tool.type || tool.name || '名前なし'}</div>
       <div className="detail-thumb">
         {tool.img_url
           ? <img src={tool.img_url} alt="" />
           : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}><ToolSvgSm /></div>}
       </div>
 
+      {tool.name        ? <div className="detail-row"><span className="dl">メーカー</span><span className="dv">{tool.name}</span></div> : null}
       {tool.type        ? <div className="detail-row"><span className="dl">種類</span><span className="dv">{tool.type}</span></div> : null}
       {tool.needle_size ? <div className="detail-row"><span className="dl">号数</span><span className="dv">{tool.needle_size}</span></div> : null}
       {tool.size        ? <div className="detail-row"><span className="dl">サイズ</span><span className="dv">{tool.size}</span></div> : null}

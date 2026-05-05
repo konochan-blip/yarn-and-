@@ -72,7 +72,6 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
       </div>
       <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
 
-      <div className="field"><label>メーカー</label><input type="text" value={name} placeholder="例：クロバー" onChange={(e) => setName(e.target.value)} /></div>
       <div className="field">
         <label>種類</label>
         <select value={type} onChange={(e) => { setType(e.target.value); if (e.target.value !== 'その他') setTypeCustom('') }}>
@@ -84,6 +83,7 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
       {type === 'その他' && (
         <div className="field"><label>種類（詳細）</label><input type="text" value={typeCustom} placeholder="例：ニッティングスレーダー" onChange={(e) => setTypeCustom(e.target.value)} /></div>
       )}
+      <div className="field"><label>メーカー</label><input type="text" value={name} placeholder="例：クロバー" onChange={(e) => setName(e.target.value)} /></div>
       <div style={{ display: 'flex', gap: '12px' }}>
         <div className="field" style={{ flex: 1 }}><label>号数</label><input type="text" value={needleSize} placeholder="例：3号" onChange={(e) => setNeedleSize(e.target.value)} /></div>
         <div className="field" style={{ flex: 1 }}><label>サイズ</label><input type="text" value={size} placeholder="例：2.3mm" onChange={(e) => setSize(e.target.value)} /></div>
