@@ -92,11 +92,9 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                               </div>
                             )}
                           </div>
-                          {work.name && (
-                            <div style={{ background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {work.name}
-                            </div>
-                          )}
+                          <div style={{ background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minHeight: '14px' }}>
+                            {work.name || ''}
+                          </div>
                         </div>
                       )}
                     </SortableItem>
@@ -157,11 +155,9 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                     </div>
                   )}
                 </div>
-                {work.name && (
-                  <div style={{ background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {work.name}
-                  </div>
-                )}
+                <div style={{ background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minHeight: '14px' }}>
+                  {work.name || ''}
+                </div>
               </div>
             )
           })}
