@@ -7,7 +7,7 @@ import { MiniYarnBall } from './WorkDetail'
 
 const LABEL_H = 19
 const imgBoxStyle = { position: 'relative', width: '100%', paddingBottom: '100%', background: '#EDE0E5', overflow: 'hidden' }
-const labelStyle = { height: `${LABEL_H}px`, background: 'rgba(140,98,114,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }
+const labelStyle = { height: `${LABEL_H}px`, background: 'rgba(140,98,114,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }
 const labelTextStyle = { fontSize: '9px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }
 
 function WorkGridCard({ work, count, onOpenDetail }) {
