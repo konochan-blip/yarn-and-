@@ -253,16 +253,11 @@ export default function UserPage({ username }) {
               ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ作品が登録されていません</div>
               : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
                   {works.map((work) => (
-                    <div key={work.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                    <div key={work.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5' }}>
                       {work.img_url
                         ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                         : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
                       }
-                      {work.name && (
-                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                          <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{work.name}</div>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -273,17 +268,11 @@ export default function UserPage({ username }) {
               ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ毛糸が登録されていません</div>
               : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
                   {yarns.map((yarn) => (
-                    <div key={yarn.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                    <div key={yarn.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5' }}>
                       {yarn.img_url
                         ? <img src={yarn.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                         : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
                       }
-                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{yarn.name || '名前なし'}</div>
-                        {(yarn.colorname || yarn.material) && (
-                          <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{[yarn.colorname, yarn.material].filter(Boolean).join(' · ')}</div>
-                        )}
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -294,17 +283,11 @@ export default function UserPage({ username }) {
               ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ道具が登録されていません</div>
               : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
                   {tools.map((tool) => (
-                    <div key={tool.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                    <div key={tool.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5' }}>
                       {tool.img_url
                         ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                         : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
                       }
-                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tool.name || '名前なし'}</div>
-                        {(tool.type || tool.size) && (
-                          <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{[tool.type, tool.size].filter(Boolean).join(' · ')}</div>
-                        )}
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -315,17 +298,11 @@ export default function UserPage({ username }) {
               ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ書籍が登録されていません</div>
               : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
                   {books.map((book) => (
-                    <div key={book.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                    <div key={book.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5' }}>
                       {book.img_url
                         ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                         : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
                       }
-                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{book.title || '無題'}</div>
-                        {book.author && (
-                          <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{book.author}</div>
-                        )}
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -336,16 +313,11 @@ export default function UserPage({ username }) {
               ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだ購入品が登録されていません</div>
               : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
                   {purchases.map((p) => (
-                    <div key={p.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                    <div key={p.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5' }}>
                       {p.img_url
                         ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                         : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🛍️</div>
                       }
-                      {p.name && (
-                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                          <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>

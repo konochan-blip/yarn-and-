@@ -324,16 +324,11 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
                       {profileWorks.map((work) => (
                         <div key={work.id} onClick={() => setDetailWork(work)}
-                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer' }}>
                           {work.img_url
                             ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                             : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
                           }
-                          {work.name && (
-                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                              <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{work.name}</div>
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -347,17 +342,11 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
                       {profileYarns.map((yarn) => (
                         <div key={yarn.id} onClick={() => setDetailYarn(yarn)}
-                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer' }}>
                           {yarn.img_url
                             ? <img src={yarn.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                             : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
                           }
-                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                            <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{yarn.name || '名前なし'}</div>
-                            {yarn.material && (
-                              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{yarn.material}</div>
-                            )}
-                          </div>
                         </div>
                       ))}
                     </div>
@@ -371,17 +360,11 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
                       {profileTools.map((tool) => (
                         <div key={tool.id} onClick={() => setDetailTool(tool)}
-                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer' }}>
                           {tool.img_url
                             ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                             : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
                           }
-                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                            <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tool.name || '名前なし'}</div>
-                            {(tool.type || tool.size) && (
-                              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{[tool.type, tool.size].filter(Boolean).join(' · ')}</div>
-                            )}
-                          </div>
                         </div>
                       ))}
                     </div>
@@ -395,17 +378,11 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
                       {profileBooks.map((book) => (
                         <div key={book.id} onClick={() => setDetailBook(book)}
-                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer' }}>
                           {book.img_url
                             ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                             : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
                           }
-                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                            <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{book.title || '無題'}</div>
-                            {book.author && (
-                              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{book.author}</div>
-                            )}
-                          </div>
                         </div>
                       ))}
                     </div>
@@ -419,16 +396,11 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
                       {profilePurchases.map((p) => (
                         <div key={p.id} onClick={() => setDetailPurchase(p)}
-                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer' }}>
                           {p.img_url
                             ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                             : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🛍️</div>
                           }
-                          {p.name && (
-                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent,rgba(0,0,0,0.45))', padding: '14px 6px 5px', pointerEvents: 'none' }}>
-                              <div style={{ fontSize: '11px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
