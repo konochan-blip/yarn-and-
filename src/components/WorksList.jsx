@@ -79,20 +79,21 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                   return (
                     <SortableItem key={work.id} id={work.id}>
                       {({ handleProps }) => (
-                        <div {...handleProps} onClick={() => onOpenDetail(work)}
-                          style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative', touchAction: 'none' }}>
-                          {work.img_url
-                            ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
-                          }
-                          {count > 0 && (
-                            <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                              <MiniYarnBall />
-                              <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
-                            </div>
-                          )}
+                        <div {...handleProps} onClick={() => onOpenDetail(work)} style={{ cursor: 'grab', touchAction: 'none' }}>
+                          <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                            {work.img_url
+                              ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                              : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
+                            }
+                            {count > 0 && (
+                              <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                                <MiniYarnBall />
+                                <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
+                              </div>
+                            )}
+                          </div>
                           {work.name && (
-                            <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <div style={{ background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {work.name}
                             </div>
                           )}
@@ -143,20 +144,21 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
           {list.map((work) => {
             const count = yarnCounts[work.id] || 0
             return (
-              <div key={work.id} onClick={() => onOpenDetail(work)}
-                style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
-                {work.img_url
-                  ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                  : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
-                }
-                {count > 0 && (
-                  <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    <MiniYarnBall />
-                    <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
-                  </div>
-                )}
+              <div key={work.id} onClick={() => onOpenDetail(work)} style={{ cursor: 'pointer' }}>
+                <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                  {work.img_url
+                    ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
+                  }
+                  {count > 0 && (
+                    <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      <MiniYarnBall />
+                      <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
+                    </div>
+                  )}
+                </div>
                 {work.name && (
-                  <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {work.name}
                   </div>
                 )}
