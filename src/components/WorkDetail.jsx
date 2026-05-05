@@ -216,9 +216,9 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
       )}
 
       <div className="modal-actions">
-        {onDelete && <button className="btn danger" onClick={() => setConfirmDelete(true)}>削除</button>}
         {onEdit && <button className="btn" onClick={() => { onClose(); onEdit(work) }}>編集</button>}
         <button className="btn primary" onClick={onClose}>閉じる</button>
+        {onDelete && <button className="btn danger" onClick={() => setConfirmDelete(true)}>削除</button>}
       </div>
     </Modal>
   )
