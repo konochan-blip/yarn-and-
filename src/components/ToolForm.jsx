@@ -4,6 +4,7 @@ import Modal from './Modal'
 export default function ToolForm({ open, editingTool, onSave, onClose }) {
   const [name, setName] = useState('')
   const [type, setType] = useState('')
+  const [typeCustom, setTypeCustom] = useState('')
   const [size, setSize] = useState('')
   const [needleSize, setNeedleSize] = useState('')
   const [price, setPrice] = useState('')
@@ -13,11 +14,20 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
   const [saving, setSaving] = useState(false)
   const imgInputRef = useRef()
 
+  const PRESET_TYPES = ['かぎ針', '棒針', '輪針', 'とじ針', '段数マーカー', 'その他']
+
   useEffect(() => {
     if (!open) return
     if (editingTool) {
       setName(editingTool.name || '')
-      setType(editingTool.type || '')
+      const t = editingTool.type || ''
+      if (t && !PRESET_TYPES.includes(t)) {
+        setType('その他')
+        setTypeCustom(t)
+      } else {
+        setType(t)
+        setTypeCustom('')
+      }
       setNeedleSize(editingTool.needle_size || '')
       setSize(editingTool.size || '')
       setPrice(editingTool.price || '')
@@ -25,7 +35,7 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
       setImgFile(null)
       setImgPreview(editingTool.img_url || null)
     } else {
-      setName(''); setType(''); setNeedleSize(''); setSize(''); setPrice(''); setMemo('')
+      setName(''); setType(''); setTypeCustom(''); setNeedleSize(''); setSize(''); setPrice(''); setMemo('')
       setImgFile(null); setImgPreview(null)
     }
   }, [open, editingTool])
@@ -43,7 +53,8 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
   async function handleSave() {
     setSaving(true)
     try {
-      const data = { name, type, needle_size: needleSize, size, price, memo, img_url: imgPreview || '' }
+      const effectiveType = type === 'その他' ? (typeCustom.trim() || 'その他') : type
+      const data = { name, type: effectiveType, needle_size: needleSize, size, price, memo, img_url: imgPreview || '' }
       if (editingTool) data.id = editingTool.id
       await onSave(data, imgFile)
       onClose()
@@ -64,12 +75,15 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
       <div className="field"><label>メーカー</label><input type="text" value={name} placeholder="例：クロバー" onChange={(e) => setName(e.target.value)} /></div>
       <div className="field">
         <label>種類</label>
-        <select value={type} onChange={(e) => setType(e.target.value)}>
+        <select value={type} onChange={(e) => { setType(e.target.value); if (e.target.value !== 'その他') setTypeCustom('') }}>
           <option value="">選択してね</option>
           <option>かぎ針</option><option>棒針</option><option>輪針</option>
           <option>とじ針</option><option>段数マーカー</option><option>その他</option>
         </select>
       </div>
+      {type === 'その他' && (
+        <div className="field"><label>種類（詳細）</label><input type="text" value={typeCustom} placeholder="例：ニッティングスレーダー" onChange={(e) => setTypeCustom(e.target.value)} /></div>
+      )}
       <div style={{ display: 'flex', gap: '12px' }}>
         <div className="field" style={{ flex: 1 }}><label>号数</label><input type="text" value={needleSize} placeholder="例：3号" onChange={(e) => setNeedleSize(e.target.value)} /></div>
         <div className="field" style={{ flex: 1 }}><label>サイズ</label><input type="text" value={size} placeholder="例：2.3mm" onChange={(e) => setSize(e.target.value)} /></div>
