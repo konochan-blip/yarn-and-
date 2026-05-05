@@ -24,8 +24,8 @@ export default function ToolDetail({ tool, onClose, onEdit, onDelete }) {
           : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}><ToolSvgSm /></div>}
       </div>
 
-      {tool.name        ? <div className="detail-row"><span className="dl">メーカー</span><span className="dv">{tool.name}</span></div> : null}
       {tool.type        ? <div className="detail-row"><span className="dl">種類</span><span className="dv">{tool.type}</span></div> : null}
+      {tool.name        ? <div className="detail-row"><span className="dl">メーカー</span><span className="dv">{tool.name}</span></div> : null}
       {tool.needle_size ? <div className="detail-row"><span className="dl">号数</span><span className="dv">{tool.needle_size}</span></div> : null}
       {tool.size        ? <div className="detail-row"><span className="dl">サイズ</span><span className="dv">{tool.size}</span></div> : null}
       {tool.price ? <div className="detail-row"><span className="dl">価格</span><span className="dv">{tool.price}</span></div> : null}
