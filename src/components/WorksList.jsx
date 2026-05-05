@@ -1,19 +1,19 @@
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import SortableItem, { DragHandle } from './SortableItem'
 import { WorkSvgSm, YarnSvgSm } from '../lib/svgs'
 import { MiniYarnBall } from './WorkDetail'
 
 const LABEL_H = 19
+const imgBoxStyle = { position: 'relative', width: '100%', paddingBottom: '100%', background: '#EDE0E5', overflow: 'hidden' }
+const labelStyle = { height: `${LABEL_H}px`, background: 'rgba(140,98,114,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }
+const labelTextStyle = { fontSize: '9px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }
 
-function WorkGridItem({ work, count, onOpenDetail, dragHandleProps, isDrag }) {
+function WorkGridCard({ work, count, onOpenDetail }) {
   return (
-    <div
-      {...(dragHandleProps || {})}
-      onClick={() => onOpenDetail(work)}
-      style={{ cursor: isDrag ? 'grab' : 'pointer', touchAction: isDrag ? 'none' : undefined, overflow: 'hidden' }}
-    >
-      <div style={{ position: 'relative', width: '100%', paddingBottom: '100%', background: '#EDE0E5', overflow: 'hidden' }}>
+    <div onClick={() => onOpenDetail(work)} style={{ cursor: 'pointer', overflow: 'hidden' }}>
+      <div style={imgBoxStyle}>
         {work.img_url
           ? <img src={work.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
           : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
@@ -25,10 +25,46 @@ function WorkGridItem({ work, count, onOpenDetail, dragHandleProps, isDrag }) {
           </div>
         )}
       </div>
-      <div style={{ height: `${LABEL_H}px`, background: 'rgba(140,98,114,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
-        <span style={{ fontSize: '9px', color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
-          {work.name || ''}
-        </span>
+      <div style={labelStyle}>
+        <span style={labelTextStyle}>{work.name || ''}</span>
+      </div>
+    </div>
+  )
+}
+
+function SortableWorkGridCard({ work, count, onOpenDetail }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: work.id })
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      onClick={() => onOpenDetail(work)}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        cursor: 'grab',
+        touchAction: 'none',
+        overflow: 'hidden',
+        position: 'relative',
+        zIndex: isDragging ? 999 : 'auto',
+      }}
+    >
+      <div style={imgBoxStyle}>
+        {work.img_url
+          ? <img src={work.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+          : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
+        }
+        {count > 0 && (
+          <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+            <MiniYarnBall />
+            <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
+          </div>
+        )}
+      </div>
+      <div style={labelStyle}>
+        <span style={labelTextStyle}>{work.name || ''}</span>
       </div>
     </div>
   )
@@ -101,57 +137,18 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
         </div>
       ) : canDrag ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={list.map((i) => i.id)} strategy={view === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
-            {view === 'grid' ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-                {list.map((work) => (
-                  <SortableItem key={work.id} id={work.id}>
-                    {({ handleProps }) => (
-                      <WorkGridItem work={work} count={yarnCounts[work.id] || 0} onOpenDetail={onOpenDetail} dragHandleProps={handleProps} isDrag />
-                    )}
-                  </SortableItem>
-                ))}
-              </div>
-            ) : (
-            <div className="list">
-              {list.map((work) => {
-                const linkedYarns = (work.yarn_ids || []).map((id) => yarns.find((y) => y.id === id)).filter(Boolean)
-                const yarnTags = linkedYarns.length
-                  ? linkedYarns.map((y) => <span key={y.id} className="tag color-name">{y.name || '毛糸'}</span>)
-                  : <span className="meta-text">毛糸未紐付け</span>
-                return (
-                  <SortableItem key={work.id} id={work.id}>
-                    {({ handleProps }) => (
-                      <div className="yarn-row" onClick={() => onOpenDetail(work)}>
-                        <DragHandle {...handleProps} />
-                        <div className="yarn-thumb">
-                          {work.img_url ? <img src={work.img_url} alt="" /> : <WorkSvgSm />}
-                        </div>
-                        <div className="yarn-info">
-                          <div className="yarn-name">{work.name || '名前なし'}</div>
-                          <div className="yarn-tags">
-                            {yarnTags}
-                            {work.needle ? <span className="tag">{work.needle}</span> : null}
-                          </div>
-                          {work.memo ? (
-                            <div className="meta-text" style={{ marginTop: '3px' }}>
-                              {work.memo.slice(0, 30)}{work.memo.length > 30 ? '…' : ''}
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-                    )}
-                  </SortableItem>
-                )
-              })}
+          <SortableContext items={list.map((i) => i.id)} strategy={rectSortingStrategy}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+              {list.map((work) => (
+                <SortableWorkGridCard key={work.id} work={work} count={yarnCounts[work.id] || 0} onOpenDetail={onOpenDetail} />
+              ))}
             </div>
-            )}
           </SortableContext>
         </DndContext>
       ) : view === 'grid' ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
           {list.map((work) => (
-            <WorkGridItem key={work.id} work={work} count={yarnCounts[work.id] || 0} onOpenDetail={onOpenDetail} />
+            <WorkGridCard key={work.id} work={work} count={yarnCounts[work.id] || 0} onOpenDetail={onOpenDetail} />
           ))}
         </div>
       ) : (
