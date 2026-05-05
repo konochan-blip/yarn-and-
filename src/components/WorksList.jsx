@@ -79,7 +79,7 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                   return (
                     <SortableItem key={work.id} id={work.id}>
                       {({ handleProps }) => (
-                        <div {...handleProps} onClick={() => onOpenDetail(work)} style={{ cursor: 'grab', touchAction: 'none' }}>
+                        <div {...handleProps} onClick={() => onOpenDetail(work)} style={{ cursor: 'grab', touchAction: 'none', overflow: 'hidden' }}>
                           <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
                             {work.img_url
                               ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
@@ -92,8 +92,10 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                               </div>
                             )}
                           </div>
-                          <div style={{ background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minHeight: '14px' }}>
-                            {work.name || ''}
+                          <div style={{ padding: '3px 4px 4px', background: 'rgba(140,98,114,0.82)' }}>
+                            <div style={{ fontSize: '9px', color: '#fff', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {work.name || ' '}
+                            </div>
                           </div>
                         </div>
                       )}
@@ -142,7 +144,7 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
           {list.map((work) => {
             const count = yarnCounts[work.id] || 0
             return (
-              <div key={work.id} onClick={() => onOpenDetail(work)} style={{ cursor: 'pointer' }}>
+              <div key={work.id} onClick={() => onOpenDetail(work)} style={{ cursor: 'pointer', overflow: 'hidden' }}>
                 <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
                   {work.img_url
                     ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
@@ -155,8 +157,10 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                     </div>
                   )}
                 </div>
-                <div style={{ background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minHeight: '14px' }}>
-                  {work.name || ''}
+                <div style={{ padding: '3px 4px 4px', background: 'rgba(140,98,114,0.82)' }}>
+                  <div style={{ fontSize: '9px', color: '#fff', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {work.name || ' '}
+                  </div>
                 </div>
               </div>
             )
