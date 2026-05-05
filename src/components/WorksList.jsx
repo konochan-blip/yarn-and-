@@ -45,7 +45,7 @@ function SortableWorkGridCard({ work, count, onOpenDetail }) {
         transition,
         opacity: isDragging ? 0.5 : 1,
         cursor: 'grab',
-        touchAction: 'none',
+        touchAction: isDragging ? 'none' : 'auto',
         overflow: 'hidden',
         position: 'relative',
         zIndex: isDragging ? 999 : 'auto',
@@ -83,7 +83,7 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 500, tolerance: 10 } })
   )
 
   function handleDragEnd(event) {
