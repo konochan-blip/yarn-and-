@@ -91,6 +91,11 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                               <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
                             </div>
                           )}
+                          {work.name && (
+                            <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {work.name}
+                            </div>
+                          )}
                         </div>
                       )}
                     </SortableItem>
@@ -148,6 +153,11 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
                   <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
                     <MiniYarnBall />
                     <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
+                  </div>
+                )}
+                {work.name && (
+                  <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {work.name}
                   </div>
                 )}
               </div>
