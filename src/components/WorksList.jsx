@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
+import { SortableContext, rectSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import SortableItem, { DragHandle } from './SortableItem'
-import { WorkSvgSm, YarnSvgSm } from '../lib/svgs'
+import { WorkSvgSm } from '../lib/svgs'
 import { MiniYarnBall } from './WorkDetail'
 
 const LABEL_H = 19
@@ -71,6 +72,7 @@ function SortableWorkGridCard({ work, count, onOpenDetail }) {
 }
 
 export default function WorksList({ works, yarns, workCategories, sort, needleFilter, categoryFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onCategoryFilterChange, onViewChange, onOpenDetail, onReorder }) {
+  const [reorderMode, setReorderMode] = useState(false)
   const allCategories = [...new Set([...(workCategories || []), 'その他'].filter((c) => works.some((w) => (w.categories || []).includes(c))))]
 
   let list = [...works]
@@ -79,11 +81,13 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
   if (sort === 'new') list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
   else if (sort === 'yarn') list.sort((a, b) => (b.yarn_ids?.length || 0) - (a.yarn_ids?.length || 0))
-  const canDrag = sort === 'default' && !needleFilter && !categoryFilter && view === 'grid'
+
+  const canEnterReorder = sort === 'default' && !needleFilter && !categoryFilter && view === 'grid'
+  const canDrag = canEnterReorder && reorderMode
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 500, tolerance: 10 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
   )
 
   function handleDragEnd(event) {
@@ -94,17 +98,27 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
     onReorder(arrayMove(list, oldIndex, newIndex))
   }
 
+  function handleSortChange(v) {
+    setReorderMode(false)
+    onSortChange(v)
+  }
+
+  function handleViewChange(v) {
+    setReorderMode(false)
+    onViewChange(v)
+  }
+
   return (
     <>
       <div className="toolbar">
         <label>並び替え</label>
-        <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+        <select value={sort} onChange={(e) => handleSortChange(e.target.value)}>
           <option value="new">新しい順</option>
           <option value="default">登録順</option>
           <option value="name">名前順</option>
           <option value="yarn">YARN順</option>
         </select>
-        <select value={needleFilter} onChange={(e) => onNeedleFilterChange(e.target.value)}
+        <select value={needleFilter} onChange={(e) => { setReorderMode(false); onNeedleFilterChange(e.target.value) }}
           style={{ fontFamily: 'inherit', fontSize: '13px', padding: '4px 8px', border: '1px solid var(--border)', borderRadius: '99px', background: 'var(--bg)', color: 'var(--text-secondary)', cursor: 'pointer', outline: 'none' }}>
           <option value="">すべて</option>
           <option value="かぎ針">かぎ針</option>
@@ -113,7 +127,7 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
           <option value="その他">その他</option>
         </select>
         {allCategories.length > 0 && (
-          <select value={categoryFilter} onChange={(e) => onCategoryFilterChange(e.target.value)}
+          <select value={categoryFilter} onChange={(e) => { setReorderMode(false); onCategoryFilterChange(e.target.value) }}
             style={{ fontFamily: 'inherit', fontSize: '13px', padding: '4px 8px', border: '1px solid var(--border)', borderRadius: '99px', background: 'var(--bg)', color: 'var(--text-secondary)', cursor: 'pointer', outline: 'none' }}>
             <option value="">カテゴリー</option>
             {allCategories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
@@ -121,12 +135,21 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
         )}
         <span className="count-badge">{works.length}点</span>
         <div style={{ display: 'flex', gap: '4px', marginLeft: '4px' }}>
-          <button onClick={() => onViewChange('list')} title="リスト"
+          <button onClick={() => handleViewChange('list')} title="リスト"
             style={{ padding: '5px 8px', borderRadius: '6px', border: '1px solid #DCCDD4', background: view === 'list' ? '#8C6272' : '#FDF5F7', color: view === 'list' ? '#FDF5F7' : '#7A6369', cursor: 'pointer', fontSize: '13px', lineHeight: 1, overflow: 'hidden' }}>☰</button>
-          <button onClick={() => onViewChange('grid')} title="グリッド"
+          <button onClick={() => handleViewChange('grid')} title="グリッド"
             style={{ padding: '5px 8px', borderRadius: '6px', border: '1px solid #DCCDD4', background: view === 'grid' ? '#8C6272' : '#FDF5F7', color: view === 'grid' ? '#FDF5F7' : '#7A6369', cursor: 'pointer', fontSize: '13px', lineHeight: 1, overflow: 'hidden' }}>⊞</button>
         </div>
       </div>
+
+      {canEnterReorder && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 0 6px' }}>
+          <button onClick={() => setReorderMode((v) => !v)}
+            style={{ fontFamily: 'inherit', fontSize: '12px', padding: '4px 12px', borderRadius: '99px', border: '1px solid var(--accent)', background: reorderMode ? 'var(--accent)' : 'transparent', color: reorderMode ? '#fff' : 'var(--accent)', cursor: 'pointer' }}>
+            {reorderMode ? '完了' : '並び替え'}
+          </button>
+        </div>
+      )}
 
       {works.length === 0 ? (
         <div className="empty">

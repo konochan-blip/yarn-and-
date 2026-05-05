@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import SortableItem, { DragHandle } from './SortableItem'
@@ -15,14 +16,17 @@ function ViewToggle({ view, onViewChange }) {
 }
 
 export default function ToolsList({ tools, sort, view, onSortChange, onViewChange, onOpenDetail, onReorder }) {
+  const [reorderMode, setReorderMode] = useState(false)
   const sorted = [...tools]
   if (sort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'name') sorted.sort((a, b) => (a.type || '').localeCompare(b.type || '', 'ja'))
-  const canDrag = sort === 'default' && view === 'grid'
+
+  const canEnterReorder = sort === 'default' && view === 'grid'
+  const canDrag = canEnterReorder && reorderMode
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 500, tolerance: 10 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
   )
 
   function handleDragEnd(event) {
@@ -33,18 +37,37 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
     onReorder(arrayMove(sorted, oldIndex, newIndex))
   }
 
+  function handleSortChange(v) {
+    setReorderMode(false)
+    onSortChange(v)
+  }
+
+  function handleViewChange(v) {
+    setReorderMode(false)
+    onViewChange(v)
+  }
+
   return (
     <>
       <div className="toolbar">
         <label>並び替え</label>
-        <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+        <select value={sort} onChange={(e) => handleSortChange(e.target.value)}>
           <option value="new">新しい順</option>
           <option value="default">登録順</option>
           <option value="name">種類順</option>
         </select>
         <span className="count-badge">{tools.length}点</span>
-        <ViewToggle view={view} onViewChange={onViewChange} />
+        <ViewToggle view={view} onViewChange={handleViewChange} />
       </div>
+
+      {canEnterReorder && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 0 6px' }}>
+          <button onClick={() => setReorderMode((v) => !v)}
+            style={{ fontFamily: 'inherit', fontSize: '12px', padding: '4px 12px', borderRadius: '99px', border: '1px solid var(--accent)', background: reorderMode ? 'var(--accent)' : 'transparent', color: reorderMode ? '#fff' : 'var(--accent)', cursor: 'pointer' }}>
+            {reorderMode ? '完了' : '並び替え'}
+          </button>
+        </div>
+      )}
 
       {tools.length === 0 ? (
         <div className="empty">
@@ -55,51 +78,22 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
         </div>
       ) : canDrag ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sorted.map((i) => i.id)} strategy={view === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
-            {view === 'grid' ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-                {sorted.map((tool) => (
-                  <SortableItem key={tool.id} id={tool.id}>
-                    {({ handleProps }) => (
-                      <div {...handleProps} onClick={() => onOpenDetail(tool)}
-                        style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative', touchAction: 'none' }}>
-                        {tool.img_url
-                          ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
-                        }
-                      </div>
-                    )}
-                  </SortableItem>
-                ))}
-              </div>
-            ) : (
-            <div className="list">
+          <SortableContext items={sorted.map((i) => i.id)} strategy={rectSortingStrategy}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
               {sorted.map((tool) => (
                 <SortableItem key={tool.id} id={tool.id}>
                   {({ handleProps }) => (
-                    <div className="yarn-row" onClick={() => onOpenDetail(tool)}>
-                      <DragHandle {...handleProps} />
-                      <div className="yarn-thumb">
-                        {tool.img_url ? <img src={tool.img_url} alt="" /> : <ToolSvgSm />}
-                      </div>
-                      <div className="yarn-info">
-                        <div className="yarn-name">{tool.name || '名前なし'}</div>
-                        <div className="yarn-tags">
-                          {tool.type ? <span className="tag">{tool.type}</span> : null}
-                          {tool.size ? <span className="meta-text">{tool.size}</span> : null}
-                        </div>
-                        {tool.memo ? (
-                          <div className="meta-text" style={{ marginTop: '3px' }}>
-                            {tool.memo.slice(0, 30)}{tool.memo.length > 30 ? '…' : ''}
-                          </div>
-                        ) : null}
-                      </div>
+                    <div {...handleProps} onClick={() => onOpenDetail(tool)}
+                      style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative', touchAction: 'none' }}>
+                      {tool.img_url
+                        ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
+                      }
                     </div>
                   )}
                 </SortableItem>
               ))}
             </div>
-            )}
           </SortableContext>
         </DndContext>
       ) : view === 'grid' ? (
