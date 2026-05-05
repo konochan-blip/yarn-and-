@@ -18,6 +18,7 @@ import BookDetail from './components/BookDetail'
 import WorkDetail from './components/WorkDetail'
 import LabelSearch from './components/LabelSearch'
 import ShopSettings from './components/ShopSettings'
+import MakerSettings from './components/MakerSettings'
 import CategorySettings from './components/CategorySettings'
 import PurchaseForm from './components/PurchaseForm'
 import PurchaseDetail from './components/PurchaseDetail'
@@ -76,7 +77,7 @@ export default function App() {
       if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true)
       if (event === 'SIGNED_IN' && shouldShowTutorial()) setShowTutorial(true)
       if (!session) {
-        setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([]); setPurchases([]); setWorkCategories([])
+        setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([]); setMakers([]); setPurchases([]); setWorkCategories([])
         setFollows([]); setFollowersCount(0); setFeedWorks([]); setFeedProfiles([]); setFeedLoaded(false)
       }
     })
@@ -91,6 +92,7 @@ export default function App() {
   const [books,      setBooks]      = useState([])
   const [works,      setWorks]      = useState([])
   const [shops,      setShops]      = useState([])
+  const [makers,     setMakers]     = useState([])
   const [purchases,  setPurchases]  = useState([])
   const [workCategories, setWorkCategories] = useState([])
   const [loading, setLoading] = useState(false)
@@ -140,6 +142,7 @@ export default function App() {
   const [detailWorkAuthor, setDetailWorkAuthor] = useState(null)
   const [labelSearchOpen,      setLabelSearchOpen]      = useState(false)
   const [settingsOpen,         setSettingsOpen]         = useState(false)
+  const [makerSettingsOpen,    setMakerSettingsOpen]    = useState(false)
   const [categorySettingsOpen, setCategorySettingsOpen] = useState(false)
   const [purchaseFormOpen,     setPurchaseFormOpen]     = useState(false)
   const [editingPurchase,      setEditingPurchase]      = useState(null)
@@ -221,6 +224,9 @@ export default function App() {
       // テーブルが未作成でも他データに影響しないよう個別取得
       supabase.from('work_categories').select('name').eq('user_id', user.id).order('created_at', { ascending: true })
         .then(({ data: wc }) => setWorkCategories((wc || []).map((row) => row.name)))
+        .catch(() => {})
+      supabase.from('tool_makers').select('name').eq('user_id', user.id).order('created_at', { ascending: true })
+        .then(({ data: mk }) => setMakers((mk || []).map((row) => row.name)))
         .catch(() => {})
       supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30)
         .then(async ({ data: notifs }) => {
@@ -471,6 +477,18 @@ export default function App() {
     setShops((prev) => prev.filter((s) => s !== name))
   }
 
+  // ────────── Maker CRUD ─────────────────────────
+  async function addMaker(name) {
+    const { error } = await supabase.from('tool_makers').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
+    if (error) throw new Error(error.message || 'メーカーの追加に失敗しました')
+    setMakers((prev) => prev.includes(name) ? prev : [...prev, name])
+  }
+
+  async function deleteMaker(name) {
+    await supabase.from('tool_makers').delete().eq('user_id', user.id).eq('name', name)
+    setMakers((prev) => prev.filter((m) => m !== name))
+  }
+
   async function savePurchase(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
     const record = { user_id: user.id, name: data.name, seller: data.seller, price: data.price, memo: data.memo, img_url }
@@ -598,8 +616,9 @@ export default function App() {
       <YarnForm open={yarnFormOpen} editingYarn={editingYarn} shops={shops} yarns={yarns}
         onSave={saveYarn} onClose={() => setYarnFormOpen(false)} onMergeCount={mergeYarnCount}
         onOpenShopSettings={() => setSettingsOpen(true)} />
-      <ToolForm open={toolFormOpen} editingTool={editingTool}
-        onSave={saveTool} onClose={() => setToolFormOpen(false)} />
+      <ToolForm open={toolFormOpen} editingTool={editingTool} makers={makers}
+        onSave={saveTool} onClose={() => setToolFormOpen(false)}
+        onOpenMakerSettings={() => setMakerSettingsOpen(true)} />
       <BookForm open={bookFormOpen} editingBook={editingBook}
         onSave={saveBook} onClose={() => setBookFormOpen(false)} />
       <WorkForm open={workFormOpen} editingWork={editingWork} yarns={yarns} books={books}
@@ -636,6 +655,8 @@ export default function App() {
         onClose={() => setLabelSearchOpen(false)} onOpenDetail={setDetailYarn} />
       <ShopSettings open={settingsOpen} shops={shops}
         onClose={() => setSettingsOpen(false)} onAdd={addShop} onDelete={deleteShop} />
+      <MakerSettings open={makerSettingsOpen} makers={makers}
+        onClose={() => setMakerSettingsOpen(false)} onAdd={addMaker} onDelete={deleteMaker} />
       <CategorySettings open={categorySettingsOpen} categories={workCategories}
         onClose={() => setCategorySettingsOpen(false)} onAdd={addWorkCategory} onDelete={deleteWorkCategory} />
       <PurchaseForm open={purchaseFormOpen} editingPurchase={editingPurchase}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Modal from './Modal'
 
-export default function ToolForm({ open, editingTool, onSave, onClose }) {
+export default function ToolForm({ open, editingTool, makers = [], onSave, onClose, onOpenMakerSettings }) {
   const [name, setName] = useState('')
   const [type, setType] = useState('')
   const [typeCustom, setTypeCustom] = useState('')
@@ -83,7 +83,29 @@ export default function ToolForm({ open, editingTool, onSave, onClose }) {
       {type === 'その他' && (
         <div className="field"><label>種類（詳細）</label><input type="text" value={typeCustom} placeholder="例：ニッティングスレーダー" onChange={(e) => setTypeCustom(e.target.value)} /></div>
       )}
-      <div className="field"><label>メーカー</label><input type="text" value={name} placeholder="例：クロバー" onChange={(e) => setName(e.target.value)} /></div>
+      <div className="field">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+          <label style={{ margin: 0 }}>メーカー</label>
+          {onOpenMakerSettings && (
+            <button type="button" onClick={onOpenMakerSettings}
+              style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0' }}>
+              ＋ メーカーを編集
+            </button>
+          )}
+        </div>
+        {makers.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {makers.map((m) => (
+              <button key={m} type="button" onClick={() => setName(name === m ? '' : m)}
+                style={{ padding: '7px 14px', borderRadius: '99px', border: name === m ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: name === m ? 'var(--accent)' : 'var(--surface)', color: name === m ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', transition: 'all 0.15s', fontWeight: name === m ? 600 : 400 }}>
+                {m}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <input type="text" value={name} placeholder="例：クロバー" onChange={(e) => setName(e.target.value)} />
+        )}
+      </div>
       <div style={{ display: 'flex', gap: '12px' }}>
         <div className="field" style={{ flex: 1 }}><label>号数</label><input type="text" value={needleSize} placeholder="例：3号" onChange={(e) => setNeedleSize(e.target.value)} /></div>
         <div className="field" style={{ flex: 1 }}><label>サイズ</label><input type="text" value={size} placeholder="例：2.3mm" onChange={(e) => setSize(e.target.value)} /></div>
