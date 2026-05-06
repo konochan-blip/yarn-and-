@@ -45,9 +45,12 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   )
 }
 
-export default function MyPage({ open, profile, yarns, tools, books, works, purchases, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail }) {
+export default function MyPage({ open, profile, yarns, tools, books, works, purchases, wishItems = [], followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddWishItem, onDeleteWishItem }) {
   const [sheet, setSheet] = useState(null)
   const [copied, setCopied] = useState(false)
+  const [wishText, setWishText] = useState('')
+  const [wishYarnId, setWishYarnId] = useState('')
+  const [addingWish, setAddingWish] = useState(false)
 
   const handleCopyUrl = useCallback(() => {
     const url = `https://www.yarn-and.com/user/${profile?.handle || profile?.username || ''}`
@@ -195,6 +198,47 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
               </div>
             </div>
           )}
+
+          {/* 買う物リスト */}
+          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                買う物リスト <span style={{ fontSize: '11px', fontWeight: 400, color: 'var(--text-tertiary)' }}>{wishItems.length}</span>
+              </div>
+            </div>
+            {wishItems.length === 0 && !addingWish && (
+              <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>まだ何も登録されていないよ</div>
+            )}
+            {wishItems.map((item) => {
+              const linked = yarns.find((y) => y.id === item.yarn_id)
+              return (
+                <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{item.text}</span>
+                    {linked && <span style={{ marginLeft: '6px', fontSize: '11px', padding: '1px 7px', borderRadius: '99px', background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 500 }}>{linked.name || '毛糸'}</span>}
+                  </div>
+                  <button onClick={() => onDeleteWishItem(item.id)} style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: '2px 4px', flexShrink: 0 }}>×</button>
+                </div>
+              )
+            })}
+            {addingWish ? (
+              <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <input type="text" value={wishText} placeholder="例：ソックヤーン・かぎ針5号" onChange={(e) => setWishText(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                <select value={wishYarnId} onChange={(e) => setWishYarnId(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-secondary)', outline: 'none', width: '100%' }}>
+                  <option value="">毛糸と紐づけない</option>
+                  {yarns.map((y) => <option key={y.id} value={y.id}>{y.name || '名前なし'}{y.colorname ? ` / ${y.colorname}` : ''}</option>)}
+                </select>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className="btn" onClick={() => { setAddingWish(false); setWishText(''); setWishYarnId('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                  <button className="btn primary" disabled={!wishText.trim()} onClick={async () => { if (!wishText.trim()) return; await onAddWishItem(wishText.trim(), wishYarnId || null); setWishText(''); setWishYarnId(''); setAddingWish(false) }} style={{ flex: 1, fontSize: '13px' }}>追加</button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => setAddingWish(true)} style={{ marginTop: wishItems.length ? '8px' : '0', background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>
+            )}
+          </div>
 
           {profile?.favorite_shops?.length > 0 && (
             <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>

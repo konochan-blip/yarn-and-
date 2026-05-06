@@ -77,7 +77,7 @@ export default function App() {
       if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true)
       if (event === 'SIGNED_IN' && shouldShowTutorial()) setShowTutorial(true)
       if (!session) {
-        setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([]); setMakers([]); setPurchases([]); setWorkCategories([])
+        setYarns([]); setTools([]); setBooks([]); setWorks([]); setShops([]); setMakers([]); setWishItems([]); setPurchases([]); setWorkCategories([])
         setFollows([]); setFollowersCount(0); setFeedWorks([]); setFeedProfiles([]); setFeedLoaded(false)
       }
     })
@@ -93,6 +93,7 @@ export default function App() {
   const [works,      setWorks]      = useState([])
   const [shops,      setShops]      = useState([])
   const [makers,     setMakers]     = useState([])
+  const [wishItems,  setWishItems]  = useState([])
   const [purchases,  setPurchases]  = useState([])
   const [workCategories, setWorkCategories] = useState([])
   const [loading, setLoading] = useState(false)
@@ -227,6 +228,9 @@ export default function App() {
         .catch(() => {})
       supabase.from('tool_makers').select('name').eq('user_id', user.id).order('created_at', { ascending: true })
         .then(({ data: mk }) => setMakers((mk || []).map((row) => row.name)))
+        .catch(() => {})
+      supabase.from('wish_items').select('*').eq('user_id', user.id).order('created_at', { ascending: true })
+        .then(({ data: wi }) => setWishItems(wi || []))
         .catch(() => {})
       supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30)
         .then(async ({ data: notifs }) => {
@@ -477,6 +481,19 @@ export default function App() {
     setShops((prev) => prev.filter((s) => s !== name))
   }
 
+  // ────────── WishItem CRUD ──────────────────────
+  async function addWishItem(text, yarnId) {
+    const { data: inserted, error } = await supabase.from('wish_items')
+      .insert([{ user_id: user.id, text, yarn_id: yarnId || null }]).select().single()
+    if (error) throw new Error(error.message)
+    if (inserted) setWishItems((prev) => [...prev, inserted])
+  }
+
+  async function deleteWishItem(id) {
+    await supabase.from('wish_items').delete().eq('id', id)
+    setWishItems((prev) => prev.filter((w) => w.id !== id))
+  }
+
   // ────────── Maker CRUD ─────────────────────────
   async function addMaker(name) {
     const { error } = await supabase.from('tool_makers').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
@@ -666,6 +683,7 @@ export default function App() {
         onEdit={(p) => { setDetailPurchase(null); setEditingPurchase(p); setPurchaseFormOpen(true) }}
         onDelete={deletePurchase} />
       <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works} purchases={purchases}
+        wishItems={wishItems}
         followsCount={follows.length} followersCount={followersCount}
         follows={follows} feedProfiles={feedProfiles}
         onClose={() => setMyPageOpen(false)}
@@ -674,7 +692,9 @@ export default function App() {
         onChangePassword={() => { setMyPageOpen(false); setChangePasswordOpen(true) }}
         onChangeHandle={() => { setMyPageOpen(false); setChangeHandleOpen(true) }}
         onAddPurchase={() => { setEditingPurchase(null); setPurchaseFormOpen(true) }}
-        onOpenPurchaseDetail={setDetailPurchase} />
+        onOpenPurchaseDetail={setDetailPurchase}
+        onAddWishItem={addWishItem}
+        onDeleteWishItem={deleteWishItem} />
       <ChangePasswordModal open={changePasswordOpen || passwordRecovery} onClose={() => { setChangePasswordOpen(false); setPasswordRecovery(false) }} />
       <ChangeHandleModal open={changeHandleOpen} currentHandle={profile?.handle} userId={user?.id}
         onClose={() => setChangeHandleOpen(false)}
