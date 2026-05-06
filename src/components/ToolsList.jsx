@@ -83,7 +83,6 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
   return (
     <>
       <div className="toolbar">
-        <label>並び替え</label>
         <select value={sort} onChange={(e) => handleSortChange(e.target.value)}>
           <option value="new">新しい順</option>
           <option value="default">登録順</option>

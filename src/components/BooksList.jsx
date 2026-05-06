@@ -90,7 +90,6 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
   return (
     <>
       <div className="toolbar">
-        <label>並び替え</label>
         <select value={sort} onChange={(e) => handleSortChange(e.target.value)}>
           <option value="new">新しい順</option>
           <option value="default">登録順</option>
