@@ -11,6 +11,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
   const [material, setMaterial] = useState('')
   const [lot, setLot] = useState('')
   const [count, setCount] = useState('')
+  const [countUnit, setCountUnit] = useState('本')
   const [price, setPrice] = useState('')
   const [needle, setNeedle] = useState('')
   const [weightG, setWeightG] = useState('')
@@ -36,6 +37,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
       setMaterial(editingYarn.material || '')
       setLot(editingYarn.lot || '')
       setCount(String(editingYarn.count || ''))
+      setCountUnit(editingYarn.count_unit || '本')
       setPrice(editingYarn.price || '')
       setNeedle(editingYarn.needle || '')
       setWeightG(String(editingYarn.weight_g || ''))
@@ -47,7 +49,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
       setImgPreview(editingYarn.img_url || null)
     } else {
       setName(''); setProductNumber(''); setColor(''); setColorname(''); setMaterial(''); setLot('')
-      setCount(''); setPrice(''); setNeedle(''); setWeightG(''); setLengthM(''); setLabel(''); setMemo(''); setSelectedShops([])
+      setCount(''); setCountUnit('本'); setPrice(''); setNeedle(''); setWeightG(''); setLengthM(''); setLabel(''); setMemo(''); setSelectedShops([])
       setImgFile(null); setImgPreview(null)
     }
     setSimilar([])
@@ -117,7 +119,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
 
     setSaving(true)
     try {
-      const data = { name, product_number: productNumber, color, colorname, material, lot, count: Number(count) || 0, price, needle, weight_g: weightG ? Number(weightG) : null, length_m: lengthM ? Number(lengthM) : null, label, memo, shops: selectedShops, img_url: imgPreview || '' }
+      const data = { name, product_number: productNumber, color, colorname, material, lot, count: Number(count) || 0, count_unit: countUnit, price, needle, weight_g: weightG ? Number(weightG) : null, length_m: lengthM ? Number(lengthM) : null, label, memo, shops: selectedShops, img_url: imgPreview || '' }
       if (editingYarn) data.id = editingYarn.id
       await onSave(data, imgFile)
       onClose()
@@ -173,7 +175,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
                 </div>
                 <div className="similar-info">
                   <div className="similar-name">{item.name || '名前なし'}</div>
-                  <div className="similar-sub">色番号:{item.color || '—'} / 現在{item.count || 0}本</div>
+                  <div className="similar-sub">色番号:{item.color || '—'} / 現在{item.count || 0}{item.count_unit || '本'}</div>
                 </div>
                 <div className="similar-add">
                   <input type="number" min="1" value={mergeInputs[item.id] || '1'}
@@ -188,7 +190,18 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
         <div className="field"><label>色</label><input type="text" value={colorname} placeholder="例：ネイビー、ミントグリーン" onChange={(e) => setColorname(e.target.value)} /></div>
         <div className="field"><label>素材</label><input type="text" value={material} placeholder="例：ウール50% コットン50%" onChange={(e) => setMaterial(e.target.value)} /></div>
         <div className="field"><label>ロット番号</label><input type="text" value={lot} placeholder="例：L204" onChange={(e) => setLot(e.target.value)} /></div>
-        <div className="field"><label>本数</label><input type="number" value={count} placeholder="例：5" min="0" onChange={(e) => setCount(e.target.value)} /></div>
+        <div className="field">
+          <label>本数・玉数</label>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <input type="number" value={count} placeholder="例：5" min="0" onChange={(e) => setCount(e.target.value)} style={{ flex: 1 }} />
+            {['本', '玉'].map((u) => (
+              <button key={u} type="button" onClick={() => setCountUnit(u)}
+                style={{ padding: '7px 16px', borderRadius: '99px', border: countUnit === u ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: countUnit === u ? 'var(--accent)' : 'var(--surface)', color: countUnit === u ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', fontWeight: countUnit === u ? 600 : 400 }}>
+                {u}
+              </button>
+            ))}
+          </div>
+        </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <div className="field" style={{ flex: 1 }}><label>グラム (g)</label><input type="number" value={weightG} placeholder="例：40" min="0" onChange={(e) => setWeightG(e.target.value)} /></div>
           <div className="field" style={{ flex: 1 }}><label>長さ (m)</label><input type="number" value={lengthM} placeholder="例：80" min="0" onChange={(e) => setLengthM(e.target.value)} /></div>

@@ -39,7 +39,7 @@ export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onO
       <div className="detail-row"><span className="dl">ロット</span><span className="dv">{yarn.lot || '—'}</span></div>
       {yarn.needle ? <div className="detail-row"><span className="dl">適合針</span><span className="dv">{yarn.needle}</span></div> : null}
       {yarn.price ? <div className="detail-row"><span className="dl">定価</span><span className="dv">{yarn.price}</span></div> : null}
-      <div className="detail-row"><span className="dl">本数</span><span className="dv">{yarn.count || 0} 本</span></div>
+      <div className="detail-row"><span className="dl">本数・玉数</span><span className="dv">{yarn.count || 0} {yarn.count_unit || '本'}</span></div>
       {(yarn.weight_g || yarn.length_m) && (
         <div className="detail-row">
           <span className="dl">規格</span>

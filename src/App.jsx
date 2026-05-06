@@ -350,7 +350,7 @@ export default function App() {
   // ────────── Yarn CRUD ──────────────────────────
   async function saveYarn(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, name: data.name, product_number: data.product_number, color: data.color, colorname: data.colorname, material: data.material, lot: data.lot, count: data.count, price: data.price, needle: data.needle, weight_g: data.weight_g, length_m: data.length_m, label: data.label, memo: data.memo, shops: data.shops, img_url }
+    const record = { user_id: user.id, name: data.name, product_number: data.product_number, color: data.color, colorname: data.colorname, material: data.material, lot: data.lot, count: data.count, count_unit: data.count_unit || '本', price: data.price, needle: data.needle, weight_g: data.weight_g, length_m: data.length_m, label: data.label, memo: data.memo, shops: data.shops, img_url }
     if (data.id) {
       const { data: updated, error } = await supabase.from('yarns').update(record).eq('id', data.id).select().single()
       if (error) throw new Error(error.message)

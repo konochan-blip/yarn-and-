@@ -34,7 +34,7 @@ function YarnGridCard({ item, onOpenDetail }) {
       </div>
       <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
         <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
-        <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
+        <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}{item.count_unit || '本'}</div>
       </div>
     </div>
   )
@@ -73,7 +73,7 @@ function SortableYarnGridCard({ item, onOpenDetail }) {
       </div>
       <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
         <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
-        <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
+        <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}{item.count_unit || '本'}</div>
       </div>
     </div>
   )
@@ -216,7 +216,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                 </div>
                 <div className="yarn-count">
                   <span className="count-num">{item.count || 0}</span>
-                  <span className="count-unit">本</span>
+                  <span className="count-unit">{item.count_unit || '本'}</span>
                 </div>
               </div>
             )
