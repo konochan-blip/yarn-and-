@@ -181,7 +181,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
             <YarnGridCard key={item.id} item={item} onOpenDetail={onOpenDetail} />
           ))}
         </div>
-      ) : canDrag ? null : (
+      ) : (
         <div className="list">
           {sorted.map((item) => {
             const tags = [
@@ -224,57 +224,6 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
         </div>
       )}
 
-      {sort === 'default' && view !== 'grid' && (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sorted.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-            <div className="list">
-              {sorted.map((item) => {
-                const tags = [
-                  item.colorname ? <span key="cn" className="tag color-name">{item.colorname}</span> : null,
-                  item.material ? <span key="mt" className="tag">{item.material}</span> : null,
-                  item.needle ? <span key="nd" className="tag">🪡 {item.needle}</span> : null,
-                ].filter(Boolean)
-                const shopTags = (item.shops || []).map((s) => <span key={s} className="tag shop">{s}</span>)
-                const workTags = works
-                  .filter((w) => (w.yarn_ids || []).includes(item.id))
-                  .map((w) => <span key={w.id} className="tag work">✦ {w.name || '作品'}</span>)
-                return (
-                  <SortableItem key={item.id} id={item.id}>
-                    {({ handleProps }) => (
-                      <div className="yarn-row" onClick={() => onOpenDetail(item)}>
-                        <DragHandle {...handleProps} />
-                        <div className="yarn-thumb">
-                          {item.img_url ? (
-                            <img src={item.img_url} alt="" />
-                          ) : (() => { const [c1,c2] = swatchOf(item); return (<>
-                            <div className="yarn-swatch" style={{'--sw1':c1,'--sw2':c2}} />
-                            <div className="yarn-swatch-stitch" />
-                            <div className="yarn-swatch-rim" />
-                          </>)})()}
-                        </div>
-                        <div className="yarn-info">
-                          <div className="yarn-name">{item.name || '名前なし'}</div>
-                          {(item.color || item.lot) && (
-                            <div className="yarn-meta">
-                              {[item.color && `No.${item.color}`, item.lot && `Lot.${item.lot}`].filter(Boolean).join(' · ')}
-                            </div>
-                          )}
-                          <div className="yarn-tags">{tags}</div>
-                          <div className="yarn-tags" style={{ marginTop: '4px' }}>{shopTags}{workTags}</div>
-                        </div>
-                        <div className="yarn-count">
-                          <span className="count-num">{item.count || 0}</span>
-                          <span className="count-unit">本</span>
-                        </div>
-                      </div>
-                    )}
-                  </SortableItem>
-                )
-              })}
-            </div>
-          </SortableContext>
-        </DndContext>
-      )}
     </>
   )
 }
