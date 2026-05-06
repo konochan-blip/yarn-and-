@@ -165,29 +165,6 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
             </div>
           </div>
 
-          {/* Content stats */}
-          <div className="mypage-stats" style={{ marginBottom: '20px' }}>
-            <div className="mypage-stat">
-              <span className="mypage-stat-num">{yarns.length}</span>
-              <span className="mypage-stat-label">毛糸</span>
-            </div>
-            <div className="mypage-stat">
-              <span className="mypage-stat-num">{tools.length}</span>
-              <span className="mypage-stat-label">道具</span>
-            </div>
-            <div className="mypage-stat">
-              <span className="mypage-stat-num">{books.length}</span>
-              <span className="mypage-stat-label">書籍</span>
-            </div>
-            <div className="mypage-stat">
-              <span className="mypage-stat-num">{works.length}</span>
-              <span className="mypage-stat-label">作品</span>
-            </div>
-            <div className="mypage-stat">
-              <span className="mypage-stat-num">{(purchases || []).length}</span>
-              <span className="mypage-stat-label">購入品</span>
-            </div>
-          </div>
 
           {isPublic && (
             <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
@@ -239,7 +216,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
           {/* 購入品グリッド */}
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>購入品</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>購入品 <span style={{ fontSize: '11px', fontWeight: 400, color: 'var(--text-tertiary)' }}>{(purchases || []).length}</span></div>
               <button onClick={onAddPurchase} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>
             </div>
             {(purchases || []).length === 0
