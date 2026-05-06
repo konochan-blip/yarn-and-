@@ -149,6 +149,7 @@ export default function App() {
   const [editingPurchase,      setEditingPurchase]      = useState(null)
   const [detailPurchase,       setDetailPurchase]       = useState(null)
   const [myPageOpen,       setMyPageOpen]       = useState(false)
+  const [returnToMyPage,   setReturnToMyPage]   = useState(false)
   const [profileFormOpen,  setProfileFormOpen]  = useState(false)
   const [profile,          setProfile]          = useState(null)
 
@@ -645,7 +646,7 @@ export default function App() {
 
       {/* Details */}
       <YarnDetail yarn={detailYarn} works={works}
-        onClose={() => setDetailYarn(null)}
+        onClose={() => { setDetailYarn(null); if (returnToMyPage) { setMyPageOpen(true); setReturnToMyPage(false) } }}
         onEdit={detailYarn?.user_id === user?.id ? (yarn) => { setDetailYarn(null); setEditingYarn(yarn); setYarnFormOpen(true) } : undefined}
         onDelete={detailYarn?.user_id === user?.id ? deleteYarn : undefined}
         onOpenWorkDetail={setDetailWork} />
@@ -688,14 +689,14 @@ export default function App() {
         follows={follows} feedProfiles={feedProfiles}
         onClose={() => setMyPageOpen(false)}
         onEdit={() => { setMyPageOpen(false); setProfileFormOpen(true) }}
-        onOpenProfile={(p) => { setMyPageOpen(false); setViewingProfile(p) }}
+        onOpenProfile={(p) => { setMyPageOpen(false); setReturnToMyPage(true); setViewingProfile(p) }}
         onChangePassword={() => { setMyPageOpen(false); setChangePasswordOpen(true) }}
         onChangeHandle={() => { setMyPageOpen(false); setChangeHandleOpen(true) }}
         onAddPurchase={() => { setEditingPurchase(null); setPurchaseFormOpen(true) }}
         onOpenPurchaseDetail={setDetailPurchase}
         onAddWishItem={addWishItem}
         onDeleteWishItem={deleteWishItem}
-        onOpenYarnDetail={(yarn) => { setMyPageOpen(false); setDetailYarn(yarn) }} />
+        onOpenYarnDetail={(yarn) => { setMyPageOpen(false); setReturnToMyPage(true); setDetailYarn(yarn) }} />
       <ChangePasswordModal open={changePasswordOpen || passwordRecovery} onClose={() => { setChangePasswordOpen(false); setPasswordRecovery(false) }} />
       <ChangeHandleModal open={changeHandleOpen} currentHandle={profile?.handle} userId={user?.id}
         onClose={() => setChangeHandleOpen(false)}
@@ -708,7 +709,7 @@ export default function App() {
         isFollowing={follows.some((f) => f.following_id === viewingProfile?.user_id)}
         onFollow={followUser}
         onUnfollow={unfollowUser}
-        onClose={() => setViewingProfile(null)}
+        onClose={() => { setViewingProfile(null); if (returnToMyPage) { setMyPageOpen(true); setReturnToMyPage(false) } }}
         onOpenProfile={setViewingProfile}
       />
 
