@@ -482,9 +482,9 @@ export default function App() {
   }
 
   // ────────── WishItem CRUD ──────────────────────
-  async function addWishItem(text, yarnId) {
+  async function addWishItem(text, yarnId, shop, quantity) {
     const { data: inserted, error } = await supabase.from('wish_items')
-      .insert([{ user_id: user.id, text, yarn_id: yarnId || null }]).select().single()
+      .insert([{ user_id: user.id, text, yarn_id: yarnId || null, shop: shop || null, quantity: quantity || null }]).select().single()
     if (error) throw new Error(error.message)
     if (inserted) setWishItems((prev) => [...prev, inserted])
   }
@@ -694,7 +694,8 @@ export default function App() {
         onAddPurchase={() => { setEditingPurchase(null); setPurchaseFormOpen(true) }}
         onOpenPurchaseDetail={setDetailPurchase}
         onAddWishItem={addWishItem}
-        onDeleteWishItem={deleteWishItem} />
+        onDeleteWishItem={deleteWishItem}
+        onOpenYarnDetail={(yarn) => { setMyPageOpen(false); setDetailYarn(yarn) }} />
       <ChangePasswordModal open={changePasswordOpen || passwordRecovery} onClose={() => { setChangePasswordOpen(false); setPasswordRecovery(false) }} />
       <ChangeHandleModal open={changeHandleOpen} currentHandle={profile?.handle} userId={user?.id}
         onClose={() => setChangeHandleOpen(false)}
