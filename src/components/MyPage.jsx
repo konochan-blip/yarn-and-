@@ -53,6 +53,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
   const [wishShop, setWishShop] = useState('')
   const [wishQty, setWishQty] = useState('')
   const [addingWish, setAddingWish] = useState(false)
+  const [wishError, setWishError] = useState('')
 
   const handleCopyUrl = useCallback(() => {
     const url = `https://www.yarn-and.com/user/${profile?.handle || profile?.username || ''}`
@@ -246,9 +247,10 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                   <option value="">毛糸と紐づけない</option>
                   {yarns.map((y) => <option key={y.id} value={y.id}>{y.name || '名前なし'}{y.colorname ? ` / ${y.colorname}` : ''}</option>)}
                 </select>
+                {wishError && <div style={{ fontSize: '12px', color: '#c0392b', padding: '4px 2px' }}>{wishError}</div>}
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="btn" onClick={() => { setAddingWish(false); setWishText(''); setWishYarnId(''); setWishShop(''); setWishQty('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
-                  <button className="btn primary" disabled={!wishText.trim()} onClick={async () => { if (!wishText.trim()) return; await onAddWishItem(wishText.trim(), wishYarnId || null, wishShop.trim(), wishQty.trim()); setWishText(''); setWishYarnId(''); setWishShop(''); setWishQty(''); setAddingWish(false) }} style={{ flex: 1, fontSize: '13px' }}>追加</button>
+                  <button className="btn" onClick={() => { setAddingWish(false); setWishText(''); setWishYarnId(''); setWishShop(''); setWishQty(''); setWishError('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                  <button className="btn primary" disabled={!wishText.trim() && !wishYarnId} onClick={async () => { try { await onAddWishItem(wishText.trim(), wishYarnId || null, wishShop.trim(), wishQty.trim()); setWishText(''); setWishYarnId(''); setWishShop(''); setWishQty(''); setAddingWish(false); setWishError('') } catch(e) { setWishError(e.message || '保存に失敗しました') } }} style={{ flex: 1, fontSize: '13px' }}>追加</button>
                 </div>
               </div>
             ) : (

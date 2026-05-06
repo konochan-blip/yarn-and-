@@ -484,7 +484,7 @@ export default function App() {
   // ────────── WishItem CRUD ──────────────────────
   async function addWishItem(text, yarnId, shop, quantity) {
     const { data: inserted, error } = await supabase.from('wish_items')
-      .insert([{ user_id: user.id, text, yarn_id: yarnId || null, shop: shop || null, quantity: quantity || null }]).select().single()
+      .insert([{ user_id: user.id, text: text || '', yarn_id: yarnId || null, shop: shop || null, quantity: quantity || null }]).select().single()
     if (error) throw new Error(error.message)
     if (inserted) setWishItems((prev) => [...prev, inserted])
   }
