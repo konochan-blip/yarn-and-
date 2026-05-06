@@ -1,8 +1,41 @@
 import { useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import SortableItem, { DragHandle } from './SortableItem'
 import { ToolSvgSm } from '../lib/svgs'
+
+const imgBoxStyle = { position: 'relative', width: '100%', paddingBottom: '100%', background: '#EDE0E5', overflow: 'hidden' }
+
+function SortableToolGridCard({ tool, onOpenDetail }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: tool.id })
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      onClick={() => onOpenDetail(tool)}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        cursor: 'grab',
+        touchAction: 'none',
+        overflow: 'hidden',
+        background: '#EDE0E5',
+        position: 'relative',
+        zIndex: isDragging ? 999 : 'auto',
+      }}
+    >
+      <div style={imgBoxStyle}>
+        {tool.img_url
+          ? <img src={tool.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+          : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
+        }
+      </div>
+    </div>
+  )
+}
 
 function ViewToggle({ view, onViewChange }) {
   return (
@@ -81,17 +114,7 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
           <SortableContext items={sorted.map((i) => i.id)} strategy={rectSortingStrategy}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
               {sorted.map((tool) => (
-                <SortableItem key={tool.id} id={tool.id}>
-                  {({ handleProps }) => (
-                    <div {...handleProps} onClick={() => onOpenDetail(tool)}
-                      style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative', touchAction: 'none' }}>
-                      {tool.img_url
-                        ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
-                      }
-                    </div>
-                  )}
-                </SortableItem>
+                <SortableToolGridCard key={tool.id} tool={tool} onOpenDetail={onOpenDetail} />
               ))}
             </div>
           </SortableContext>
@@ -100,11 +123,13 @@ export default function ToolsList({ tools, sort, view, onSortChange, onViewChang
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
           {sorted.map((tool) => (
             <div key={tool.id} onClick={() => onOpenDetail(tool)}
-              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
-              {tool.img_url
-                ? <img src={tool.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
-              }
+              style={{ overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+              <div style={imgBoxStyle}>
+                {tool.img_url
+                  ? <img src={tool.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                  : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ToolSvgSm /></div>
+                }
+              </div>
             </div>
           ))}
         </div>

@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import SortableItem, { DragHandle } from './SortableItem'
 import { YarnSvgSm } from '../lib/svgs'
 
@@ -14,7 +16,68 @@ function swatchOf(yarn) {
   return SWATCHES[Math.abs(h) % SWATCHES.length]
 }
 
+const imgBoxStyle = { position: 'relative', width: '100%', paddingBottom: '100%', background: '#EDE0E5', overflow: 'hidden' }
 
+function YarnGridCard({ item, onOpenDetail }) {
+  return (
+    <div onClick={() => onOpenDetail(item)} style={{ cursor: 'pointer', background: 'var(--surface)', overflow: 'hidden' }}>
+      <div style={imgBoxStyle}>
+        {item.img_url
+          ? <img src={item.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+          : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
+        }
+        {item.label && (
+          <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {item.label}
+          </div>
+        )}
+      </div>
+      <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
+        <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
+        <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
+      </div>
+    </div>
+  )
+}
+
+function SortableYarnGridCard({ item, onOpenDetail }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      onClick={() => onOpenDetail(item)}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        cursor: 'grab',
+        touchAction: 'none',
+        background: 'var(--surface)',
+        overflow: 'hidden',
+        position: 'relative',
+        zIndex: isDragging ? 999 : 'auto',
+      }}
+    >
+      <div style={imgBoxStyle}>
+        {item.img_url
+          ? <img src={item.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+          : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
+        }
+        {item.label && (
+          <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {item.label}
+          </div>
+        )}
+      </div>
+      <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
+        <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
+        <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
+      </div>
+    </div>
+  )
+}
 
 function getSorted(items, sort) {
   const list = [...items]
@@ -41,12 +104,15 @@ function ViewToggle({ view, onViewChange }) {
 }
 
 export default function YarnList({ yarns, works, sort, view, onSortChange, onViewChange, onOpenDetail, onOpenLabelSearch, onReorder }) {
+  const [reorderMode, setReorderMode] = useState(false)
   const sorted = getSorted(yarns, sort)
-  const canDrag = sort === 'default' && view === 'grid'
+
+  const canEnterReorder = sort === 'default' && view === 'grid'
+  const canDrag = canEnterReorder && reorderMode
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
   )
 
   function handleDragEnd(event) {
@@ -57,11 +123,14 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
     onReorder(arrayMove(sorted, oldIndex, newIndex))
   }
 
+  function handleSortChange(v) { setReorderMode(false); onSortChange(v) }
+  function handleViewChange(v) { setReorderMode(false); onViewChange(v) }
+
   return (
     <>
       <div className="toolbar">
         <label>並び替え</label>
-        <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+        <select value={sort} onChange={(e) => handleSortChange(e.target.value)}>
           <option value="new">新しい順</option>
           <option value="default">登録順</option>
           <option value="count-desc">在庫多い順</option>
@@ -73,8 +142,17 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
         </select>
         <span className="count-badge">{yarns.length}点</span>
         <button className="btn ai" onClick={onOpenLabelSearch} style={{ whiteSpace: 'nowrap', fontSize: '11px', padding: '5px 10px' }}>✦ 検索</button>
-        <ViewToggle view={view} onViewChange={onViewChange} />
+        <ViewToggle view={view} onViewChange={handleViewChange} />
       </div>
+
+      {canEnterReorder && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 0 6px' }}>
+          <button onClick={() => setReorderMode((v) => !v)}
+            style={{ fontFamily: 'inherit', fontSize: '12px', padding: '4px 12px', borderRadius: '99px', border: '1px solid var(--accent)', background: reorderMode ? 'var(--accent)' : 'transparent', color: reorderMode ? '#fff' : 'var(--accent)', cursor: 'pointer' }}>
+            {reorderMode ? '完了' : '並び替え'}
+          </button>
+        </div>
+      )}
 
       {yarns.length === 0 ? (
         <div className="empty">
@@ -89,35 +167,66 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
         </div>
       ) : canDrag ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sorted.map((i) => i.id)} strategy={view === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
-            {view === 'grid' ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
-                {sorted.map((item) => (
-                  <SortableItem key={item.id} id={item.id}>
-                    {({ handleProps }) => (
-                      <div {...handleProps} onClick={() => onOpenDetail(item)}
-                        style={{ cursor: 'grab', background: 'var(--surface)', overflow: 'hidden', touchAction: 'none' }}>
-                        <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
-                          {item.img_url
-                            ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
-                          }
-                          {item.label && (
-                            <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {item.label}
-                            </div>
-                          )}
-                        </div>
-                        <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
-                          <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
-                          <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
-                        </div>
-                      </div>
-                    )}
-                  </SortableItem>
-                ))}
+          <SortableContext items={sorted.map((i) => i.id)} strategy={rectSortingStrategy}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
+              {sorted.map((item) => (
+                <SortableYarnGridCard key={item.id} item={item} onOpenDetail={onOpenDetail} />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      ) : view === 'grid' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
+          {sorted.map((item) => (
+            <YarnGridCard key={item.id} item={item} onOpenDetail={onOpenDetail} />
+          ))}
+        </div>
+      ) : canDrag ? null : (
+        <div className="list">
+          {sorted.map((item) => {
+            const tags = [
+              item.colorname ? <span key="cn" className="tag color-name">{item.colorname}</span> : null,
+              item.material ? <span key="mt" className="tag">{item.material}</span> : null,
+              item.needle ? <span key="nd" className="tag">🪡 {item.needle}</span> : null,
+            ].filter(Boolean)
+            const shopTags = (item.shops || []).map((s) => <span key={s} className="tag shop">{s}</span>)
+            const workTags = works
+              .filter((w) => (w.yarn_ids || []).includes(item.id))
+              .map((w) => <span key={w.id} className="tag work">✦ {w.name || '作品'}</span>)
+            return (
+              <div key={item.id} className="yarn-row" onClick={() => onOpenDetail(item)}>
+                <div className="yarn-thumb">
+                  {item.img_url ? (
+                    <img src={item.img_url} alt="" />
+                  ) : (() => { const [c1,c2] = swatchOf(item); return (<>
+                    <div className="yarn-swatch" style={{'--sw1':c1,'--sw2':c2}} />
+                    <div className="yarn-swatch-stitch" />
+                    <div className="yarn-swatch-rim" />
+                  </>)})()}
+                </div>
+                <div className="yarn-info">
+                  <div className="yarn-name">{item.name || '名前なし'}</div>
+                  {(item.color || item.lot) && (
+                    <div className="yarn-meta">
+                      {[item.color && `No.${item.color}`, item.lot && `Lot.${item.lot}`].filter(Boolean).join(' · ')}
+                    </div>
+                  )}
+                  <div className="yarn-tags">{tags}</div>
+                  <div className="yarn-tags" style={{ marginTop: '4px' }}>{shopTags}{workTags}</div>
+                </div>
+                <div className="yarn-count">
+                  <span className="count-num">{item.count || 0}</span>
+                  <span className="count-unit">本</span>
+                </div>
               </div>
-            ) : (
+            )
+          })}
+        </div>
+      )}
+
+      {sort === 'default' && view !== 'grid' && (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={sorted.map((i) => i.id)} strategy={verticalListSortingStrategy}>
             <div className="list">
               {sorted.map((item) => {
                 const tags = [
@@ -163,73 +272,8 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                 )
               })}
             </div>
-            )}
           </SortableContext>
         </DndContext>
-      ) : view === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
-          {sorted.map((item) => (
-            <div key={item.id} onClick={() => onOpenDetail(item)}
-              style={{ cursor: 'pointer', background: 'var(--surface)', overflow: 'hidden' }}>
-              <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
-                {item.img_url
-                  ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                  : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><YarnSvgSm /></div>
-                }
-                {item.label && (
-                  <div style={{ position: 'absolute', bottom: '3px', left: '3px', right: '3px', background: 'rgba(140,98,114,0.82)', color: '#fff', fontSize: '8px', fontWeight: 600, textAlign: 'center', borderRadius: '4px', padding: '2px 3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {item.label}
-                  </div>
-                )}
-              </div>
-              <div style={{ padding: '3px 4px 4px', borderTop: '1px solid var(--border-light)' }}>
-                <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name || '名前なし'}</div>
-                <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', lineHeight: 1.2 }}>{item.count || 0}本</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="list">
-          {sorted.map((item) => {
-            const tags = [
-              item.colorname ? <span key="cn" className="tag color-name">{item.colorname}</span> : null,
-              item.material ? <span key="mt" className="tag">{item.material}</span> : null,
-              item.needle ? <span key="nd" className="tag">🪡 {item.needle}</span> : null,
-            ].filter(Boolean)
-            const shopTags = (item.shops || []).map((s) => <span key={s} className="tag shop">{s}</span>)
-            const workTags = works
-              .filter((w) => (w.yarn_ids || []).includes(item.id))
-              .map((w) => <span key={w.id} className="tag work">✦ {w.name || '作品'}</span>)
-            return (
-              <div key={item.id} className="yarn-row" onClick={() => onOpenDetail(item)}>
-                <div className="yarn-thumb">
-                  {item.img_url ? (
-                    <img src={item.img_url} alt="" />
-                  ) : (() => { const [c1,c2] = swatchOf(item); return (<>
-                    <div className="yarn-swatch" style={{'--sw1':c1,'--sw2':c2}} />
-                    <div className="yarn-swatch-stitch" />
-                    <div className="yarn-swatch-rim" />
-                  </>)})()}
-                </div>
-                <div className="yarn-info">
-                  <div className="yarn-name">{item.name || '名前なし'}</div>
-                  {(item.color || item.lot) && (
-                    <div className="yarn-meta">
-                      {[item.color && `No.${item.color}`, item.lot && `Lot.${item.lot}`].filter(Boolean).join(' · ')}
-                    </div>
-                  )}
-                  <div className="yarn-tags">{tags}</div>
-                  <div className="yarn-tags" style={{ marginTop: '4px' }}>{shopTags}{workTags}</div>
-                </div>
-                <div className="yarn-count">
-                  <span className="count-num">{item.count || 0}</span>
-                  <span className="count-unit">本</span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
       )}
     </>
   )

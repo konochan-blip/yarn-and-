@@ -1,7 +1,54 @@
+import { useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy, rectSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import SortableItem, { DragHandle } from './SortableItem'
 import { BookSvgSm } from '../lib/svgs'
+
+const imgBoxStyle = { position: 'relative', width: '100%', paddingBottom: '100%', background: '#EDE0E5', overflow: 'hidden' }
+
+function BookGridCard({ book, onOpenDetail }) {
+  return (
+    <div onClick={() => onOpenDetail(book)} style={{ cursor: 'pointer', overflow: 'hidden', background: '#EDE0E5' }}>
+      <div style={imgBoxStyle}>
+        {book.img_url
+          ? <img src={book.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+          : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
+        }
+      </div>
+    </div>
+  )
+}
+
+function SortableBookGridCard({ book, onOpenDetail }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: book.id })
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      onClick={() => onOpenDetail(book)}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        cursor: 'grab',
+        touchAction: 'none',
+        overflow: 'hidden',
+        background: '#EDE0E5',
+        position: 'relative',
+        zIndex: isDragging ? 999 : 'auto',
+      }}
+    >
+      <div style={imgBoxStyle}>
+        {book.img_url
+          ? <img src={book.img_url} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+          : <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
+        }
+      </div>
+    </div>
+  )
+}
 
 function ViewToggle({ view, onViewChange }) {
   return (
@@ -15,15 +62,18 @@ function ViewToggle({ view, onViewChange }) {
 }
 
 export default function BooksList({ books, works, sort, view, onSortChange, onViewChange, onOpenDetail, onReorder }) {
+  const [reorderMode, setReorderMode] = useState(false)
   const sorted = [...books]
   if (sort === 'new') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'title') sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ja'))
   else if (sort === 'author') sorted.sort((a, b) => (a.author || '').localeCompare(b.author || '', 'ja'))
-  const canDrag = sort === 'default' && view === 'grid'
+
+  const canEnterReorder = sort === 'default' && view === 'grid'
+  const canDrag = canEnterReorder && reorderMode
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
   )
 
   function handleDragEnd(event) {
@@ -34,19 +84,31 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
     onReorder(arrayMove(sorted, oldIndex, newIndex))
   }
 
+  function handleSortChange(v) { setReorderMode(false); onSortChange(v) }
+  function handleViewChange(v) { setReorderMode(false); onViewChange(v) }
+
   return (
     <>
       <div className="toolbar">
         <label>並び替え</label>
-        <select value={sort} onChange={(e) => onSortChange(e.target.value)}>
+        <select value={sort} onChange={(e) => handleSortChange(e.target.value)}>
           <option value="new">新しい順</option>
           <option value="default">登録順</option>
           <option value="title">タイトル順</option>
           <option value="author">著者順</option>
         </select>
         <span className="count-badge">{books.length}冊</span>
-        <ViewToggle view={view} onViewChange={onViewChange} />
+        <ViewToggle view={view} onViewChange={handleViewChange} />
       </div>
+
+      {canEnterReorder && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 0 6px' }}>
+          <button onClick={() => setReorderMode((v) => !v)}
+            style={{ fontFamily: 'inherit', fontSize: '12px', padding: '4px 12px', borderRadius: '99px', border: '1px solid var(--accent)', background: reorderMode ? 'var(--accent)' : 'transparent', color: reorderMode ? '#fff' : 'var(--accent)', cursor: 'pointer' }}>
+            {reorderMode ? '完了' : '並び替え'}
+          </button>
+        </div>
+      )}
 
       {books.length === 0 ? (
         <div className="empty">
@@ -58,24 +120,23 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
         </div>
       ) : canDrag ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sorted.map((i) => i.id)} strategy={view === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
-            {view === 'grid' ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-                {sorted.map((book) => (
-                  <SortableItem key={book.id} id={book.id}>
-                    {({ handleProps }) => (
-                      <div {...handleProps} onClick={() => onOpenDetail(book)}
-                        style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'grab', position: 'relative', touchAction: 'none' }}>
-                        {book.img_url
-                          ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
-                        }
-                      </div>
-                    )}
-                  </SortableItem>
-                ))}
-              </div>
-            ) : (
+          <SortableContext items={sorted.map((i) => i.id)} strategy={rectSortingStrategy}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+              {sorted.map((book) => (
+                <SortableBookGridCard key={book.id} book={book} onOpenDetail={onOpenDetail} />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      ) : view === 'grid' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+          {sorted.map((book) => (
+            <BookGridCard key={book.id} book={book} onOpenDetail={onOpenDetail} />
+          ))}
+        </div>
+      ) : sort === 'default' ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={sorted.map((i) => i.id)} strategy={verticalListSortingStrategy}>
             <div className="list">
               {sorted.map((book) => {
                 const workCount = works.filter((w) => (w.book_ids || []).includes(book.id)).length
@@ -113,21 +174,8 @@ export default function BooksList({ books, works, sort, view, onSortChange, onVi
                 )
               })}
             </div>
-            )}
           </SortableContext>
         </DndContext>
-      ) : view === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-          {sorted.map((book) => (
-            <div key={book.id} onClick={() => onOpenDetail(book)}
-              style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
-              {book.img_url
-                ? <img src={book.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookSvgSm /></div>
-              }
-            </div>
-          ))}
-        </div>
       ) : (
         <div className="list">
           {sorted.map((book) => {
