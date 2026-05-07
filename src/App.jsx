@@ -649,7 +649,8 @@ export default function App() {
         onClose={() => { setDetailYarn(null); if (returnToMyPage) { setMyPageOpen(true); setReturnToMyPage(false) } }}
         onEdit={detailYarn?.user_id === user?.id ? (yarn) => { setDetailYarn(null); setEditingYarn(yarn); setYarnFormOpen(true) } : undefined}
         onDelete={detailYarn?.user_id === user?.id ? deleteYarn : undefined}
-        onOpenWorkDetail={setDetailWork} />
+        onOpenWorkDetail={setDetailWork}
+        onAddToWishList={(yarn) => addWishItem('', yarn.id, null, null)} />
       <ToolDetail tool={detailTool}
         onClose={() => setDetailTool(null)}
         onEdit={detailTool?.user_id === user?.id ? (tool) => { setDetailTool(null); setEditingTool(tool); setToolFormOpen(true) } : undefined}
