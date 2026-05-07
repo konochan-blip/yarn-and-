@@ -208,6 +208,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
               <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                 買う物リスト <span style={{ fontSize: '11px', fontWeight: 400, color: 'var(--text-tertiary)' }}>{wishItems.length}</span>
               </div>
+              {!addingWish && <button onClick={() => setAddingWish(true)} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>}
             </div>
             {wishItems.length === 0 && !addingWish && (
               <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>まだ何も登録されていないよ</div>
@@ -253,8 +254,6 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                   <button className="btn primary" disabled={!wishText.trim() && !wishYarnId} onClick={async () => { try { await onAddWishItem(wishText.trim(), wishYarnId || null, wishShop.trim(), wishQty.trim()); setWishText(''); setWishYarnId(''); setWishShop(''); setWishQty(''); setAddingWish(false); setWishError('') } catch(e) { setWishError(e.message || '保存に失敗しました') } }} style={{ flex: 1, fontSize: '13px' }}>追加</button>
                 </div>
               </div>
-            ) : (
-              <button onClick={() => setAddingWish(true)} style={{ marginTop: wishItems.length ? '8px' : '0', background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>
             )}
           </div>
 
