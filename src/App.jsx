@@ -490,6 +490,14 @@ export default function App() {
     if (inserted) setWishItems((prev) => [...prev, inserted])
   }
 
+  async function updateWishItem(id, text, yarnId, shop, quantity) {
+    const { data: updated, error } = await supabase.from('wish_items')
+      .update({ text: text || '', yarn_id: yarnId || null, shop: shop || null, quantity: quantity || null })
+      .eq('id', id).select().single()
+    if (error) throw new Error(error.message)
+    if (updated) setWishItems((prev) => prev.map((w) => w.id === id ? updated : w))
+  }
+
   async function deleteWishItem(id) {
     await supabase.from('wish_items').delete().eq('id', id)
     setWishItems((prev) => prev.filter((w) => w.id !== id))
@@ -696,6 +704,7 @@ export default function App() {
         onAddPurchase={() => { setEditingPurchase(null); setPurchaseFormOpen(true) }}
         onOpenPurchaseDetail={setDetailPurchase}
         onAddWishItem={addWishItem}
+        onUpdateWishItem={updateWishItem}
         onDeleteWishItem={deleteWishItem}
         onOpenYarnDetail={(yarn) => { setMyPageOpen(false); setReturnToMyPage(true); setDetailYarn(yarn) }} />
       <ChangePasswordModal open={changePasswordOpen || passwordRecovery} onClose={() => { setChangePasswordOpen(false); setPasswordRecovery(false) }} />

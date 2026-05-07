@@ -45,7 +45,7 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   )
 }
 
-export default function MyPage({ open, profile, yarns, tools, books, works, purchases, wishItems = [], followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddWishItem, onDeleteWishItem, onOpenYarnDetail }) {
+export default function MyPage({ open, profile, yarns, tools, books, works, purchases, wishItems = [], followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddWishItem, onUpdateWishItem, onDeleteWishItem, onOpenYarnDetail }) {
   const [sheet, setSheet] = useState(null)
   const [copied, setCopied] = useState(false)
   const [wishText, setWishText] = useState('')
@@ -54,6 +54,22 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
   const [wishQty, setWishQty] = useState('')
   const [addingWish, setAddingWish] = useState(false)
   const [wishError, setWishError] = useState('')
+  const [editingWishId, setEditingWishId] = useState(null)
+  const [editText, setEditText] = useState('')
+  const [editYarnId, setEditYarnId] = useState('')
+  const [editShop, setEditShop] = useState('')
+  const [editQty, setEditQty] = useState('')
+  const [editError, setEditError] = useState('')
+
+  function startEditWish(item) {
+    setEditingWishId(item.id)
+    setEditText(item.text || '')
+    setEditYarnId(item.yarn_id || '')
+    setEditShop(item.shop || '')
+    setEditQty(item.quantity || '')
+    setEditError('')
+  }
+  function cancelEditWish() { setEditingWishId(null); setEditError('') }
 
   const handleCopyUrl = useCallback(() => {
     const url = `https://www.yarn-and.com/user/${profile?.handle || profile?.username || ''}`
@@ -213,6 +229,30 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
             )}
             {wishItems.map((item) => {
               const linked = yarns.find((y) => y.id === item.yarn_id)
+              if (editingWishId === item.id) {
+                return (
+                  <div key={item.id} style={{ padding: '8px 0', borderBottom: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <input type="text" value={editText} placeholder="例：ソックヤーン・かぎ針5号など" onChange={(e) => setEditText(e.target.value)}
+                      style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input type="text" value={editShop} placeholder="お店" onChange={(e) => setEditShop(e.target.value)}
+                        style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', flex: 1, minWidth: 0 }} />
+                      <input type="text" value={editQty} placeholder="個数" onChange={(e) => setEditQty(e.target.value)}
+                        style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', flex: 1, minWidth: 0 }} />
+                    </div>
+                    <select value={editYarnId} onChange={(e) => setEditYarnId(e.target.value)}
+                      style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-secondary)', outline: 'none', width: '100%' }}>
+                      <option value="">毛糸と紐づけない</option>
+                      {yarns.map((y) => <option key={y.id} value={y.id}>{y.name || '名前なし'}{y.colorname ? ` / ${y.colorname}` : ''}</option>)}
+                    </select>
+                    {editError && <div style={{ fontSize: '12px', color: '#c0392b' }}>{editError}</div>}
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button className="btn" onClick={cancelEditWish} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                      <button className="btn primary" disabled={!editText.trim() && !editYarnId} onClick={async () => { try { await onUpdateWishItem(item.id, editText.trim(), editYarnId || null, editShop.trim(), editQty.trim()); setEditingWishId(null); setEditError('') } catch(e) { setEditError(e.message || '保存に失敗しました') } }} style={{ flex: 1, fontSize: '13px' }}>保存</button>
+                    </div>
+                  </div>
+                )
+              }
               return (
                 <div key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', padding: '7px 0', borderBottom: '1px solid var(--border-light)' }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -227,6 +267,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                       {item.quantity && <span style={{ fontSize: '11px', padding: '1px 7px', borderRadius: '99px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontWeight: 500 }}>{item.quantity}</span>}
                     </div>
                   </div>
+                  <button onClick={() => startEditWish(item)} style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '13px', lineHeight: 1, padding: '2px 4px', flexShrink: 0 }}>✎</button>
                   <button onClick={() => onDeleteWishItem(item.id)} style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: '2px 4px', flexShrink: 0 }}>×</button>
                 </div>
               )
