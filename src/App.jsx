@@ -165,6 +165,10 @@ export default function App() {
   const [publicProfiles,      setPublicProfiles]      = useState([])
   const [publicWorksLoaded,   setPublicWorksLoaded]   = useState(false)
   const [publicWorksLoading,  setPublicWorksLoading]  = useState(false)
+  const [yarnedWorks,         setYarnedWorks]         = useState([])
+  const [yarnedProfiles,      setYarnedProfiles]      = useState([])
+  const [yarnedWorksLoaded,   setYarnedWorksLoaded]   = useState(false)
+  const [yarnedWorksLoading,  setYarnedWorksLoading]  = useState(false)
   const [yarnCountsMap,       setYarnCountsMap]       = useState({})
   const [viewingProfile,      setViewingProfile]      = useState(null)
 
@@ -274,6 +278,24 @@ export default function App() {
     setFeedProfiles(pr || [])
     setFeedLoaded(true)
     setFeedLoading(false)
+  }
+
+  async function loadYarnedWorks() {
+    if (!user) return
+    setYarnedWorksLoading(true)
+    try {
+      const { data: yarnRows } = await supabase.from('work_yarns').select('work_id').eq('user_id', user.id)
+      if (!yarnRows || yarnRows.length === 0) { setYarnedWorks([]); setYarnedProfiles([]); setYarnedWorksLoaded(true); return }
+      const workIds = yarnRows.map((r) => r.work_id)
+      const { data: w } = await supabase.from('works').select('*').in('id', workIds)
+      const authorIds = [...new Set((w || []).map((wk) => wk.user_id))]
+      const { data: pr } = authorIds.length > 0 ? await supabase.from('profiles').select('*').in('user_id', authorIds) : { data: [] }
+      setYarnedWorks(w || [])
+      setYarnedProfiles(pr || [])
+      setYarnedWorksLoaded(true)
+    } finally {
+      setYarnedWorksLoading(false)
+    }
   }
 
   async function loadPublicWorks() {
@@ -629,7 +651,9 @@ export default function App() {
             feedLoaded={feedLoaded} feedLoading={feedLoading}
             publicWorks={publicWorks} publicProfiles={publicProfiles}
             publicWorksLoaded={publicWorksLoaded} publicWorksLoading={publicWorksLoading}
-            myWorks={works} myProfile={profile}
+            yarnedWorks={yarnedWorks} yarnedProfiles={yarnedProfiles}
+            yarnedWorksLoaded={yarnedWorksLoaded} yarnedWorksLoading={yarnedWorksLoading}
+            onLoadYarnedWorks={loadYarnedWorks}
             yarnCounts={yarnCountsMap}
             onLoadPublicWorks={loadPublicWorks}
             onFollowUser={followUser} onUnfollowUser={unfollowUser}

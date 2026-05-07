@@ -6,9 +6,9 @@ import { MiniYarnBall } from './WorkDetail'
 export default function FeedPage({
   follows, feedWorks, feedProfiles, feedLoaded, feedLoading,
   publicWorks, publicProfiles, publicWorksLoaded, publicWorksLoading,
-  myWorks = [], myProfile,
+  yarnedWorks = [], yarnedProfiles = [], yarnedWorksLoaded, yarnedWorksLoading,
   yarnCounts = {},
-  onLoadPublicWorks,
+  onLoadPublicWorks, onLoadYarnedWorks,
   onFollowUser, onUnfollowUser, onOpenProfile, onOpenWork,
 }) {
   const [query, setQuery] = useState('')
@@ -26,9 +26,8 @@ export default function FeedPage({
   const followingIds = new Set(follows.map((f) => f.following_id))
 
   useEffect(() => {
-    if (feedTab === 'public' && !publicWorksLoaded && !publicWorksLoading) {
-      onLoadPublicWorks()
-    }
+    if (feedTab === 'public' && !publicWorksLoaded && !publicWorksLoading) onLoadPublicWorks()
+    if (feedTab === 'yarned' && !yarnedWorksLoaded && !yarnedWorksLoading) onLoadYarnedWorks()
   }, [feedTab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleQueryChange(e) {
@@ -124,7 +123,7 @@ export default function FeedPage({
 
       {/* Tab switcher */}
       <div style={{ display: 'flex', gap: '4px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '4px', marginBottom: '16px' }}>
-        {[['following', 'フォロー中'], ['public', 'みんなの投稿'], ['mine', 'YARN＆']].map(([key, label]) => (
+        {[['following', 'フォロー中'], ['public', 'みんなの投稿'], ['yarned', 'YARN＆']].map(([key, label]) => (
           <button key={key} onClick={() => setFeedTab(key)}
             style={{
               flex: 1, padding: '7px 0', borderRadius: '9px', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit', fontWeight: feedTab === key ? 600 : 400,
@@ -275,24 +274,25 @@ export default function FeedPage({
         </>
       )}
       {/* ── YARN＆タブ ── */}
-      {feedTab === 'mine' && (
+      {feedTab === 'yarned' && (
         <>
-          {myWorks.length === 0 ? (
+          {yarnedWorksLoading ? (
+            <div className="loading">読み込み中…</div>
+          ) : !yarnedWorksLoaded ? null
+          : yarnedWorks.length === 0 ? (
             <div className="empty">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round">
-                <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/>
-                <path d="M8 12h8M12 8v8"/>
-              </svg>
-              まだ作品が登録されていないよ<br />「作品追加」から登録してみてね
+              <img src="/yarn.png" width="64" height="64" alt="" style={{ opacity: 0.4 }} />
+              まだYARNした作品がないよ<br />気になる作品にYARNしてみよう
             </div>
           ) : (
             <>
-              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', letterSpacing: '0.06em', marginBottom: '10px' }}>自分の投稿 {myWorks.length}件</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', letterSpacing: '0.06em', marginBottom: '10px' }}>YARNした作品 {yarnedWorks.length}件</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
-                {[...myWorks].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map((work) => {
+                {[...yarnedWorks].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map((work) => {
+                  const author = yarnedProfiles.find((p) => p.user_id === work.user_id)
                   const count = yarnCounts[work.id] || 0
                   return (
-                    <div key={work.id} onClick={() => onOpenWork(work, myProfile)}
+                    <div key={work.id} onClick={() => onOpenWork(work, author)}
                       style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
                       {work.img_url
                         ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
@@ -304,8 +304,14 @@ export default function FeedPage({
                           <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
                         </div>
                       )}
-                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.52))', padding: '14px 6px 5px' }}>
-                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{work.name || ''}</div>
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.52))', padding: '18px 6px 5px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <div style={{ width: '16px', height: '16px', borderRadius: '50%', overflow: 'hidden', background: 'rgba(255,255,255,0.25)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {author?.avatar_url && <img src={author.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
+                          </div>
+                          <div style={{ fontSize: '10px', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{author?.username || ''}</div>
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '1px' }}>{work.name || ''}</div>
                       </div>
                     </div>
                   )
