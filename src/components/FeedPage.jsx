@@ -123,7 +123,7 @@ export default function FeedPage({
 
       {/* Tab switcher */}
       <div style={{ display: 'flex', gap: '4px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '4px', marginBottom: '16px' }}>
-        {[['following', 'フォロー中'], ['public', 'みんなの投稿'], ['yarned', 'YARN＆']].map(([key, label]) => (
+        {[['following', 'フォロー中'], ['public', 'みんなの投稿'], ['yarned', 'YARN']].map(([key, label]) => (
           <button key={key} onClick={() => setFeedTab(key)}
             style={{
               flex: 1, padding: '7px 0', borderRadius: '9px', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit', fontWeight: feedTab === key ? 600 : 400,
