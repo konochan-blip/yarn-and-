@@ -233,7 +233,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                 </div>
               )
             })}
-            {addingWish ? (
+            {addingWish && (
               <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <input type="text" value={wishText} placeholder="例：ソックヤーン・かぎ針5号など" onChange={(e) => setWishText(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
