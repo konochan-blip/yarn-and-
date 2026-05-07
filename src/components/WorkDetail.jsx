@@ -117,6 +117,11 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
         </div>
       )}
 
+      {work.status === '制作中' && (
+        <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+          <span style={{ fontSize: '12px', padding: '3px 14px', borderRadius: '99px', background: '#FFF0D6', color: '#C07020', fontWeight: 600, border: '1px solid #F0C070' }}>🧶 制作中</span>
+        </div>
+      )}
       <div className="detail-thumb">
         {work.img_url ? <img src={work.img_url} alt="" /> : <WorkSvgSm />}
       </div>

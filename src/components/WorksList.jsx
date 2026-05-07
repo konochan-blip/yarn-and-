@@ -73,16 +73,18 @@ function SortableWorkGridCard({ work, count, onOpenDetail }) {
 
 export default function WorksList({ works, yarns, workCategories, sort, needleFilter, categoryFilter, view, yarnCounts = {}, onSortChange, onNeedleFilterChange, onCategoryFilterChange, onViewChange, onOpenDetail, onReorder }) {
   const [reorderMode, setReorderMode] = useState(false)
+  const [statusFilter, setStatusFilter] = useState('all')
   const allCategories = [...new Set([...(workCategories || []), 'その他'].filter((c) => works.some((w) => (w.categories || []).includes(c))))]
 
   let list = [...works]
+  if (statusFilter !== 'all') list = list.filter((w) => (w.status || '完成') === statusFilter)
   if (needleFilter) list = list.filter((w) => w.needle === needleFilter)
   if (categoryFilter) list = list.filter((w) => (w.categories || []).includes(categoryFilter))
   if (sort === 'new') list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   else if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
   else if (sort === 'yarn') list.sort((a, b) => (b.yarn_ids?.length || 0) - (a.yarn_ids?.length || 0))
 
-  const canEnterReorder = sort === 'default' && !needleFilter && !categoryFilter && view === 'grid'
+  const canEnterReorder = sort === 'default' && !needleFilter && !categoryFilter && statusFilter === 'all' && view === 'grid'
   const canDrag = canEnterReorder && reorderMode
 
   const sensors = useSensors(
@@ -139,6 +141,15 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
           <button onClick={() => handleViewChange('grid')} title="グリッド"
             style={{ padding: '5px 8px', borderRadius: '6px', border: '1px solid #DCCDD4', background: view === 'grid' ? '#8C6272' : '#FDF5F7', color: view === 'grid' ? '#FDF5F7' : '#7A6369', cursor: 'pointer', fontSize: '13px', lineHeight: 1, overflow: 'hidden' }}>⊞</button>
         </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+        {[['all', 'すべて'], ['制作中', '🧶 制作中'], ['完成', '✓ 完成']].map(([key, label]) => (
+          <button key={key} onClick={() => { setStatusFilter(key); setReorderMode(false) }}
+            style={{ padding: '5px 14px', borderRadius: '99px', border: statusFilter === key ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: statusFilter === key ? 'var(--accent)' : 'var(--surface)', color: statusFilter === key ? '#fff' : 'var(--text-secondary)', fontSize: '12px', fontFamily: 'inherit', cursor: 'pointer', fontWeight: statusFilter === key ? 600 : 400 }}>
+            {label}
+          </button>
+        ))}
       </div>
 
       {canEnterReorder && (

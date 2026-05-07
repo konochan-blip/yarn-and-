@@ -16,6 +16,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
   const [imgFile, setImgFile] = useState(null)
   const [imgPreview, setImgPreview] = useState(null)
   const [patternItems, setPatternItems] = useState([])
+  const [status, setStatus] = useState('制作中')
   const [saving, setSaving] = useState(false)
   const imgInputRef = useRef()
   const patternInputRef = useRef()
@@ -34,11 +35,13 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       setImgFile(null)
       setImgPreview(editingWork.img_url || null)
       setPatternItems((editingWork.pattern_imgs || []).map((url) => ({ preview: url, file: null })))
+      setStatus(editingWork.status || '完成')
     } else {
       setName(''); setNeedle(''); setMemo(''); setPrivateMemo(''); setRef('')
       setCategories([])
       setSelectedYarnIds([]); setSelectedBookIds([])
       setImgFile(null); setImgPreview(null); setPatternItems([])
+      setStatus('制作中')
     }
   }, [open, editingWork])
 
@@ -81,7 +84,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
   async function handleSave() {
     setSaving(true)
     try {
-      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems }
+      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems, status }
       if (editingWork) data.id = editingWork.id
       await onSave(data, imgFile)
       onClose()
@@ -98,6 +101,18 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
         {imgPreview ? <img src={imgPreview} alt="" /> : <div className="img-placeholder-text">タップして写真を選択</div>}
       </div>
       <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
+
+      <div className="field">
+        <label>ステータス</label>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {['制作中', '完成'].map((s) => (
+            <button key={s} type="button" onClick={() => setStatus(s)}
+              style={{ flex: 1, padding: '8px', borderRadius: '99px', border: status === s ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: status === s ? 'var(--accent)' : 'var(--surface)', color: status === s ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', fontWeight: status === s ? 600 : 400 }}>
+              {s === '制作中' ? '🧶 制作中' : '✓ 完成'}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="field"><label>作品名</label><input type="text" value={name} placeholder="例：フリルスカート、帽子など" onChange={(e) => setName(e.target.value)} /></div>
 
