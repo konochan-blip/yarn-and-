@@ -145,7 +145,7 @@ export default function WorksList({ works, yarns, workCategories, sort, needleFi
         <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 0 6px' }}>
           <button onClick={() => setReorderMode((v) => !v)}
             style={{ fontFamily: 'inherit', fontSize: '12px', padding: '4px 12px', borderRadius: '99px', border: '1px solid var(--accent)', background: reorderMode ? 'var(--accent)' : 'transparent', color: reorderMode ? '#fff' : 'var(--accent)', cursor: 'pointer' }}>
-            {reorderMode ? '完了' : '並び替え'}
+            {reorderMode ? '完了' : '並べ替える'}
           </button>
         </div>
       )}
