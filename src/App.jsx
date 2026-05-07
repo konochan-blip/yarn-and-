@@ -274,7 +274,7 @@ export default function App() {
       supabase.from('works').select('*').in('user_id', followingIds).order('created_at', { ascending: false }).limit(60),
       supabase.from('profiles').select('*').in('user_id', followingIds),
     ])
-    setFeedWorks(w || [])
+    setFeedWorks((w || []).filter((wk) => !wk.status || wk.status === '完成'))
     setFeedProfiles(pr || [])
     setFeedLoaded(true)
     setFeedLoading(false)
@@ -321,7 +321,7 @@ export default function App() {
         .in('user_id', publicUserIds)
         .limit(90)
 
-      const shuffled = [...(w || [])].sort(() => Math.random() - 0.5)
+      const shuffled = [...(w || [])].filter((wk) => !wk.status || wk.status === '完成').sort(() => Math.random() - 0.5)
       setPublicWorks(shuffled)
       setPublicProfiles(pr)
       setPublicWorksLoaded(true)

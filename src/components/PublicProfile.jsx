@@ -113,7 +113,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
       setProfileYarns(v(2).data || [])
       setProfileTools(v(3).data || [])
       setProfileBooks(v(4).data || [])
-      setProfileWorks(v(5).data || [])
+      setProfileWorks((v(5).data || []).filter((w) => !w.status || w.status === '完成'))
       setProfilePurchases(v(6).data || [])
       setDataLoading(false)
     })
