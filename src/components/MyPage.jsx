@@ -227,7 +227,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                         </span>
                       )}
                       {item.shop && <span style={{ fontSize: '11px', padding: '1px 7px', borderRadius: '99px', background: 'var(--tag-shop-bg)', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{item.shop}</span>}
-                      {item.quantity && <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>{item.quantity}</span>}
+                      {item.quantity && <span style={{ fontSize: '11px', padding: '1px 7px', borderRadius: '99px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontWeight: 500 }}>{item.quantity}</span>}
                     </div>
                   </div>
                   <button onClick={() => onDeleteWishItem(item.id)} style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: '2px 4px', flexShrink: 0 }}>×</button>
