@@ -38,9 +38,9 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
     setHasYarned(false)
     async function fetchYarns() {
       const [{ count }, { data: mine }] = await Promise.all([
-        supabase.from('work_yarns').select('id', { count: 'exact', head: true }).eq('work_id', work.id),
+        supabase.from('work_likes').select('id', { count: 'exact', head: true }).eq('work_id', work.id),
         currentUserId
-          ? supabase.from('work_yarns').select('id').eq('work_id', work.id).eq('user_id', currentUserId).maybeSingle()
+          ? supabase.from('work_likes').select('id').eq('work_id', work.id).eq('user_id', currentUserId).maybeSingle()
           : Promise.resolve({ data: null }),
       ])
       setYarnCount(count || 0)
@@ -72,10 +72,10 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
     setYarnLoading(true)
     try {
       if (hasYarned) {
-        const { error } = await supabase.from('work_yarns').delete().eq('work_id', work.id).eq('user_id', currentUserId)
+        const { error } = await supabase.from('work_likes').delete().eq('work_id', work.id).eq('user_id', currentUserId)
         if (!error) { setHasYarned(false); setYarnCount((n) => Math.max(0, n - 1)); onYarnChange?.(work.id, -1) }
       } else {
-        const { error } = await supabase.from('work_yarns').insert({ work_id: work.id, user_id: currentUserId })
+        const { error } = await supabase.from('work_likes').insert({ work_id: work.id, user_id: currentUserId })
         if (!error) { setHasYarned(true); setYarnCount((n) => n + 1); onYarnChange?.(work.id, +1) }
         else { console.error('YARN error:', error.message) }
       }

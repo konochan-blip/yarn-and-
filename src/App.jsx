@@ -284,7 +284,7 @@ export default function App() {
     if (!user) return
     setYarnedWorksLoading(true)
     try {
-      const { data: yarnRows } = await supabase.from('work_yarns').select('work_id').eq('user_id', user.id)
+      const { data: yarnRows } = await supabase.from('work_likes').select('work_id').eq('user_id', user.id)
       if (!yarnRows || yarnRows.length === 0) { setYarnedWorks([]); setYarnedProfiles([]); setYarnedWorksLoaded(true); return }
       const workIds = yarnRows.map((r) => r.work_id)
       const { data: w } = await supabase.from('works').select('*').in('id', workIds)
