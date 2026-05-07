@@ -6,6 +6,7 @@ import { MiniYarnBall } from './WorkDetail'
 export default function FeedPage({
   follows, feedWorks, feedProfiles, feedLoaded, feedLoading,
   publicWorks, publicProfiles, publicWorksLoaded, publicWorksLoading,
+  myWorks = [], myProfile,
   yarnCounts = {},
   onLoadPublicWorks,
   onFollowUser, onUnfollowUser, onOpenProfile, onOpenWork,
@@ -123,28 +124,16 @@ export default function FeedPage({
 
       {/* Tab switcher */}
       <div style={{ display: 'flex', gap: '4px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '4px', marginBottom: '16px' }}>
-        <button
-          onClick={() => setFeedTab('following')}
-          style={{
-            flex: 1, padding: '7px 0', borderRadius: '9px', border: 'none', cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit', fontWeight: feedTab === 'following' ? 600 : 400,
-            background: feedTab === 'following' ? 'var(--accent)' : 'transparent',
-            color: feedTab === 'following' ? '#fff' : 'var(--text-secondary)',
-            transition: 'all 0.18s',
-          }}
-        >
-          フォロー中
-        </button>
-        <button
-          onClick={() => setFeedTab('public')}
-          style={{
-            flex: 1, padding: '7px 0', borderRadius: '9px', border: 'none', cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit', fontWeight: feedTab === 'public' ? 600 : 400,
-            background: feedTab === 'public' ? 'var(--accent)' : 'transparent',
-            color: feedTab === 'public' ? '#fff' : 'var(--text-secondary)',
-            transition: 'all 0.18s',
-          }}
-        >
-          みんなの投稿
-        </button>
+        {[['following', 'フォロー中'], ['public', 'みんなの投稿'], ['mine', 'YARN＆']].map(([key, label]) => (
+          <button key={key} onClick={() => setFeedTab(key)}
+            style={{
+              flex: 1, padding: '7px 0', borderRadius: '9px', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit', fontWeight: feedTab === key ? 600 : 400,
+              background: feedTab === key ? 'var(--accent)' : 'transparent',
+              color: feedTab === key ? '#fff' : 'var(--text-secondary)',
+              transition: 'all 0.18s',
+            }}
+          >{label}</button>
+        ))}
       </div>
 
       {/* ── フォロー中タブ ── */}
@@ -282,6 +271,47 @@ export default function FeedPage({
                 )
               })}
             </div>
+          )}
+        </>
+      )}
+      {/* ── YARN＆タブ ── */}
+      {feedTab === 'mine' && (
+        <>
+          {myWorks.length === 0 ? (
+            <div className="empty">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round">
+                <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/>
+                <path d="M8 12h8M12 8v8"/>
+              </svg>
+              まだ作品が登録されていないよ<br />「作品追加」から登録してみてね
+            </div>
+          ) : (
+            <>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', letterSpacing: '0.06em', marginBottom: '10px' }}>自分の投稿 {myWorks.length}件</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+                {[...myWorks].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map((work) => {
+                  const count = yarnCounts[work.id] || 0
+                  return (
+                    <div key={work.id} onClick={() => onOpenWork(work, myProfile)}
+                      style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', cursor: 'pointer', position: 'relative' }}>
+                      {work.img_url
+                        ? <img src={work.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><WorkSvgSm /></div>
+                      }
+                      {count > 0 && (
+                        <div style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.42)', borderRadius: '99px', padding: '2px 6px 2px 4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                          <MiniYarnBall />
+                          <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600, lineHeight: 1 }}>{count}</span>
+                        </div>
+                      )}
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.52))', padding: '14px 6px 5px' }}>
+                        <div style={{ fontSize: '11px', color: '#fff', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{work.name || ''}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
           )}
         </>
       )}

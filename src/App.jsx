@@ -629,6 +629,7 @@ export default function App() {
             feedLoaded={feedLoaded} feedLoading={feedLoading}
             publicWorks={publicWorks} publicProfiles={publicProfiles}
             publicWorksLoaded={publicWorksLoaded} publicWorksLoading={publicWorksLoading}
+            myWorks={works} myProfile={profile}
             yarnCounts={yarnCountsMap}
             onLoadPublicWorks={loadPublicWorks}
             onFollowUser={followUser} onUnfollowUser={unfollowUser}
