@@ -72,15 +72,12 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
     setYarnLoading(true)
     try {
       if (hasYarned) {
-        await supabase.from('work_yarns').delete().eq('work_id', work.id).eq('user_id', currentUserId)
-        setHasYarned(false)
-        setYarnCount((n) => Math.max(0, n - 1))
-        onYarnChange?.(work.id, -1)
+        const { error } = await supabase.from('work_yarns').delete().eq('work_id', work.id).eq('user_id', currentUserId)
+        if (!error) { setHasYarned(false); setYarnCount((n) => Math.max(0, n - 1)); onYarnChange?.(work.id, -1) }
       } else {
-        await supabase.from('work_yarns').insert({ work_id: work.id, user_id: currentUserId })
-        setHasYarned(true)
-        setYarnCount((n) => n + 1)
-        onYarnChange?.(work.id, +1)
+        const { error } = await supabase.from('work_yarns').insert({ work_id: work.id, user_id: currentUserId })
+        if (!error) { setHasYarned(true); setYarnCount((n) => n + 1); onYarnChange?.(work.id, +1) }
+        else { console.error('YARN error:', error.message) }
       }
     } finally {
       setYarnLoading(false)
