@@ -205,8 +205,9 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
           {/* 買う物リスト */}
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                買う物リスト
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>買う物リスト</span>
+                <span className="count-badge">{wishItems.length}</span>
               </div>
               {!addingWish && <button onClick={() => setAddingWish(true)} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>}
             </div>
