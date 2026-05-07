@@ -458,7 +458,7 @@ export default function App() {
         item.file ? uploadImage(item.file).catch(() => item.preview) : Promise.resolve(item.preview)
       )
     )
-    const record = { user_id: user.id, name: data.name, needle: data.needle, memo: data.memo, private_memo: data.private_memo, ref: data.ref, categories: data.categories || [], yarn_ids: data.yarn_ids, book_ids: data.book_ids, img_url, pattern_imgs, status: data.status || '完成' }
+    const record = { user_id: user.id, name: data.name, needle: data.needle, memo: data.memo, private_memo: data.private_memo, ref: data.ref, categories: data.categories || [], yarn_ids: data.yarn_ids, book_ids: data.book_ids, img_url, pattern_imgs, status: data.status || '完成', production_time: data.production_time || null, yarn_usage: data.yarn_usage || null }
     if (data.id) {
       const { data: updated } = await supabase.from('works').update(record).eq('id', data.id).select().single()
       setWorks((prev) => prev.map((w) => w.id === data.id ? updated : w))

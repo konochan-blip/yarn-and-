@@ -17,6 +17,8 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
   const [imgPreview, setImgPreview] = useState(null)
   const [patternItems, setPatternItems] = useState([])
   const [status, setStatus] = useState('制作中')
+  const [productionTime, setProductionTime] = useState('')
+  const [yarnUsage, setYarnUsage] = useState('')
   const [saving, setSaving] = useState(false)
   const imgInputRef = useRef()
   const patternInputRef = useRef()
@@ -36,12 +38,15 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       setImgPreview(editingWork.img_url || null)
       setPatternItems((editingWork.pattern_imgs || []).map((url) => ({ preview: url, file: null })))
       setStatus(editingWork.status || '完成')
+      setProductionTime(editingWork.production_time || '')
+      setYarnUsage(editingWork.yarn_usage || '')
     } else {
       setName(''); setNeedle(''); setMemo(''); setPrivateMemo(''); setRef('')
       setCategories([])
       setSelectedYarnIds([]); setSelectedBookIds([])
       setImgFile(null); setImgPreview(null); setPatternItems([])
       setStatus('制作中')
+      setProductionTime(''); setYarnUsage('')
     }
   }, [open, editingWork])
 
@@ -84,7 +89,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
   async function handleSave() {
     setSaving(true)
     try {
-      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems, status }
+      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems, status, production_time: productionTime, yarn_usage: yarnUsage }
       if (editingWork) data.id = editingWork.id
       await onSave(data, imgFile)
       onClose()
@@ -197,6 +202,13 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       </div>
 
       <div className="field"><textarea value={ref} placeholder="編み図・作り方参考URL" onChange={(e) => setRef(e.target.value)} /></div>
+
+      <div className="field">
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ flex: 1 }}><label>制作時間</label><input type="text" value={productionTime} placeholder="例：3時間、2週間" onChange={(e) => setProductionTime(e.target.value)} /></div>
+          <div style={{ flex: 1 }}><label>使用量</label><input type="text" value={yarnUsage} placeholder="例：2玉、150g" onChange={(e) => setYarnUsage(e.target.value)} /></div>
+        </div>
+      </div>
 
       <div className="field"><label>メモ</label><textarea value={memo} placeholder="使用針・サイズ・感想など" onChange={(e) => setMemo(e.target.value)} /></div>
       <div className="field"><label>自分メモ（非公開）</label><textarea value={privateMemo} placeholder="自分だけのメモ。他の人には見えません" rows={3} onChange={(e) => setPrivateMemo(e.target.value)} /></div>
