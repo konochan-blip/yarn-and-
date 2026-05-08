@@ -199,6 +199,38 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
           </div>
 
 
+          {profile?.social_links?.length > 0 && (
+            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>リンク</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {profile.social_links.map((l, i) => (
+                  <a key={i} href={l.url} target="_blank" rel="noopener noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--accent-light)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
+                    <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{l.title}</span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>↗</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {profile?.favorite_shops?.length > 0 && (
+            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>お気に入りのお店</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {profile.favorite_shops.map((s, i) => (
+                  s.url
+                    ? <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
+                        <span style={{ fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>›</span>
+                      </a>
+                    : <span key={i} style={{ background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* 購入品 / ラベルコレクション タブ */}
           <div style={{ display: 'flex', marginBottom: '10px', background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', overflow: 'hidden' }}>
             {[['purchases', '購入品'], ['labels', 'ラベルコレクション']].map(([key, label]) => (
@@ -300,38 +332,6 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                   </div>
                 </div>
               )}
-            </div>
-          )}
-
-          {profile?.social_links?.length > 0 && (
-            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>リンク</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {profile.social_links.map((l, i) => (
-                  <a key={i} href={l.url} target="_blank" rel="noopener noreferrer"
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--accent-light)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
-                    <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{l.title}</span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>↗</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {profile?.favorite_shops?.length > 0 && (
-            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>お気に入りのお店</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {profile.favorite_shops.map((s, i) => (
-                  s.url
-                    ? <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
-                        <span style={{ fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
-                        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>›</span>
-                      </a>
-                    : <span key={i} style={{ background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
-                ))}
-              </div>
             </div>
           )}
 
