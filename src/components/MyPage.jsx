@@ -70,6 +70,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
   const [labelMemo, setLabelMemo] = useState('')
   const [labelSaving, setLabelSaving] = useState(false)
   const [viewingLabel, setViewingLabel] = useState(null)
+  const [showAllLabels, setShowAllLabels] = useState(false)
   const labelImgRef = useRef()
 
   function startEditWish(item) {
@@ -280,8 +281,9 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                 <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
               )}
               {(labels || []).length > 0 && (
+                <>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginBottom: addingLabel ? '12px' : 0 }}>
-                  {labels.map((lbl) => (
+                  {(showAllLabels ? labels : labels.slice(0, 6)).map((lbl) => (
                     <div key={lbl.id} onClick={() => setViewingLabel(lbl)}
                       style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)', position: 'relative' }}>
                       {lbl.img_url
@@ -296,6 +298,13 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                     </div>
                   ))}
                 </div>
+                {labels.length > 6 && !showAllLabels && (
+                  <button onClick={() => setShowAllLabels(true)}
+                    style={{ width: '100%', marginTop: '10px', padding: '8px', background: 'none', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit' }}>
+                    もっとみる（{labels.length - 6}件）
+                  </button>
+                )}
+                </>
               )}
               {addingLabel && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
