@@ -63,6 +63,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
   const [profileBooks, setProfileBooks] = useState([])
   const [profileWorks, setProfileWorks] = useState([])
   const [profilePurchases, setProfilePurchases] = useState([])
+  const [profileLabels, setProfileLabels] = useState([])
   const [dataLoading, setDataLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('yarn')
   const [detailYarn, setDetailYarn] = useState(null)
@@ -80,6 +81,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
     setProfileBooks([])
     setProfileWorks([])
     setProfilePurchases([])
+    setProfileLabels([])
     setDetailYarn(null)
     setDetailTool(null)
     setDetailBook(null)
@@ -106,6 +108,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
       supabase.from('books').select('*').eq('user_id', profile.user_id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
       supabase.from('works').select('*').eq('user_id', profile.user_id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
       supabase.from('purchases').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
+      supabase.from('label_collections').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
     ]).then((results) => {
       const v = (i) => results[i].status === 'fulfilled' ? results[i].value : {}
       setFollowersCount(v(0).count ?? 0)
@@ -115,6 +118,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
       setProfileBooks(v(4).data || [])
       setProfileWorks((v(5).data || []).filter((w) => !w.status || w.status === '完成'))
       setProfilePurchases(v(6).data || [])
+      setProfileLabels(v(7).data || [])
       setDataLoading(false)
     })
   }, [profile?.user_id])
@@ -151,6 +155,7 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
     { key: 'book',     label: '書籍',   count: profileBooks.length },
     { key: 'work',     label: '作品',   count: profileWorks.length },
     { key: 'purchase', label: '購入品', count: profilePurchases.length },
+    { key: 'label',    label: 'ラベル',  count: profileLabels.length },
   ]
 
   return (
@@ -401,6 +406,28 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
                             ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                             : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🛍️</div>
                           }
+                        </div>
+                      ))}
+                    </div>
+                  )
+                )}
+
+                {activeTab === 'label' && (
+                  profileLabels.length === 0 ? (
+                    <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだラベルが登録されていません</div>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
+                      {profileLabels.map((lbl) => (
+                        <div key={lbl.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                          {lbl.img_url
+                            ? <img src={lbl.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🏷️</div>
+                          }
+                          {lbl.brand && (
+                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', padding: '2px 5px' }}>
+                              <span style={{ fontSize: '9px', color: '#fff', fontWeight: 500 }}>{lbl.brand}</span>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
