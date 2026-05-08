@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 
 function knittingAge(since) {
   if (!since) return null
@@ -45,7 +45,7 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   )
 }
 
-export default function MyPage({ open, profile, yarns, tools, books, works, purchases, wishItems = [], followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddWishItem, onUpdateWishItem, onDeleteWishItem, onOpenYarnDetail }) {
+export default function MyPage({ open, profile, yarns, tools, books, works, purchases, labels = [], wishItems = [], followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddLabel, onDeleteLabel, onAddWishItem, onUpdateWishItem, onDeleteWishItem, onOpenYarnDetail }) {
   const [sheet, setSheet] = useState(null)
   const [copied, setCopied] = useState(false)
   const [wishText, setWishText] = useState('')
@@ -60,6 +60,17 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
   const [editShop, setEditShop] = useState('')
   const [editQty, setEditQty] = useState('')
   const [editError, setEditError] = useState('')
+  const [purchaseTab, setPurchaseTab] = useState('purchases')
+  const [showAllPurchases, setShowAllPurchases] = useState(false)
+  const [addingLabel, setAddingLabel] = useState(false)
+  const [labelImgFile, setLabelImgFile] = useState(null)
+  const [labelImgPreview, setLabelImgPreview] = useState(null)
+  const [labelBrand, setLabelBrand] = useState('')
+  const [labelColor, setLabelColor] = useState('')
+  const [labelMemo, setLabelMemo] = useState('')
+  const [labelSaving, setLabelSaving] = useState(false)
+  const [viewingLabel, setViewingLabel] = useState(null)
+  const labelImgRef = useRef()
 
   function startEditWish(item) {
     setEditingWishId(item.id)
@@ -188,27 +199,109 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
           </div>
 
 
-          {/* 購入品グリッド */}
-          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>購入品</div>
-              <button onClick={onAddPurchase} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>
+          {/* 購入品 / ラベルコレクション タブ */}
+          <div style={{ display: 'flex', marginBottom: '10px', background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', overflow: 'hidden' }}>
+            {[['purchases', '購入品'], ['labels', 'ラベルコレクション']].map(([key, label]) => (
+              <button key={key} onClick={() => setPurchaseTab(key)}
+                style={{ flex: 1, padding: '10px 4px', border: 'none', borderRight: key === 'purchases' ? '1px solid var(--border)' : 'none', background: purchaseTab === key ? 'var(--accent)' : 'transparent', color: purchaseTab === key ? '#fff' : 'var(--text-secondary)', fontSize: '12px', fontFamily: 'inherit', cursor: 'pointer', fontWeight: purchaseTab === key ? 600 : 400, transition: 'all 0.15s' }}>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {purchaseTab === 'purchases' ? (
+            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>購入品</div>
+                <button onClick={onAddPurchase} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>
+              </div>
+              {(purchases || []).length === 0
+                ? <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
+                : <>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+                      {(showAllPurchases ? purchases : purchases.slice(0, 6)).map((p) => (
+                        <div key={p.id} onClick={() => onOpenPurchaseDetail(p)}
+                          style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)' }}>
+                          {p.img_url
+                            ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🛍️</div>
+                          }
+                        </div>
+                      ))}
+                    </div>
+                    {purchases.length > 6 && !showAllPurchases && (
+                      <button onClick={() => setShowAllPurchases(true)}
+                        style={{ width: '100%', marginTop: '10px', padding: '8px', background: 'none', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit' }}>
+                        もっとみる（{purchases.length - 6}件）
+                      </button>
+                    )}
+                  </>
+              }
             </div>
-            {(purchases || []).length === 0
-              ? <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
-              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
-                  {(purchases || []).map((p) => (
-                    <div key={p.id} onClick={() => onOpenPurchaseDetail(p)}
-                      style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)' }}>
-                      {p.img_url
-                        ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🛍️</div>
+          ) : (
+            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>ラベルコレクション</div>
+                {!addingLabel && <button onClick={() => setAddingLabel(true)} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>}
+              </div>
+              {(labels || []).length === 0 && !addingLabel && (
+                <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
+              )}
+              {(labels || []).length > 0 && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginBottom: addingLabel ? '12px' : 0 }}>
+                  {labels.map((lbl) => (
+                    <div key={lbl.id} onClick={() => setViewingLabel(lbl)}
+                      style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)', position: 'relative' }}>
+                      {lbl.img_url
+                        ? <img src={lbl.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🏷️</div>
                       }
+                      {lbl.brand && (
+                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', padding: '2px 5px' }}>
+                          <span style={{ fontSize: '9px', color: '#fff', fontWeight: 500 }}>{lbl.brand}</span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-            }
-          </div>
+              )}
+              {addingLabel && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div onClick={() => labelImgRef.current?.click()}
+                    style={{ width: '100%', aspectRatio: '4/3', borderRadius: '10px', border: '1.5px dashed var(--border)', background: 'var(--bg)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    {labelImgPreview
+                      ? <img src={labelImgPreview} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
+                      : <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>タップして写真を選択</span>
+                    }
+                  </div>
+                  <input ref={labelImgRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                    const file = e.target.files[0]; if (!file) return
+                    setLabelImgFile(file)
+                    const reader = new FileReader()
+                    reader.onload = (ev) => setLabelImgPreview(ev.target.result)
+                    reader.readAsDataURL(file)
+                    e.target.value = ''
+                  }} />
+                  <input type="text" value={labelBrand} placeholder="ブランド名（例：ダルマ、ハマナカ）" onChange={(e) => setLabelBrand(e.target.value)}
+                    style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                  <input type="text" value={labelColor} placeholder="色名・品番" onChange={(e) => setLabelColor(e.target.value)}
+                    style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                  <textarea value={labelMemo} placeholder="メモ" rows={2} onChange={(e) => setLabelMemo(e.target.value)}
+                    style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button className="btn" onClick={() => { setAddingLabel(false); setLabelImgFile(null); setLabelImgPreview(null); setLabelBrand(''); setLabelColor(''); setLabelMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                    <button className="btn primary" disabled={labelSaving || !labelImgPreview} onClick={async () => {
+                      setLabelSaving(true)
+                      try {
+                        await onAddLabel({ img_url: labelImgPreview || '', brand: labelBrand.trim(), color: labelColor.trim(), memo: labelMemo.trim() }, labelImgFile)
+                        setAddingLabel(false); setLabelImgFile(null); setLabelImgPreview(null); setLabelBrand(''); setLabelColor(''); setLabelMemo('')
+                      } finally { setLabelSaving(false) }
+                    }} style={{ flex: 1, fontSize: '13px' }}>{labelSaving ? '保存中…' : '保存する'}</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {profile?.social_links?.length > 0 && (
             <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
@@ -352,6 +445,27 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
           </div>
         </div>
       </div>
+
+      {viewingLabel && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.88)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setViewingLabel(null)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+            {viewingLabel.img_url && <img src={viewingLabel.img_url} style={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '10px' }} alt="" />}
+            {(viewingLabel.brand || viewingLabel.color || viewingLabel.memo) && (
+              <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '10px', padding: '12px 16px', width: '100%' }}>
+                {viewingLabel.brand && <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600 }}>{viewingLabel.brand}</div>}
+                {viewingLabel.color && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{viewingLabel.color}</div>}
+                {viewingLabel.memo && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '6px' }}>{viewingLabel.memo}</div>}
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+              <button onClick={() => setViewingLabel(null)}
+                style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>閉じる</button>
+              <button onClick={() => { onDeleteLabel(viewingLabel.id); setViewingLabel(null) }}
+                style={{ flex: 1, padding: '10px', background: 'rgba(180,40,40,0.8)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>削除する</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {sheet === 'follows' && (
         <UserListSheet

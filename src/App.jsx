@@ -95,6 +95,7 @@ export default function App() {
   const [makers,     setMakers]     = useState([])
   const [wishItems,  setWishItems]  = useState([])
   const [purchases,  setPurchases]  = useState([])
+  const [labels,     setLabels]     = useState([])
   const [workCategories, setWorkCategories] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -247,6 +248,9 @@ export default function App() {
         }).catch(() => {})
       supabase.from('purchases').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
         .then(({ data: pur }) => setPurchases(pur || []))
+        .catch(() => {})
+      supabase.from('label_collections').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+        .then(({ data: lbl }) => setLabels(lbl || []))
         .catch(() => {})
       setProfile(p || null)
       setFollows(f || [])
@@ -554,6 +558,18 @@ export default function App() {
     setPurchases((prev) => prev.filter((p) => p.id !== id))
   }
 
+  async function addLabel(data, imgFile) {
+    const img_url = await resolveImgUrl(data, imgFile)
+    const record = { user_id: user.id, img_url, brand: data.brand || '', color: data.color || '', memo: data.memo || '' }
+    const { data: inserted } = await supabase.from('label_collections').insert([record]).select().single()
+    if (inserted) setLabels((prev) => [inserted, ...prev])
+  }
+
+  async function deleteLabel(id) {
+    await supabase.from('label_collections').delete().eq('id', id)
+    setLabels((prev) => prev.filter((l) => l.id !== id))
+  }
+
   async function addWorkCategory(name) {
     const { error } = await supabase.from('work_categories').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
     if (error) throw new Error(error.message || 'カテゴリーの追加に失敗しました')
@@ -717,7 +733,7 @@ export default function App() {
         onClose={() => setDetailPurchase(null)}
         onEdit={(p) => { setDetailPurchase(null); setEditingPurchase(p); setPurchaseFormOpen(true) }}
         onDelete={deletePurchase} />
-      <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works} purchases={purchases}
+      <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works} purchases={purchases} labels={labels}
         wishItems={wishItems}
         followsCount={follows.length} followersCount={followersCount}
         follows={follows} feedProfiles={feedProfiles}
@@ -728,6 +744,8 @@ export default function App() {
         onChangeHandle={() => { setMyPageOpen(false); setChangeHandleOpen(true) }}
         onAddPurchase={() => { setEditingPurchase(null); setPurchaseFormOpen(true) }}
         onOpenPurchaseDetail={setDetailPurchase}
+        onAddLabel={addLabel}
+        onDeleteLabel={deleteLabel}
         onAddWishItem={addWishItem}
         onUpdateWishItem={updateWishItem}
         onDeleteWishItem={deleteWishItem}
