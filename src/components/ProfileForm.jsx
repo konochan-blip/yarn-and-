@@ -235,11 +235,17 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
         )}
       </div>
 
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '20px 0 16px' }}>
+        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', whiteSpace: 'nowrap', fontWeight: 500 }}>ここより下は他のユーザーには表示されません</span>
+        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+      </div>
+
       <div style={{ background: 'var(--bg)', borderRadius: '10px', padding: '4px 12px', marginBottom: '14px' }}>
         <div className="toggle-row">
           <div>
             <div className="toggle-label">プロフィールを公開する</div>
-            <div className="toggle-sub">将来のシェア機能で使用されます</div>
+            <div className="toggle-sub">ONにするとプロフィールページが公開されます</div>
           </div>
           <label className="toggle-switch">
             <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
