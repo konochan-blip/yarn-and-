@@ -98,6 +98,7 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
   return (
     <Modal open={open} onClose={onClose}>
       <div className="modal-title">プロフィール編集</div>
+      <div style={{ background: 'red', color: 'white', padding: '8px', textAlign: 'center', fontSize: '12px' }}>テスト</div>
 
       <div className="avatar-upload" onClick={() => imgInputRef.current?.click()}>
         {imgPreview ? <img src={imgPreview} alt="" /> : <PersonSvg />}
