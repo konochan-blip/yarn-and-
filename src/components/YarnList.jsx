@@ -167,7 +167,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
       ) : canDrag ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={sorted.map((i) => i.id)} strategy={rectSortingStrategy}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
               {sorted.map((item) => (
                 <SortableYarnGridCard key={item.id} item={item} onOpenDetail={onOpenDetail} />
               ))}
@@ -175,7 +175,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           </SortableContext>
         </DndContext>
       ) : view === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '3px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px' }}>
           {sorted.map((item) => (
             <YarnGridCard key={item.id} item={item} onOpenDetail={onOpenDetail} />
           ))}
