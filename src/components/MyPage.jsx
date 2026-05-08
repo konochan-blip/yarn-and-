@@ -188,35 +188,32 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
           </div>
 
 
-          {isPublic && (
-            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '8px', letterSpacing: '0.06em' }}>プロフィールURL</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ flex: 1, fontSize: '12px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-mono)' }}>
-                  www.yarn-and.com/user/{profile?.handle || username}
+          {/* 購入品グリッド */}
+          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>購入品</div>
+              <button onClick={onAddPurchase} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>
+            </div>
+            {(purchases || []).length === 0
+              ? <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
+              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+                  {(purchases || []).map((p) => (
+                    <div key={p.id} onClick={() => onOpenPurchaseDetail(p)}
+                      style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)' }}>
+                      {p.img_url
+                        ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🛍️</div>
+                      }
+                    </div>
+                  ))}
                 </div>
-                <button className="btn" onClick={handleCopyUrl}
-                  style={{ fontSize: '12px', padding: '5px 12px', flexShrink: 0, background: copied ? 'var(--accent)' : '', color: copied ? '#fff' : '', borderColor: copied ? 'var(--accent)' : '' }}>
-                  {copied ? '✓ コピー済み' : 'コピー'}
-                </button>
-              </div>
-            </div>
-          )}
+            }
+          </div>
 
-          {profile?.social_links?.length > 0 && (
-            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>リンク</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {profile.social_links.map((l, i) => (
-                  <a key={i} href={l.url} target="_blank" rel="noopener noreferrer"
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--accent-light)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
-                    <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{l.title}</span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>↗</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* 非公開セクション区切り */}
+          <div style={{ background: '#F3EEF1', border: '1px solid #DCCDD4', borderRadius: '10px', padding: '10px 14px', margin: '4px 0 14px', textAlign: 'center' }}>
+            <span style={{ fontSize: '12px', color: '#8C6272', fontWeight: 600 }}>🔒 ここより下は他のユーザーには表示されません</span>
+          </div>
 
           {/* 買う物リスト */}
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
@@ -296,44 +293,35 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
             )}
           </div>
 
-          {profile?.favorite_shops?.length > 0 && (
+          {profile?.social_links?.length > 0 && (
             <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>お気に入りのお店</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '10px', letterSpacing: '0.06em' }}>リンク</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {profile.favorite_shops.map((s, i) => (
-                  s.url
-                    ? <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
-                        <span style={{ fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
-                        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>›</span>
-                      </a>
-                    : <span key={i} style={{ background: 'var(--tag-shop-bg)', borderRadius: '10px', padding: '8px 12px', fontSize: '13px', color: 'var(--tag-shop-text)', fontWeight: 500 }}>{s.name}</span>
+                {profile.social_links.map((l, i) => (
+                  <a key={i} href={l.url} target="_blank" rel="noopener noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--accent-light)', borderRadius: '10px', padding: '8px 12px', textDecoration: 'none' }}>
+                    <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{l.title}</span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>↗</span>
+                  </a>
                 ))}
               </div>
             </div>
           )}
 
-          {/* 購入品グリッド */}
-          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>購入品</div>
-              <button onClick={onAddPurchase} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>
-            </div>
-            {(purchases || []).length === 0
-              ? <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
-              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
-                  {(purchases || []).map((p) => (
-                    <div key={p.id} onClick={() => onOpenPurchaseDetail(p)}
-                      style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)' }}>
-                      {p.img_url
-                        ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🛍️</div>
-                      }
-                    </div>
-                  ))}
+          {isPublic && (
+            <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '12px 16px', marginBottom: '10px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '8px', letterSpacing: '0.06em' }}>プロフィールURL</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ flex: 1, fontSize: '12px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-mono)' }}>
+                  www.yarn-and.com/user/{profile?.handle || username}
                 </div>
-            }
-          </div>
+                <button className="btn" onClick={handleCopyUrl}
+                  style={{ fontSize: '12px', padding: '5px 12px', flexShrink: 0, background: copied ? 'var(--accent)' : '', color: copied ? '#fff' : '', borderColor: copied ? 'var(--accent)' : '' }}>
+                  {copied ? '✓ コピー済み' : 'コピー'}
+                </button>
+              </div>
+            </div>
+          )}
 
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '4px 12px' }}>
             <button onClick={onChangeHandle} style={{ width: '100%', background: 'none', border: 'none', padding: '12px 0', fontSize: '14px', color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'var(--font-sans)', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)' }}>
