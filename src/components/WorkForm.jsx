@@ -117,6 +117,11 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
             </button>
           ))}
         </div>
+        {status === '制作中' && (
+          <div style={{ marginTop: '8px', fontSize: '12px', color: '#8C6272', background: '#F3EEF1', border: '1px solid #DCCDD4', borderRadius: '8px', padding: '7px 12px' }}>
+            🔒 制作中の作品は自分のみ見えます（他のユーザーには表示されません）
+          </div>
+        )}
       </div>
 
       <div className="field"><label>作品名</label><input type="text" value={name} placeholder="例：フリルスカート、帽子など" onChange={(e) => setName(e.target.value)} /></div>
