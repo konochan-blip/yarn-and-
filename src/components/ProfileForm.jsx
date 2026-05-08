@@ -235,10 +235,8 @@ export default function ProfileForm({ open, profile, onSave, onClose }) {
         )}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '20px 0 16px' }}>
-        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
-        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', whiteSpace: 'nowrap', fontWeight: 500 }}>ここより下は他のユーザーには表示されません</span>
-        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+      <div style={{ background: '#F3EEF1', border: '1px solid #DCCDD4', borderRadius: '10px', padding: '10px 14px', margin: '20px 0 14px', textAlign: 'center' }}>
+        <span style={{ fontSize: '12px', color: '#8C6272', fontWeight: 600 }}>🔒 ここより下は他のユーザーには表示されません</span>
       </div>
 
       <div style={{ background: 'var(--bg)', borderRadius: '10px', padding: '4px 12px', marginBottom: '14px' }}>
