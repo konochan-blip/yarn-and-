@@ -157,6 +157,19 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
         </div>
       )}
       {work.needle ? <div className="detail-row"><span className="dl">編み方</span><span className="dv">{work.needle}</span></div> : null}
+      {(work.start_date || work.end_date) && (
+        <div className="detail-row">
+          <span className="dl">制作期間</span>
+          <span className="dv">
+            {work.start_date && work.end_date ? (() => {
+              const s = new Date(work.start_date), e = new Date(work.end_date)
+              const days = Math.round((e - s) / 86400000)
+              const text = days <= 0 ? '1日' : days < 7 ? `${days}日` : days < 30 ? `${Math.floor(days/7)}週間${days%7 > 0 ? `${days%7}日` : ''}` : `${Math.floor(days/30)}ヶ月${days%30 > 0 ? `${days%30}日` : ''}`
+              return `${work.start_date} 〜 ${work.end_date}（${text}）`
+            })() : work.start_date ? `${work.start_date} 〜` : `〜 ${work.end_date}`}
+          </span>
+        </div>
+      )}
       {(work.production_time || work.yarn_usage) && (
         <div className="detail-row">
           {work.production_time && <><span className="dl">制作時間</span><span className="dv">{work.production_time}</span></>}

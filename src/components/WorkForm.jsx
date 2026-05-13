@@ -17,6 +17,8 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
   const [imgPreview, setImgPreview] = useState(null)
   const [patternItems, setPatternItems] = useState([])
   const [status, setStatus] = useState('制作中')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const [productionTime, setProductionTime] = useState('')
   const [yarnUsage, setYarnUsage] = useState('')
   const [saving, setSaving] = useState(false)
@@ -38,6 +40,8 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       setImgPreview(editingWork.img_url || null)
       setPatternItems((editingWork.pattern_imgs || []).map((url) => ({ preview: url, file: null })))
       setStatus(editingWork.status || '完成')
+      setStartDate(editingWork.start_date || '')
+      setEndDate(editingWork.end_date || '')
       setProductionTime(editingWork.production_time || '')
       setYarnUsage(editingWork.yarn_usage || '')
     } else {
@@ -46,6 +50,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       setSelectedYarnIds([]); setSelectedBookIds([])
       setImgFile(null); setImgPreview(null); setPatternItems([])
       setStatus('制作中')
+      setStartDate(''); setEndDate('')
       setProductionTime(''); setYarnUsage('')
     }
   }, [open, editingWork])
@@ -89,7 +94,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
   async function handleSave() {
     setSaving(true)
     try {
-      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems, status, production_time: productionTime, yarn_usage: yarnUsage }
+      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems, status, start_date: startDate || null, end_date: endDate || null, production_time: productionTime, yarn_usage: yarnUsage }
       if (editingWork) data.id = editingWork.id
       await onSave(data, imgFile)
       onClose()
@@ -207,6 +212,22 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       </div>
 
       <div className="field"><textarea value={ref} placeholder="編み図・作り方参考URL" onChange={(e) => setRef(e.target.value)} /></div>
+
+      <div className="field">
+        <label>制作期間</label>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={{ flex: 1 }} />
+          <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>〜</span>
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{ flex: 1 }} />
+        </div>
+        {startDate && endDate && (() => {
+          const s = new Date(startDate), e = new Date(endDate)
+          const days = Math.round((e - s) / 86400000)
+          if (days < 0) return <div style={{ fontSize: '12px', color: '#c0392b', marginTop: '4px' }}>完成日が開始日より前になっています</div>
+          const text = days === 0 ? '1日' : days < 7 ? `${days}日` : days < 30 ? `${Math.floor(days/7)}週間${days%7 > 0 ? `${days%7}日` : ''}` : `${Math.floor(days/30)}ヶ月${days%30 > 0 ? `${days%30}日` : ''}`
+          return <div style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 600, marginTop: '6px' }}>📅 制作期間：{text}</div>
+        })()}
+      </div>
 
       <div className="field">
         <div style={{ display: 'flex', gap: '10px' }}>
