@@ -170,12 +170,8 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
           </span>
         </div>
       )}
-      {(work.production_time || work.yarn_usage) && (
-        <div className="detail-row">
-          {work.production_time && <><span className="dl">制作時間</span><span className="dv">{work.production_time}</span></>}
-          {work.production_time && work.yarn_usage && <span style={{ color: 'var(--border)', margin: '0 4px' }}>｜</span>}
-          {work.yarn_usage && <><span className="dl">使用量</span><span className="dv">{work.yarn_usage}</span></>}
-        </div>
+      {work.yarn_usage && (
+        <div className="detail-row"><span className="dl">使用量</span><span className="dv">{work.yarn_usage}</span></div>
       )}
 
       {work.memo ? (

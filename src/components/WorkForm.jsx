@@ -229,12 +229,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
         })()}
       </div>
 
-      <div className="field">
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <div style={{ flex: 1 }}><label>制作時間</label><input type="text" value={productionTime} placeholder="例：3時間、2週間" onChange={(e) => setProductionTime(e.target.value)} /></div>
-          <div style={{ flex: 1 }}><label>使用量</label><input type="text" value={yarnUsage} placeholder="例：2玉、150g" onChange={(e) => setYarnUsage(e.target.value)} /></div>
-        </div>
-      </div>
+      <div className="field"><label>使用量</label><input type="text" value={yarnUsage} placeholder="例：2玉、150g" onChange={(e) => setYarnUsage(e.target.value)} /></div>
 
       <div className="field"><label>メモ</label><textarea value={memo} placeholder="使用針・サイズ・感想など" onChange={(e) => setMemo(e.target.value)} /></div>
       <div className="field"><label>自分メモ（非公開）</label><textarea value={privateMemo} placeholder="自分だけのメモ。他の人には見えません" rows={3} onChange={(e) => setPrivateMemo(e.target.value)} /></div>
