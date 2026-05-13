@@ -19,8 +19,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
   const [status, setStatus] = useState('制作中')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [productionTime, setProductionTime] = useState('')
-  const [yarnUsage, setYarnUsage] = useState('')
+  const [yarnUsages, setYarnUsages] = useState({})
   const [saving, setSaving] = useState(false)
   const imgInputRef = useRef()
   const patternInputRef = useRef()
@@ -42,8 +41,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       setStatus(editingWork.status || '完成')
       setStartDate(editingWork.start_date || '')
       setEndDate(editingWork.end_date || '')
-      setProductionTime(editingWork.production_time || '')
-      setYarnUsage(editingWork.yarn_usage || '')
+      setYarnUsages(editingWork.yarn_usages || {})
     } else {
       setName(''); setNeedle(''); setMemo(''); setPrivateMemo(''); setRef('')
       setCategories([])
@@ -51,7 +49,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       setImgFile(null); setImgPreview(null); setPatternItems([])
       setStatus('制作中')
       setStartDate(''); setEndDate('')
-      setProductionTime(''); setYarnUsage('')
+      setYarnUsages({})
     }
   }, [open, editingWork])
 
@@ -94,7 +92,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
   async function handleSave() {
     setSaving(true)
     try {
-      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems, status, start_date: startDate || null, end_date: endDate || null, production_time: productionTime, yarn_usage: yarnUsage }
+      const data = { name, needle, memo, private_memo: privateMemo, ref, categories, yarn_ids: selectedYarnIds, book_ids: selectedBookIds, img_url: imgPreview || '', patternItems, status, start_date: startDate || null, end_date: endDate || null, yarn_usages: yarnUsages }
       if (editingWork) data.id = editingWork.id
       await onSave(data, imgFile)
       onClose()
@@ -172,9 +170,19 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
           {yarns.length === 0 ? (
             <div style={{ fontSize: '13px', color: 'var(--text-tertiary)', padding: '8px' }}>先に毛糸を登録してね</div>
           ) : yarns.map((yarn) => (
-            <div key={yarn.id} className={`yarn-select-item${selectedYarnIds.includes(yarn.id) ? ' selected' : ''}`} onClick={() => toggleYarn(yarn.id)}>
-              <div className="yarn-select-thumb">{yarn.img_url ? <img src={yarn.img_url} alt="" /> : <YarnSvgSm />}</div>
-              <span>{yarn.name || '名前なし'}{yarn.colorname ? ` · ${yarn.colorname}` : ''}</span>
+            <div key={yarn.id}>
+              <div className={`yarn-select-item${selectedYarnIds.includes(yarn.id) ? ' selected' : ''}`} onClick={() => toggleYarn(yarn.id)}>
+                <div className="yarn-select-thumb">{yarn.img_url ? <img src={yarn.img_url} alt="" /> : <YarnSvgSm />}</div>
+                <span>{yarn.name || '名前なし'}{yarn.colorname ? ` · ${yarn.colorname}` : ''}</span>
+              </div>
+              {selectedYarnIds.includes(yarn.id) && (
+                <input type="text"
+                  value={yarnUsages[yarn.id] || ''}
+                  placeholder="使用量（例：1玉、50g）"
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setYarnUsages((prev) => ({ ...prev, [yarn.id]: e.target.value }))}
+                  style={{ margin: '4px 0 6px 0', fontSize: '13px', padding: '6px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', width: '100%', boxSizing: 'border-box', fontFamily: 'inherit', outline: 'none' }} />
+              )}
             </div>
           ))}
         </div>
@@ -229,7 +237,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
         })()}
       </div>
 
-      <div className="field"><label>使用量</label><input type="text" value={yarnUsage} placeholder="例：2玉、150g" onChange={(e) => setYarnUsage(e.target.value)} /></div>
+
 
       <div className="field"><label>メモ</label><textarea value={memo} placeholder="使用針・サイズ・感想など" onChange={(e) => setMemo(e.target.value)} /></div>
       <div className="field"><label>自分メモ（非公開）</label><textarea value={privateMemo} placeholder="自分だけのメモ。他の人には見えません" rows={3} onChange={(e) => setPrivateMemo(e.target.value)} /></div>

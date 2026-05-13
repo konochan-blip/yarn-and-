@@ -170,9 +170,6 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
           </span>
         </div>
       )}
-      {work.yarn_usage && (
-        <div className="detail-row"><span className="dl">使用量</span><span className="dv">{work.yarn_usage}</span></div>
-      )}
 
       {work.memo ? (
         <div className="detail-row" style={{ flexDirection: 'column', gap: '4px' }}>
@@ -200,6 +197,9 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
               <div>
                 <div className="linked-name">{yarn.name || '名前なし'}</div>
                 <div className="linked-sub">{yarn.colorname || ''}{yarn.material ? ` · ${yarn.material}` : ''}</div>
+                {work.yarn_usages?.[yarn.id] && (
+                  <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 500, marginTop: '2px' }}>使用量：{work.yarn_usages[yarn.id]}</div>
+                )}
               </div>
             </div>
           ))
