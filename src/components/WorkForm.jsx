@@ -205,6 +205,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
       {/* 編み図写真 */}
       <div className="field">
         <label>編み図・参考写真</label>
+        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '6px' }}>著作権のある編み図・書籍の写真は載せないでください</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '6px', marginBottom: '8px' }}>
           {patternItems.map((item, idx) => (
             <div key={idx} style={{ position: 'relative', aspectRatio: '1', borderRadius: '10px', overflow: 'hidden', background: 'var(--surface-2)' }}>
@@ -219,7 +220,11 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
         <input ref={patternInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handlePatternImgAdd} />
       </div>
 
-      <div className="field"><textarea value={ref} placeholder="編み図・作り方参考URL" onChange={(e) => setRef(e.target.value)} /></div>
+      <div className="field">
+        <label>編み図・参考URL</label>
+        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '6px' }}>著作権のある編み図のURLは載せないでください</div>
+        <textarea value={ref} placeholder="編み図・作り方参考URL" onChange={(e) => setRef(e.target.value)} />
+      </div>
 
       <div className="field">
         <label>制作期間</label>
