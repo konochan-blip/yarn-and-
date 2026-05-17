@@ -591,7 +591,7 @@ export default function App() {
 
   async function addBelonging(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, img_url, name: data.name || '', size: data.size || '', memo: data.memo || '' }
+    const record = { user_id: user.id, img_url, name: data.name || '', size: data.size || '', url: data.url || '', memo: data.memo || '' }
     const { data: inserted } = await supabase.from('belongings').insert([record]).select().single()
     if (inserted) setBelongings((prev) => [inserted, ...prev])
   }

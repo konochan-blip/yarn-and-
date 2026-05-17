@@ -86,6 +86,7 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
   const [belongingImgPreview, setBelongingImgPreview] = useState(null)
   const [belongingName, setBelongingName] = useState('')
   const [belongingSize, setBelongingSize] = useState('')
+  const [belongingUrl, setBelongingUrl] = useState('')
   const [belongingMemo, setBelongingMemo] = useState('')
   const [belongingSaving, setBelongingSaving] = useState(false)
   const [viewingBelonging, setViewingBelonging] = useState(null)
@@ -475,19 +476,21 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                   reader.readAsDataURL(file)
                   e.target.value = ''
                 }} />
-                <input type="text" value={belongingName} placeholder="名称（例：かぎ針セット、輪針など）" onChange={(e) => setBelongingName(e.target.value)}
+                <input type="text" value={belongingName} placeholder="名称（例：底板、ストラップなど）" onChange={(e) => setBelongingName(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
-                <input type="text" value={belongingSize} placeholder="サイズ・品番（例：3号、2.5mm）" onChange={(e) => setBelongingSize(e.target.value)}
+                <input type="text" value={belongingSize} placeholder="サイズ" onChange={(e) => setBelongingSize(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
-                <textarea value={belongingMemo} placeholder="メモ" rows={2} onChange={(e) => setBelongingMemo(e.target.value)}
+                <input type="text" value={belongingUrl} placeholder="URL（任意）" onChange={(e) => setBelongingUrl(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                <textarea value={belongingMemo} placeholder="メモ（購入店など）" rows={2} onChange={(e) => setBelongingMemo(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="btn" onClick={() => { setAddingBelonging(false); setBelongingImgFile(null); setBelongingImgPreview(null); setBelongingName(''); setBelongingSize(''); setBelongingMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                  <button className="btn" onClick={() => { setAddingBelonging(false); setBelongingImgFile(null); setBelongingImgPreview(null); setBelongingName(''); setBelongingSize(''); setBelongingUrl(''); setBelongingMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
                   <button className="btn primary" disabled={belongingSaving || (!belongingImgPreview && !belongingName)} onClick={async () => {
                     setBelongingSaving(true)
                     try {
-                      await onAddBelonging({ img_url: belongingImgPreview || '', name: belongingName.trim(), size: belongingSize.trim(), memo: belongingMemo.trim() }, belongingImgFile)
-                      setAddingBelonging(false); setBelongingImgFile(null); setBelongingImgPreview(null); setBelongingName(''); setBelongingSize(''); setBelongingMemo('')
+                      await onAddBelonging({ img_url: belongingImgPreview || '', name: belongingName.trim(), size: belongingSize.trim(), url: belongingUrl.trim(), memo: belongingMemo.trim() }, belongingImgFile)
+                      setAddingBelonging(false); setBelongingImgFile(null); setBelongingImgPreview(null); setBelongingName(''); setBelongingSize(''); setBelongingUrl(''); setBelongingMemo('')
                     } finally { setBelongingSaving(false) }
                   }} style={{ flex: 1, fontSize: '13px' }}>{belongingSaving ? '保存中…' : '保存する'}</button>
                 </div>
@@ -647,10 +650,11 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
         <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.88)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setViewingBelonging(null)}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
             {viewingBelonging.img_url && <img src={viewingBelonging.img_url} style={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '10px' }} alt="" />}
-            {(viewingBelonging.name || viewingBelonging.size || viewingBelonging.memo) && (
+            {(viewingBelonging.name || viewingBelonging.size || viewingBelonging.url || viewingBelonging.memo) && (
               <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '10px', padding: '12px 16px', width: '100%' }}>
                 {viewingBelonging.name && <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600 }}>{viewingBelonging.name}</div>}
                 {viewingBelonging.size && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{viewingBelonging.size}</div>}
+                {viewingBelonging.url && <a href={viewingBelonging.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#8CD4F4', marginTop: '4px', display: 'block', wordBreak: 'break-all' }}>{viewingBelonging.url}</a>}
                 {viewingBelonging.memo && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '6px', whiteSpace: 'pre-wrap' }}>{viewingBelonging.memo}</div>}
               </div>
             )}
