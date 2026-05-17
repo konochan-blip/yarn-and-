@@ -45,7 +45,7 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   )
 }
 
-export default function MyPage({ open, profile, yarns, tools, books, works, purchases, labels = [], wishItems = [], followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddLabel, onDeleteLabel, onAddWishItem, onUpdateWishItem, onDeleteWishItem, onOpenYarnDetail }) {
+export default function MyPage({ open, profile, yarns, tools, books, works, purchases, labels = [], wishItems = [], wantToMake = [], onAddWantToMake, onDeleteWantToMake, belongings = [], onAddBelonging, onDeleteBelonging, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddLabel, onDeleteLabel, onAddWishItem, onUpdateWishItem, onDeleteWishItem, onOpenYarnDetail }) {
   const [sheet, setSheet] = useState(null)
   const [copied, setCopied] = useState(false)
   const [wishText, setWishText] = useState('')
@@ -72,6 +72,24 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
   const [viewingLabel, setViewingLabel] = useState(null)
   const [showAllLabels, setShowAllLabels] = useState(false)
   const labelImgRef = useRef()
+  const [addingWantToMake, setAddingWantToMake] = useState(false)
+  const [wantToMakeImgFile, setWantToMakeImgFile] = useState(null)
+  const [wantToMakeImgPreview, setWantToMakeImgPreview] = useState(null)
+  const [wantToMakeTitle, setWantToMakeTitle] = useState('')
+  const [wantToMakeUrl, setWantToMakeUrl] = useState('')
+  const [wantToMakeMemo, setWantToMakeMemo] = useState('')
+  const [wantToMakeSaving, setWantToMakeSaving] = useState(false)
+  const [viewingWantToMake, setViewingWantToMake] = useState(null)
+  const wantToMakeImgRef = useRef()
+  const [addingBelonging, setAddingBelonging] = useState(false)
+  const [belongingImgFile, setBelongingImgFile] = useState(null)
+  const [belongingImgPreview, setBelongingImgPreview] = useState(null)
+  const [belongingName, setBelongingName] = useState('')
+  const [belongingSize, setBelongingSize] = useState('')
+  const [belongingMemo, setBelongingMemo] = useState('')
+  const [belongingSaving, setBelongingSaving] = useState(false)
+  const [viewingBelonging, setViewingBelonging] = useState(null)
+  const belongingImgRef = useRef()
 
   function startEditWish(item) {
     setEditingWishId(item.id)
@@ -349,6 +367,134 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
             <span style={{ fontSize: '12px', color: '#8C6272', fontWeight: 600 }}>🔒 ここより下は他のユーザーには表示されません</span>
           </div>
 
+          {/* 作りたいものリスト */}
+          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>作りたいものリスト</div>
+              {!addingWantToMake && <button onClick={() => setAddingWantToMake(true)} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>}
+            </div>
+            {wantToMake.length === 0 && !addingWantToMake && (
+              <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
+            )}
+            {wantToMake.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginBottom: addingWantToMake ? '12px' : 0 }}>
+                {wantToMake.map((item) => (
+                  <div key={item.id} onClick={() => setViewingWantToMake(item)}
+                    style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)', position: 'relative' }}>
+                    {item.img_url
+                      ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🧶</div>
+                    }
+                    {item.title && (
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', padding: '2px 5px' }}>
+                        <span style={{ fontSize: '9px', color: '#fff', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{item.title}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            {addingWantToMake && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div onClick={() => wantToMakeImgRef.current?.click()}
+                  style={{ width: '100%', aspectRatio: '4/3', borderRadius: '10px', border: '1.5px dashed var(--border)', background: 'var(--bg)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  {wantToMakeImgPreview
+                    ? <img src={wantToMakeImgPreview} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
+                    : <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>タップして写真を選択</span>
+                  }
+                </div>
+                <input ref={wantToMakeImgRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                  const file = e.target.files[0]; if (!file) return
+                  setWantToMakeImgFile(file)
+                  const reader = new FileReader()
+                  reader.onload = (ev) => setWantToMakeImgPreview(ev.target.result)
+                  reader.readAsDataURL(file)
+                  e.target.value = ''
+                }} />
+                <input type="text" value={wantToMakeTitle} placeholder="タイトル（例：フリルスカート）" onChange={(e) => setWantToMakeTitle(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                <input type="text" value={wantToMakeUrl} placeholder="編み図URL（任意）" onChange={(e) => setWantToMakeUrl(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                <textarea value={wantToMakeMemo} placeholder="メモ（編み図の説明、必要な毛糸など）" rows={2} onChange={(e) => setWantToMakeMemo(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className="btn" onClick={() => { setAddingWantToMake(false); setWantToMakeImgFile(null); setWantToMakeImgPreview(null); setWantToMakeTitle(''); setWantToMakeUrl(''); setWantToMakeMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                  <button className="btn primary" disabled={wantToMakeSaving || (!wantToMakeImgPreview && !wantToMakeTitle)} onClick={async () => {
+                    setWantToMakeSaving(true)
+                    try {
+                      await onAddWantToMake({ img_url: wantToMakeImgPreview || '', title: wantToMakeTitle.trim(), url: wantToMakeUrl.trim(), memo: wantToMakeMemo.trim() }, wantToMakeImgFile)
+                      setAddingWantToMake(false); setWantToMakeImgFile(null); setWantToMakeImgPreview(null); setWantToMakeTitle(''); setWantToMakeUrl(''); setWantToMakeMemo('')
+                    } finally { setWantToMakeSaving(false) }
+                  }} style={{ flex: 1, fontSize: '13px' }}>{wantToMakeSaving ? '保存中…' : '保存する'}</button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 持ち物リスト */}
+          <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>持ち物リスト</div>
+              {!addingBelonging && <button onClick={() => setAddingBelonging(true)} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>}
+            </div>
+            {belongings.length === 0 && !addingBelonging && (
+              <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
+            )}
+            {belongings.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginBottom: addingBelonging ? '12px' : 0 }}>
+                {belongings.map((item) => (
+                  <div key={item.id} onClick={() => setViewingBelonging(item)}
+                    style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)', position: 'relative' }}>
+                    {item.img_url
+                      ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🧺</div>
+                    }
+                    {item.name && (
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', padding: '2px 5px' }}>
+                        <span style={{ fontSize: '9px', color: '#fff', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{item.name}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            {addingBelonging && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div onClick={() => belongingImgRef.current?.click()}
+                  style={{ width: '100%', aspectRatio: '4/3', borderRadius: '10px', border: '1.5px dashed var(--border)', background: 'var(--bg)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  {belongingImgPreview
+                    ? <img src={belongingImgPreview} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
+                    : <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>タップして写真を選択</span>
+                  }
+                </div>
+                <input ref={belongingImgRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                  const file = e.target.files[0]; if (!file) return
+                  setBelongingImgFile(file)
+                  const reader = new FileReader()
+                  reader.onload = (ev) => setBelongingImgPreview(ev.target.result)
+                  reader.readAsDataURL(file)
+                  e.target.value = ''
+                }} />
+                <input type="text" value={belongingName} placeholder="名称（例：かぎ針セット、輪針など）" onChange={(e) => setBelongingName(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                <input type="text" value={belongingSize} placeholder="サイズ・品番（例：3号、2.5mm）" onChange={(e) => setBelongingSize(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                <textarea value={belongingMemo} placeholder="メモ" rows={2} onChange={(e) => setBelongingMemo(e.target.value)}
+                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className="btn" onClick={() => { setAddingBelonging(false); setBelongingImgFile(null); setBelongingImgPreview(null); setBelongingName(''); setBelongingSize(''); setBelongingMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                  <button className="btn primary" disabled={belongingSaving || (!belongingImgPreview && !belongingName)} onClick={async () => {
+                    setBelongingSaving(true)
+                    try {
+                      await onAddBelonging({ img_url: belongingImgPreview || '', name: belongingName.trim(), size: belongingSize.trim(), memo: belongingMemo.trim() }, belongingImgFile)
+                      setAddingBelonging(false); setBelongingImgFile(null); setBelongingImgPreview(null); setBelongingName(''); setBelongingSize(''); setBelongingMemo('')
+                    } finally { setBelongingSaving(false) }
+                  }} style={{ flex: 1, fontSize: '13px' }}>{belongingSaving ? '保存中…' : '保存する'}</button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* 買う物リスト */}
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
@@ -470,6 +616,48 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
               <button onClick={() => setViewingLabel(null)}
                 style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>閉じる</button>
               <button onClick={() => { onDeleteLabel(viewingLabel.id); setViewingLabel(null) }}
+                style={{ flex: 1, padding: '10px', background: 'rgba(180,40,40,0.8)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>削除する</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {viewingWantToMake && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.88)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setViewingWantToMake(null)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+            {viewingWantToMake.img_url && <img src={viewingWantToMake.img_url} style={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '10px' }} alt="" />}
+            {(viewingWantToMake.title || viewingWantToMake.url || viewingWantToMake.memo) && (
+              <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '10px', padding: '12px 16px', width: '100%' }}>
+                {viewingWantToMake.title && <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600 }}>{viewingWantToMake.title}</div>}
+                {viewingWantToMake.url && <a href={viewingWantToMake.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#8CD4F4', marginTop: '4px', display: 'block', wordBreak: 'break-all' }}>{viewingWantToMake.url}</a>}
+                {viewingWantToMake.memo && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '6px', whiteSpace: 'pre-wrap' }}>{viewingWantToMake.memo}</div>}
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+              <button onClick={() => setViewingWantToMake(null)}
+                style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>閉じる</button>
+              <button onClick={() => { onDeleteWantToMake(viewingWantToMake.id); setViewingWantToMake(null) }}
+                style={{ flex: 1, padding: '10px', background: 'rgba(180,40,40,0.8)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>削除する</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {viewingBelonging && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.88)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setViewingBelonging(null)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+            {viewingBelonging.img_url && <img src={viewingBelonging.img_url} style={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '10px' }} alt="" />}
+            {(viewingBelonging.name || viewingBelonging.size || viewingBelonging.memo) && (
+              <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '10px', padding: '12px 16px', width: '100%' }}>
+                {viewingBelonging.name && <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600 }}>{viewingBelonging.name}</div>}
+                {viewingBelonging.size && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{viewingBelonging.size}</div>}
+                {viewingBelonging.memo && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '6px', whiteSpace: 'pre-wrap' }}>{viewingBelonging.memo}</div>}
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+              <button onClick={() => setViewingBelonging(null)}
+                style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>閉じる</button>
+              <button onClick={() => { onDeleteBelonging(viewingBelonging.id); setViewingBelonging(null) }}
                 style={{ flex: 1, padding: '10px', background: 'rgba(180,40,40,0.8)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>削除する</button>
             </div>
           </div>

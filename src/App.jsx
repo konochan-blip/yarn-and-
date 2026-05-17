@@ -95,7 +95,9 @@ export default function App() {
   const [makers,     setMakers]     = useState([])
   const [wishItems,  setWishItems]  = useState([])
   const [purchases,  setPurchases]  = useState([])
-  const [labels,     setLabels]     = useState([])
+  const [labels,      setLabels]      = useState([])
+  const [wantToMake,  setWantToMake]  = useState([])
+  const [belongings,  setBelongings]  = useState([])
   const [workCategories, setWorkCategories] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -251,6 +253,12 @@ export default function App() {
         .catch(() => {})
       supabase.from('label_collections').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
         .then(({ data: lbl }) => setLabels(lbl || []))
+        .catch(() => {})
+      supabase.from('want_to_make').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+        .then(({ data: w }) => setWantToMake(w || []))
+        .catch(() => {})
+      supabase.from('belongings').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+        .then(({ data: b }) => setBelongings(b || []))
         .catch(() => {})
       setProfile(p || null)
       setFollows(f || [])
@@ -570,6 +578,28 @@ export default function App() {
     setLabels((prev) => prev.filter((l) => l.id !== id))
   }
 
+  async function addWantToMake(data, imgFile) {
+    const img_url = await resolveImgUrl(data, imgFile)
+    const record = { user_id: user.id, img_url, title: data.title || '', url: data.url || '', memo: data.memo || '' }
+    const { data: inserted } = await supabase.from('want_to_make').insert([record]).select().single()
+    if (inserted) setWantToMake((prev) => [inserted, ...prev])
+  }
+  async function deleteWantToMake(id) {
+    await supabase.from('want_to_make').delete().eq('id', id)
+    setWantToMake((prev) => prev.filter((w) => w.id !== id))
+  }
+
+  async function addBelonging(data, imgFile) {
+    const img_url = await resolveImgUrl(data, imgFile)
+    const record = { user_id: user.id, img_url, name: data.name || '', size: data.size || '', memo: data.memo || '' }
+    const { data: inserted } = await supabase.from('belongings').insert([record]).select().single()
+    if (inserted) setBelongings((prev) => [inserted, ...prev])
+  }
+  async function deleteBelonging(id) {
+    await supabase.from('belongings').delete().eq('id', id)
+    setBelongings((prev) => prev.filter((b) => b.id !== id))
+  }
+
   async function addWorkCategory(name) {
     const { error } = await supabase.from('work_categories').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
     if (error) throw new Error(error.message || 'カテゴリーの追加に失敗しました')
@@ -735,6 +765,8 @@ export default function App() {
         onDelete={deletePurchase} />
       <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works} purchases={purchases} labels={labels}
         wishItems={wishItems}
+        wantToMake={wantToMake} onAddWantToMake={addWantToMake} onDeleteWantToMake={deleteWantToMake}
+        belongings={belongings} onAddBelonging={addBelonging} onDeleteBelonging={deleteBelonging}
         followsCount={follows.length} followersCount={followersCount}
         follows={follows} feedProfiles={feedProfiles}
         onClose={() => setMyPageOpen(false)}
