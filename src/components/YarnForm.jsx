@@ -104,8 +104,8 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
       const dupIdx = yarns.findIndex((item) => item.color && item.color.trim() === color.trim())
       if (dupIdx >= 0) {
         const existing = yarns[dupIdx]
-        const existCount = Number(existing.count) || 0
-        const addCount = Number(count) || 0
+        const existCount = parseFloat(existing.count) || 0
+        const addCount = parseFloat(count) || 0
         const ok = window.confirm(
           `「${existing.name || '登録済み'} / 色番号:${existing.color}」がすでに${existCount}本登録されてるよ！\n${addCount}本追加して合計${existCount + addCount}本にする？\n\nOK → 在庫を追加\nキャンセル → 別々に登録`
         )
@@ -119,7 +119,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
 
     setSaving(true)
     try {
-      const data = { name, product_number: productNumber, color, colorname, material, lot, count: Number(count) || 0, count_unit: countUnit, price, needle, weight_g: weightG ? Number(weightG) : null, length_m: lengthM ? Number(lengthM) : null, label, memo, shops: selectedShops, img_url: imgPreview || '' }
+      const data = { name, product_number: productNumber, color, colorname, material, lot, count: parseFloat(count) || 0, count_unit: countUnit, price, needle, weight_g: weightG ? Number(weightG) : null, length_m: lengthM ? Number(lengthM) : null, label, memo, shops: selectedShops, img_url: imgPreview || '' }
       if (editingYarn) data.id = editingYarn.id
       await onSave(data, imgFile)
       onClose()
@@ -131,8 +131,8 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
   async function handleMerge(yarnId) {
     const yarn = yarns.find((y) => y.id === yarnId)
     if (!yarn) return
-    const add = Number(mergeInputs[yarnId]) || 1
-    await onMergeCount(yarnId, (Number(yarn.count) || 0) + add)
+    const add = parseFloat(mergeInputs[yarnId]) || 1
+    await onMergeCount(yarnId, (parseFloat(yarn.count) || 0) + add)
     onClose()
   }
 
@@ -193,7 +193,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
         <div className="field">
           <label>本数・玉数</label>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <input type="number" value={count} placeholder="例：5" min="0" onChange={(e) => setCount(e.target.value)} style={{ flex: 1 }} />
+            <input type="number" value={count} placeholder="例：5" min="0" step="any" onChange={(e) => setCount(e.target.value)} style={{ flex: 1 }} />
             {['本', '玉'].map((u) => (
               <button key={u} type="button" onClick={() => setCountUnit(u)}
                 style={{ padding: '7px 16px', borderRadius: '99px', border: countUnit === u ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: countUnit === u ? 'var(--accent)' : 'var(--surface)', color: countUnit === u ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', fontWeight: countUnit === u ? 600 : 400 }}>
