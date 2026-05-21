@@ -643,49 +643,6 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
         </div>
       )}
 
-      {viewingWantToMake && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.88)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setViewingWantToMake(null)}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-            {viewingWantToMake.img_url && <img src={viewingWantToMake.img_url} style={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '10px' }} alt="" />}
-            {(viewingWantToMake.title || viewingWantToMake.url || viewingWantToMake.memo) && (
-              <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '10px', padding: '12px 16px', width: '100%' }}>
-                {viewingWantToMake.title && <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600 }}>{viewingWantToMake.title}</div>}
-                {viewingWantToMake.url && <a href={viewingWantToMake.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#8CD4F4', marginTop: '4px', display: 'block', wordBreak: 'break-all' }}>{viewingWantToMake.url}</a>}
-                {viewingWantToMake.memo && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '6px', whiteSpace: 'pre-wrap' }}>{viewingWantToMake.memo}</div>}
-              </div>
-            )}
-            <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
-              <button onClick={() => setViewingWantToMake(null)}
-                style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>閉じる</button>
-              <button onClick={() => { onDeleteWantToMake(viewingWantToMake.id); setViewingWantToMake(null) }}
-                style={{ flex: 1, padding: '10px', background: 'rgba(180,40,40,0.8)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>削除する</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {viewingBelonging && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.88)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setViewingBelonging(null)}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-            {viewingBelonging.img_url && <img src={viewingBelonging.img_url} style={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '10px' }} alt="" />}
-            {(viewingBelonging.name || viewingBelonging.size || viewingBelonging.url || viewingBelonging.memo) && (
-              <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '10px', padding: '12px 16px', width: '100%' }}>
-                {viewingBelonging.name && <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600 }}>{viewingBelonging.name}</div>}
-                {viewingBelonging.size && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{viewingBelonging.size}</div>}
-                {viewingBelonging.url && <a href={viewingBelonging.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#8CD4F4', marginTop: '4px', display: 'block', wordBreak: 'break-all' }}>{viewingBelonging.url}</a>}
-                {viewingBelonging.memo && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '6px', whiteSpace: 'pre-wrap' }}>{viewingBelonging.memo}</div>}
-              </div>
-            )}
-            <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
-              <button onClick={() => setViewingBelonging(null)}
-                style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>閉じる</button>
-              <button onClick={() => { onDeleteBelonging(viewingBelonging.id); setViewingBelonging(null) }}
-                style={{ flex: 1, padding: '10px', background: 'rgba(180,40,40,0.8)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>削除する</button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {sheet === 'follows' && (
         <UserListSheet
           title={`フォロー中 ${followsCount}人`}
