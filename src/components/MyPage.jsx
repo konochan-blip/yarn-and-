@@ -45,7 +45,7 @@ function UserListSheet({ title, users, loading, onClose, onOpenProfile }) {
   )
 }
 
-export default function MyPage({ open, profile, yarns, tools, books, works, purchases, labels = [], wishItems = [], wantToMake = [], onAddWantToMake, onDeleteWantToMake, belongings = [], onAddBelonging, onDeleteBelonging, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddLabel, onDeleteLabel, onAddWishItem, onUpdateWishItem, onDeleteWishItem, onOpenYarnDetail }) {
+export default function MyPage({ open, profile, yarns, tools, books, works, purchases, labels = [], wishItems = [], wantToMake = [], onAddWantToMake, onUpdateWantToMake, onDeleteWantToMake, belongings = [], onAddBelonging, onUpdateBelonging, onDeleteBelonging, followsCount, followersCount, follows, feedProfiles, onClose, onEdit, onOpenProfile, onChangePassword, onChangeHandle, onAddPurchase, onOpenPurchaseDetail, onAddLabel, onDeleteLabel, onAddWishItem, onUpdateWishItem, onDeleteWishItem, onOpenYarnDetail }) {
   const [sheet, setSheet] = useState(null)
   const [copied, setCopied] = useState(false)
   const [wishText, setWishText] = useState('')
@@ -73,24 +73,27 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
   const [showAllLabels, setShowAllLabels] = useState(false)
   const labelImgRef = useRef()
   const [addingWantToMake, setAddingWantToMake] = useState(false)
-  const [wantToMakeImgFile, setWantToMakeImgFile] = useState(null)
-  const [wantToMakeImgPreview, setWantToMakeImgPreview] = useState(null)
   const [wantToMakeTitle, setWantToMakeTitle] = useState('')
   const [wantToMakeUrl, setWantToMakeUrl] = useState('')
   const [wantToMakeMemo, setWantToMakeMemo] = useState('')
   const [wantToMakeSaving, setWantToMakeSaving] = useState(false)
-  const [viewingWantToMake, setViewingWantToMake] = useState(null)
-  const wantToMakeImgRef = useRef()
+  const [editingWantToMakeId, setEditingWantToMakeId] = useState(null)
+  const [editWantToMakeTitle, setEditWantToMakeTitle] = useState('')
+  const [editWantToMakeUrl, setEditWantToMakeUrl] = useState('')
+  const [editWantToMakeMemo, setEditWantToMakeMemo] = useState('')
   const [addingBelonging, setAddingBelonging] = useState(false)
-  const [belongingImgFile, setBelongingImgFile] = useState(null)
-  const [belongingImgPreview, setBelongingImgPreview] = useState(null)
   const [belongingName, setBelongingName] = useState('')
+  const [belongingQty, setBelongingQty] = useState('')
   const [belongingSize, setBelongingSize] = useState('')
   const [belongingUrl, setBelongingUrl] = useState('')
   const [belongingMemo, setBelongingMemo] = useState('')
   const [belongingSaving, setBelongingSaving] = useState(false)
-  const [viewingBelonging, setViewingBelonging] = useState(null)
-  const belongingImgRef = useRef()
+  const [editingBelongingId, setEditingBelongingId] = useState(null)
+  const [editBelongingName, setEditBelongingName] = useState('')
+  const [editBelongingQty, setEditBelongingQty] = useState('')
+  const [editBelongingSize, setEditBelongingSize] = useState('')
+  const [editBelongingUrl, setEditBelongingUrl] = useState('')
+  const [editBelongingMemo, setEditBelongingMemo] = useState('')
 
   function startEditWish(item) {
     setEditingWishId(item.id)
@@ -370,48 +373,49 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
 
           {/* 作りたいものリスト */}
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>作りたいものリスト</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>作りたいものリスト</span>
               {!addingWantToMake && <button onClick={() => setAddingWantToMake(true)} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>}
             </div>
             {wantToMake.length === 0 && !addingWantToMake && (
-              <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>まだ何も登録されていないよ</div>
             )}
-            {wantToMake.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginBottom: addingWantToMake ? '12px' : 0 }}>
-                {wantToMake.map((item) => (
-                  <div key={item.id} onClick={() => setViewingWantToMake(item)}
-                    style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)', position: 'relative' }}>
-                    {item.img_url
-                      ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🧶</div>
-                    }
-                    {item.title && (
-                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', padding: '2px 5px' }}>
-                        <span style={{ fontSize: '9px', color: '#fff', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{item.title}</span>
-                      </div>
-                    )}
+            {wantToMake.map((item) => {
+              if (editingWantToMakeId === item.id) {
+                return (
+                  <div key={item.id} style={{ padding: '8px 0', borderBottom: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <input type="text" value={editWantToMakeTitle} placeholder="タイトル" onChange={(e) => setEditWantToMakeTitle(e.target.value)}
+                      style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                    <input type="text" value={editWantToMakeUrl} placeholder="編み図URL（任意）" onChange={(e) => setEditWantToMakeUrl(e.target.value)}
+                      style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                    <textarea value={editWantToMakeMemo} placeholder="メモ" rows={2} onChange={(e) => setEditWantToMakeMemo(e.target.value)}
+                      style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button className="btn" onClick={() => setEditingWantToMakeId(null)} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                      <button className="btn primary" disabled={!editWantToMakeTitle.trim()} onClick={async () => {
+                        await onUpdateWantToMake(item.id, { title: editWantToMakeTitle.trim(), url: editWantToMakeUrl.trim(), memo: editWantToMakeMemo.trim() })
+                        setEditingWantToMakeId(null)
+                      }} style={{ flex: 1, fontSize: '13px' }}>保存</button>
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
-            {addingWantToMake && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div onClick={() => wantToMakeImgRef.current?.click()}
-                  style={{ width: '100%', aspectRatio: '4/3', borderRadius: '10px', border: '1.5px dashed var(--border)', background: 'var(--bg)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                  {wantToMakeImgPreview
-                    ? <img src={wantToMakeImgPreview} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
-                    : <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>タップして写真を選択</span>
-                  }
+                )
+              }
+              return (
+                <div key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', padding: '7px 0', borderBottom: '1px solid var(--border-light)' }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{item.title || '無題'}</div>
+                    {item.url && <div style={{ fontSize: '11px', color: 'var(--accent)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.url}</div>}
+                    {item.memo && <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '2px' }}>{item.memo}</div>}
+                  </div>
+                  <button onClick={() => { setEditingWantToMakeId(item.id); setEditWantToMakeTitle(item.title || ''); setEditWantToMakeUrl(item.url || ''); setEditWantToMakeMemo(item.memo || '') }}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '18px', lineHeight: 1, padding: '2px 4px', flexShrink: 0 }}>✎</button>
+                  <button onClick={() => onDeleteWantToMake(item.id)}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: '2px 4px', flexShrink: 0 }}>×</button>
                 </div>
-                <input ref={wantToMakeImgRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
-                  const file = e.target.files[0]; if (!file) return
-                  setWantToMakeImgFile(file)
-                  const reader = new FileReader()
-                  reader.onload = (ev) => setWantToMakeImgPreview(ev.target.result)
-                  reader.readAsDataURL(file)
-                  e.target.value = ''
-                }} />
+              )
+            })}
+            {addingWantToMake && (
+              <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <input type="text" value={wantToMakeTitle} placeholder="タイトル（例：フリルスカート）" onChange={(e) => setWantToMakeTitle(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
                 <input type="text" value={wantToMakeUrl} placeholder="編み図URL（任意）" onChange={(e) => setWantToMakeUrl(e.target.value)}
@@ -419,14 +423,14 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                 <textarea value={wantToMakeMemo} placeholder="メモ（編み図の説明、必要な毛糸など）" rows={2} onChange={(e) => setWantToMakeMemo(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="btn" onClick={() => { setAddingWantToMake(false); setWantToMakeImgFile(null); setWantToMakeImgPreview(null); setWantToMakeTitle(''); setWantToMakeUrl(''); setWantToMakeMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
-                  <button className="btn primary" disabled={wantToMakeSaving || (!wantToMakeImgPreview && !wantToMakeTitle)} onClick={async () => {
+                  <button className="btn" onClick={() => { setAddingWantToMake(false); setWantToMakeTitle(''); setWantToMakeUrl(''); setWantToMakeMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                  <button className="btn primary" disabled={wantToMakeSaving || !wantToMakeTitle.trim()} onClick={async () => {
                     setWantToMakeSaving(true)
                     try {
-                      await onAddWantToMake({ img_url: wantToMakeImgPreview || '', title: wantToMakeTitle.trim(), url: wantToMakeUrl.trim(), memo: wantToMakeMemo.trim() }, wantToMakeImgFile)
-                      setAddingWantToMake(false); setWantToMakeImgFile(null); setWantToMakeImgPreview(null); setWantToMakeTitle(''); setWantToMakeUrl(''); setWantToMakeMemo('')
+                      await onAddWantToMake({ title: wantToMakeTitle.trim(), url: wantToMakeUrl.trim(), memo: wantToMakeMemo.trim() })
+                      setAddingWantToMake(false); setWantToMakeTitle(''); setWantToMakeUrl(''); setWantToMakeMemo('')
                     } finally { setWantToMakeSaving(false) }
-                  }} style={{ flex: 1, fontSize: '13px' }}>{wantToMakeSaving ? '保存中…' : '保存する'}</button>
+                  }} style={{ flex: 1, fontSize: '13px' }}>{wantToMakeSaving ? '保存中…' : '追加'}</button>
                 </div>
               </div>
             )}
@@ -434,65 +438,79 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
 
           {/* 持ち物リスト */}
           <div style={{ background: 'var(--surface)', borderRadius: '14px', border: '1px solid var(--border)', padding: '14px 16px', marginBottom: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>持ち物リスト</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>持ち物リスト</span>
               {!addingBelonging && <button onClick={() => setAddingBelonging(true)} style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0', fontWeight: 600 }}>＋ 追加</button>}
             </div>
             {belongings.length === 0 && !addingBelonging && (
-              <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>まだ登録されていないよ</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>まだ何も登録されていないよ</div>
             )}
-            {belongings.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginBottom: addingBelonging ? '12px' : 0 }}>
-                {belongings.map((item) => (
-                  <div key={item.id} onClick={() => setViewingBelonging(item)}
-                    style={{ aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: 'var(--accent-light)', cursor: 'pointer', border: '1px solid var(--border-light)', position: 'relative' }}>
-                    {item.img_url
-                      ? <img src={item.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>🧺</div>
-                    }
-                    {item.name && (
-                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', padding: '2px 5px' }}>
-                        <span style={{ fontSize: '9px', color: '#fff', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{item.name}</span>
-                      </div>
-                    )}
+            {belongings.map((item) => {
+              if (editingBelongingId === item.id) {
+                return (
+                  <div key={item.id} style={{ padding: '8px 0', borderBottom: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <input type="text" value={editBelongingName} placeholder="名称" onChange={(e) => setEditBelongingName(e.target.value)}
+                      style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input type="text" value={editBelongingQty} placeholder="数量（例：2個）" onChange={(e) => setEditBelongingQty(e.target.value)}
+                        style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', flex: 1, minWidth: 0 }} />
+                      <input type="text" value={editBelongingSize} placeholder="サイズ" onChange={(e) => setEditBelongingSize(e.target.value)}
+                        style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', flex: 1, minWidth: 0 }} />
+                    </div>
+                    <input type="text" value={editBelongingUrl} placeholder="URL（任意）" onChange={(e) => setEditBelongingUrl(e.target.value)}
+                      style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                    <textarea value={editBelongingMemo} placeholder="メモ（購入店など）" rows={2} onChange={(e) => setEditBelongingMemo(e.target.value)}
+                      style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button className="btn" onClick={() => setEditingBelongingId(null)} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                      <button className="btn primary" disabled={!editBelongingName.trim()} onClick={async () => {
+                        await onUpdateBelonging(item.id, { name: editBelongingName.trim(), qty: editBelongingQty.trim(), size: editBelongingSize.trim(), url: editBelongingUrl.trim(), memo: editBelongingMemo.trim() })
+                        setEditingBelongingId(null)
+                      }} style={{ flex: 1, fontSize: '13px' }}>保存</button>
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
-            {addingBelonging && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div onClick={() => belongingImgRef.current?.click()}
-                  style={{ width: '100%', aspectRatio: '4/3', borderRadius: '10px', border: '1.5px dashed var(--border)', background: 'var(--bg)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                  {belongingImgPreview
-                    ? <img src={belongingImgPreview} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
-                    : <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>タップして写真を選択</span>
-                  }
+                )
+              }
+              return (
+                <div key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', padding: '7px 0', borderBottom: '1px solid var(--border-light)' }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{item.name || '無題'}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '3px' }}>
+                      {item.qty && <span style={{ fontSize: '11px', padding: '1px 7px', borderRadius: '99px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontWeight: 500 }}>{item.qty}</span>}
+                      {item.size && <span style={{ fontSize: '11px', padding: '1px 7px', borderRadius: '99px', background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 500 }}>{item.size}</span>}
+                      {item.memo && <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>{item.memo}</span>}
+                    </div>
+                  </div>
+                  <button onClick={() => { setEditingBelongingId(item.id); setEditBelongingName(item.name || ''); setEditBelongingQty(item.qty || ''); setEditBelongingSize(item.size || ''); setEditBelongingUrl(item.url || ''); setEditBelongingMemo(item.memo || '') }}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '18px', lineHeight: 1, padding: '2px 4px', flexShrink: 0 }}>✎</button>
+                  <button onClick={() => onDeleteBelonging(item.id)}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: '2px 4px', flexShrink: 0 }}>×</button>
                 </div>
-                <input ref={belongingImgRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
-                  const file = e.target.files[0]; if (!file) return
-                  setBelongingImgFile(file)
-                  const reader = new FileReader()
-                  reader.onload = (ev) => setBelongingImgPreview(ev.target.result)
-                  reader.readAsDataURL(file)
-                  e.target.value = ''
-                }} />
+              )
+            })}
+            {addingBelonging && (
+              <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <input type="text" value={belongingName} placeholder="名称（例：底板、ストラップなど）" onChange={(e) => setBelongingName(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
-                <input type="text" value={belongingSize} placeholder="サイズ" onChange={(e) => setBelongingSize(e.target.value)}
-                  style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input type="text" value={belongingQty} placeholder="数量（例：2個）" onChange={(e) => setBelongingQty(e.target.value)}
+                    style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', flex: 1, minWidth: 0 }} />
+                  <input type="text" value={belongingSize} placeholder="サイズ" onChange={(e) => setBelongingSize(e.target.value)}
+                    style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', flex: 1, minWidth: 0 }} />
+                </div>
                 <input type="text" value={belongingUrl} placeholder="URL（任意）" onChange={(e) => setBelongingUrl(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
                 <textarea value={belongingMemo} placeholder="メモ（購入店など）" rows={2} onChange={(e) => setBelongingMemo(e.target.value)}
                   style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="btn" onClick={() => { setAddingBelonging(false); setBelongingImgFile(null); setBelongingImgPreview(null); setBelongingName(''); setBelongingSize(''); setBelongingUrl(''); setBelongingMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
-                  <button className="btn primary" disabled={belongingSaving || (!belongingImgPreview && !belongingName)} onClick={async () => {
+                  <button className="btn" onClick={() => { setAddingBelonging(false); setBelongingName(''); setBelongingQty(''); setBelongingSize(''); setBelongingUrl(''); setBelongingMemo('') }} style={{ flex: 1, fontSize: '13px' }}>キャンセル</button>
+                  <button className="btn primary" disabled={belongingSaving || !belongingName.trim()} onClick={async () => {
                     setBelongingSaving(true)
                     try {
-                      await onAddBelonging({ img_url: belongingImgPreview || '', name: belongingName.trim(), size: belongingSize.trim(), url: belongingUrl.trim(), memo: belongingMemo.trim() }, belongingImgFile)
-                      setAddingBelonging(false); setBelongingImgFile(null); setBelongingImgPreview(null); setBelongingName(''); setBelongingSize(''); setBelongingUrl(''); setBelongingMemo('')
+                      await onAddBelonging({ name: belongingName.trim(), qty: belongingQty.trim(), size: belongingSize.trim(), url: belongingUrl.trim(), memo: belongingMemo.trim() })
+                      setAddingBelonging(false); setBelongingName(''); setBelongingQty(''); setBelongingSize(''); setBelongingUrl(''); setBelongingMemo('')
                     } finally { setBelongingSaving(false) }
-                  }} style={{ flex: 1, fontSize: '13px' }}>{belongingSaving ? '保存中…' : '保存する'}</button>
+                  }} style={{ flex: 1, fontSize: '13px' }}>{belongingSaving ? '保存中…' : '追加'}</button>
                 </div>
               </div>
             )}

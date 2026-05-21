@@ -578,22 +578,28 @@ export default function App() {
     setLabels((prev) => prev.filter((l) => l.id !== id))
   }
 
-  async function addWantToMake(data, imgFile) {
-    const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, img_url, title: data.title || '', url: data.url || '', memo: data.memo || '' }
+  async function addWantToMake(data) {
+    const record = { user_id: user.id, title: data.title || '', url: data.url || '', memo: data.memo || '' }
     const { data: inserted } = await supabase.from('want_to_make').insert([record]).select().single()
     if (inserted) setWantToMake((prev) => [inserted, ...prev])
+  }
+  async function updateWantToMake(id, data) {
+    const { data: updated } = await supabase.from('want_to_make').update({ title: data.title || '', url: data.url || '', memo: data.memo || '' }).eq('id', id).select().single()
+    if (updated) setWantToMake((prev) => prev.map((w) => w.id === id ? updated : w))
   }
   async function deleteWantToMake(id) {
     await supabase.from('want_to_make').delete().eq('id', id)
     setWantToMake((prev) => prev.filter((w) => w.id !== id))
   }
 
-  async function addBelonging(data, imgFile) {
-    const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, img_url, name: data.name || '', size: data.size || '', url: data.url || '', memo: data.memo || '' }
+  async function addBelonging(data) {
+    const record = { user_id: user.id, name: data.name || '', qty: data.qty || '', size: data.size || '', url: data.url || '', memo: data.memo || '' }
     const { data: inserted } = await supabase.from('belongings').insert([record]).select().single()
     if (inserted) setBelongings((prev) => [inserted, ...prev])
+  }
+  async function updateBelonging(id, data) {
+    const { data: updated } = await supabase.from('belongings').update({ name: data.name || '', qty: data.qty || '', size: data.size || '', url: data.url || '', memo: data.memo || '' }).eq('id', id).select().single()
+    if (updated) setBelongings((prev) => prev.map((b) => b.id === id ? updated : b))
   }
   async function deleteBelonging(id) {
     await supabase.from('belongings').delete().eq('id', id)
@@ -765,8 +771,8 @@ export default function App() {
         onDelete={deletePurchase} />
       <MyPage open={myPageOpen} profile={profile} yarns={yarns} tools={tools} books={books} works={works} purchases={purchases} labels={labels}
         wishItems={wishItems}
-        wantToMake={wantToMake} onAddWantToMake={addWantToMake} onDeleteWantToMake={deleteWantToMake}
-        belongings={belongings} onAddBelonging={addBelonging} onDeleteBelonging={deleteBelonging}
+        wantToMake={wantToMake} onAddWantToMake={addWantToMake} onUpdateWantToMake={updateWantToMake} onDeleteWantToMake={deleteWantToMake}
+        belongings={belongings} onAddBelonging={addBelonging} onUpdateBelonging={updateBelonging} onDeleteBelonging={deleteBelonging}
         followsCount={follows.length} followersCount={followersCount}
         follows={follows} feedProfiles={feedProfiles}
         onClose={() => setMyPageOpen(false)}
