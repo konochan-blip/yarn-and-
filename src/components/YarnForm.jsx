@@ -91,6 +91,7 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
   }
 
   function handleLabelParsed(data) {
+    if (data.maker) setMaker(data.maker)
     if (data.name) setName(data.name)
     if (data.color) setColor(data.color)
     if (data.colorname) setColorname(data.colorname)
@@ -154,7 +155,7 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
 
         <div className="field">
           <label>名前</label>
-          <input type="text" value={name} placeholder="例：ボニー、コットン"
+          <input type="text" value={name} placeholder="例：アメリー"
             onChange={(e) => { setName(e.target.value); checkSimilar(e.target.value, color) }} />
         </div>
         <div className="field">

@@ -53,7 +53,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
     setReading(true)
     try {
       const prompt = `毛糸のラベル画像です。画像内のテキストをすべて読み取り、JSONのみ返してください。
-{"name":"メーカー名と品名（例：ハマナカ ソノモノ、ダイソー ウール）","color":"色番号","colorname":"色名","material":"素材（例：ウール100%）","lot":"ロット番号","price":"定価（円表記）"}
+{"maker":"メーカー名（例：ハマナカ、ダルマ、パピー）","name":"品名（例：アメリー、ソノモノ、ボニー）","color":"色番号","colorname":"色名","material":"素材（例：ウール100%）","lot":"ロット番号","price":"定価（円表記）"}
 読み取れない項目は空文字。JSONのみ返してください。`
 
       const parts = [
