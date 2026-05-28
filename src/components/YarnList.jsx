@@ -206,7 +206,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
                   </>)})()}
                 </div>
                 <div className="yarn-info">
-                  <div className="yarn-name">{item.name || '名前なし'}</div>
+                  <div className="yarn-name">{item.maker ? <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>{item.maker} </span> : null}{item.name || '名前なし'}</div>
                   {(item.color || item.lot) && (
                     <div className="yarn-meta">
                       {[item.color && `No.${item.color}`, item.lot && `Lot.${item.lot}`].filter(Boolean).join(' · ')}
