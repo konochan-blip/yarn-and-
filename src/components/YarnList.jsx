@@ -88,6 +88,7 @@ function getSorted(items, sort) {
   if (sort === 'color') return list.sort((a, b) => (a.colorname || '').localeCompare(b.colorname || '', 'ja'))
   if (sort === 'material') return list.sort((a, b) => (a.material || '').localeCompare(b.material || '', 'ja'))
   if (sort === 'shop') return list.sort((a, b) => (a.shops?.[0] || '').localeCompare(b.shops?.[0] || '', 'ja'))
+  if (sort === 'maker') return list.sort((a, b) => (a.maker || '').localeCompare(b.maker || '', 'ja'))
   if (sort === 'name') return list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
   return list
 }
@@ -137,6 +138,7 @@ export default function YarnList({ yarns, works, sort, view, onSortChange, onVie
           <option value="color">色順</option>
           <option value="material">素材順</option>
           <option value="shop">お店順</option>
+          <option value="maker">メーカー順</option>
           <option value="name">名前順</option>
         </select>
         <span className="count-badge">{yarns.length}点</span>
