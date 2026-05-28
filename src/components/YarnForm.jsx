@@ -3,8 +3,9 @@ import Modal from './Modal'
 import LabelReader from './LabelReader'
 import { YarnSvgSm } from '../lib/svgs'
 
-export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onClose, onMergeCount, onOpenShopSettings }) {
+export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, onSave, onClose, onMergeCount, onOpenShopSettings, onOpenYarnMakerSettings }) {
   const [name, setName] = useState('')
+  const [maker, setMaker] = useState('')
   const [productNumber, setProductNumber] = useState('')
   const [color, setColor] = useState('')
   const [colorname, setColorname] = useState('')
@@ -31,6 +32,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
     if (!open) return
     if (editingYarn) {
       setName(editingYarn.name || '')
+      setMaker(editingYarn.maker || '')
       setProductNumber(editingYarn.product_number || '')
       setColor(editingYarn.color || '')
       setColorname(editingYarn.colorname || '')
@@ -48,7 +50,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
       setImgFile(null)
       setImgPreview(editingYarn.img_url || null)
     } else {
-      setName(''); setProductNumber(''); setColor(''); setColorname(''); setMaterial(''); setLot('')
+      setName(''); setMaker(''); setProductNumber(''); setColor(''); setColorname(''); setMaterial(''); setLot('')
       setCount(''); setCountUnit('本'); setPrice(''); setNeedle(''); setWeightG(''); setLengthM(''); setLabel(''); setMemo(''); setSelectedShops([])
       setImgFile(null); setImgPreview(null)
     }
@@ -119,7 +121,7 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
 
     setSaving(true)
     try {
-      const data = { name, product_number: productNumber, color, colorname, material, lot, count: parseFloat(count) || 0, count_unit: countUnit, price, needle, weight_g: weightG ? Number(weightG) : null, length_m: lengthM ? Number(lengthM) : null, label, memo, shops: selectedShops, img_url: imgPreview || '' }
+      const data = { name, maker, product_number: productNumber, color, colorname, material, lot, count: parseFloat(count) || 0, count_unit: countUnit, price, needle, weight_g: weightG ? Number(weightG) : null, length_m: lengthM ? Number(lengthM) : null, label, memo, shops: selectedShops, img_url: imgPreview || '' }
       if (editingYarn) data.id = editingYarn.id
       await onSave(data, imgFile)
       onClose()
@@ -152,8 +154,27 @@ export default function YarnForm({ open, editingYarn, shops, yarns, onSave, onCl
 
         <div className="field">
           <label>名前</label>
-          <input type="text" value={name} placeholder="例：ハマナカ ボニー"
+          <input type="text" value={name} placeholder="例：ボニー、コットン"
             onChange={(e) => { setName(e.target.value); checkSimilar(e.target.value, color) }} />
+        </div>
+        <div className="field">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <label style={{ margin: 0 }}>メーカー</label>
+            {onOpenYarnMakerSettings && (
+              <button type="button" onClick={onOpenYarnMakerSettings}
+                style={{ background: 'none', border: 'none', fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', padding: '2px 0' }}>
+                ＋ メーカーを編集
+              </button>
+            )}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {[...(yarnMakers || []), 'その他'].map((m) => (
+              <button key={m} type="button" onClick={() => setMaker(maker === m ? '' : m)}
+                style={{ padding: '7px 14px', borderRadius: '99px', border: maker === m ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: maker === m ? 'var(--accent)' : 'var(--surface)', color: maker === m ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', transition: 'all 0.15s', fontWeight: maker === m ? 600 : 400 }}>
+                {m}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="field">
           <label>品番</label>

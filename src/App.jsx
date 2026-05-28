@@ -93,6 +93,7 @@ export default function App() {
   const [works,      setWorks]      = useState([])
   const [shops,      setShops]      = useState([])
   const [makers,     setMakers]     = useState([])
+  const [yarnMakers, setYarnMakers] = useState([])
   const [wishItems,  setWishItems]  = useState([])
   const [purchases,  setPurchases]  = useState([])
   const [labels,      setLabels]      = useState([])
@@ -145,8 +146,9 @@ export default function App() {
   const [detailWork,       setDetailWork]       = useState(null)
   const [detailWorkAuthor, setDetailWorkAuthor] = useState(null)
   const [labelSearchOpen,      setLabelSearchOpen]      = useState(false)
-  const [settingsOpen,         setSettingsOpen]         = useState(false)
-  const [makerSettingsOpen,    setMakerSettingsOpen]    = useState(false)
+  const [settingsOpen,            setSettingsOpen]            = useState(false)
+  const [yarnMakerSettingsOpen,   setYarnMakerSettingsOpen]   = useState(false)
+  const [makerSettingsOpen,       setMakerSettingsOpen]       = useState(false)
   const [categorySettingsOpen, setCategorySettingsOpen] = useState(false)
   const [purchaseFormOpen,     setPurchaseFormOpen]     = useState(false)
   const [editingPurchase,      setEditingPurchase]      = useState(null)
@@ -236,6 +238,9 @@ export default function App() {
         .catch(() => {})
       supabase.from('tool_makers').select('name').eq('user_id', user.id).order('created_at', { ascending: true })
         .then(({ data: mk }) => setMakers((mk || []).map((row) => row.name)))
+        .catch(() => {})
+      supabase.from('yarn_makers').select('name').eq('user_id', user.id).order('created_at', { ascending: true })
+        .then(({ data: ym }) => setYarnMakers((ym || []).map((row) => row.name)))
         .catch(() => {})
       supabase.from('wish_items').select('*').eq('user_id', user.id).order('created_at', { ascending: true })
         .then(({ data: wi }) => setWishItems(wi || []))
@@ -389,7 +394,7 @@ export default function App() {
   // ────────── Yarn CRUD ──────────────────────────
   async function saveYarn(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
-    const record = { user_id: user.id, name: data.name, product_number: data.product_number, color: data.color, colorname: data.colorname, material: data.material, lot: data.lot, count: data.count, count_unit: data.count_unit || '本', price: data.price, needle: data.needle, weight_g: data.weight_g, length_m: data.length_m, label: data.label, memo: data.memo, shops: data.shops, img_url }
+    const record = { user_id: user.id, name: data.name, maker: data.maker || '', product_number: data.product_number, color: data.color, colorname: data.colorname, material: data.material, lot: data.lot, count: data.count, count_unit: data.count_unit || '本', price: data.price, needle: data.needle, weight_g: data.weight_g, length_m: data.length_m, label: data.label, memo: data.memo, shops: data.shops, img_url }
     if (data.id) {
       const { data: updated, error } = await supabase.from('yarns').update(record).eq('id', data.id).select().single()
       if (error) throw new Error(error.message)
@@ -538,6 +543,16 @@ export default function App() {
   }
 
   // ────────── Maker CRUD ─────────────────────────
+  async function addYarnMaker(name) {
+    const { error } = await supabase.from('yarn_makers').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
+    if (error) throw new Error(error.message || 'メーカーの追加に失敗しました')
+    setYarnMakers((prev) => prev.includes(name) ? prev : [...prev, name])
+  }
+  async function deleteYarnMaker(name) {
+    await supabase.from('yarn_makers').delete().eq('user_id', user.id).eq('name', name)
+    setYarnMakers((prev) => prev.filter((m) => m !== name))
+  }
+
   async function addMaker(name) {
     const { error } = await supabase.from('tool_makers').upsert({ user_id: user.id, name }, { onConflict: 'user_id,name' })
     if (error) throw new Error(error.message || 'メーカーの追加に失敗しました')
@@ -716,9 +731,10 @@ export default function App() {
       </main>
 
       {/* Forms */}
-      <YarnForm open={yarnFormOpen} editingYarn={editingYarn} shops={shops} yarns={yarns}
+      <YarnForm open={yarnFormOpen} editingYarn={editingYarn} shops={shops} yarnMakers={yarnMakers} yarns={yarns}
         onSave={saveYarn} onClose={() => setYarnFormOpen(false)} onMergeCount={mergeYarnCount}
-        onOpenShopSettings={() => setSettingsOpen(true)} />
+        onOpenShopSettings={() => setSettingsOpen(true)}
+        onOpenYarnMakerSettings={() => setYarnMakerSettingsOpen(true)} />
       <ToolForm open={toolFormOpen} editingTool={editingTool} makers={makers}
         onSave={saveTool} onClose={() => setToolFormOpen(false)}
         onOpenMakerSettings={() => setMakerSettingsOpen(true)} />
@@ -759,6 +775,9 @@ export default function App() {
         onClose={() => setLabelSearchOpen(false)} onOpenDetail={setDetailYarn} />
       <ShopSettings open={settingsOpen} shops={shops}
         onClose={() => setSettingsOpen(false)} onAdd={addShop} onDelete={deleteShop} />
+      <ShopSettings open={yarnMakerSettingsOpen} shops={yarnMakers}
+        onClose={() => setYarnMakerSettingsOpen(false)} onAdd={addYarnMaker} onDelete={deleteYarnMaker}
+        title="メーカーを管理" placeholder="例：ハマナカ、ダルマ" note="登録したメーカーが毛糸追加時に選べるようになります" />
       <MakerSettings open={makerSettingsOpen} makers={makers}
         onClose={() => setMakerSettingsOpen(false)} onAdd={addMaker} onDelete={deleteMaker} />
       <CategorySettings open={categorySettingsOpen} categories={workCategories}

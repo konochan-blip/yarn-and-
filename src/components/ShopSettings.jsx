@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Modal from './Modal'
 
-export default function ShopSettings({ open, shops, onClose, onAdd, onDelete }) {
+export default function ShopSettings({ open, shops, onClose, onAdd, onDelete, title = 'お店を管理', placeholder = '例：オカダヤ', note = '※「その他」は常に表示されます' }) {
   const [input, setInput] = useState('')
   const [error, setError] = useState('')
   const [adding, setAdding] = useState(false)
@@ -27,7 +27,7 @@ export default function ShopSettings({ open, shops, onClose, onAdd, onDelete }) 
 
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="modal-title">お店を管理</div>
+      <div className="modal-title">{title}</div>
 
       <div>
         {shops.length === 0
@@ -42,11 +42,11 @@ export default function ShopSettings({ open, shops, onClose, onAdd, onDelete }) 
       </div>
 
       <div className="add-shop-row">
-        <input type="text" value={input} placeholder="例：オカダヤ" onChange={(e) => { setInput(e.target.value); setError('') }} onKeyDown={handleKeyDown} />
+        <input type="text" value={input} placeholder={placeholder} onChange={(e) => { setInput(e.target.value); setError('') }} onKeyDown={handleKeyDown} />
         <button className="btn primary" disabled={adding} onClick={handleAdd}>{adding ? '追加中…' : '追加'}</button>
       </div>
       {error && <p style={{ fontSize: '12px', color: 'var(--danger)', marginTop: '6px' }}>{error}</p>}
-      <p className="settings-note">※「その他」は常に表示されます</p>
+      <p className="settings-note">{note}</p>
 
       <div className="modal-actions">
         <button className="btn" onClick={onClose}>閉じる</button>
