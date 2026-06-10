@@ -6,11 +6,13 @@ const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY
 export default function LabelReader({ open, onClose, onParsed }) {
   const [images, setImages] = useState([]) // { dataUrl, id }
   const [reading, setReading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
   const inputRef = useRef()
 
   function reset() {
     setImages([])
     setReading(false)
+    setErrorMsg('')
   }
 
   function handleClose() {
@@ -51,6 +53,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
   async function readLabel() {
     if (!images.length) return
     setReading(true)
+    setErrorMsg('')
     try {
       const prompt = `毛糸のラベル画像です。画像内のテキストをすべて読み取り、JSONのみ返してください。
 {"maker":"メーカー名（例：ハマナカ、ダルマ、パピー）","name":"品名（例：アメリー、ソノモノ、ボニー）","color":"色番号","colorname":"色名","material":"素材（例：ウール100%）","lot":"ロット番号","price":"定価（円表記）"}
@@ -88,13 +91,13 @@ export default function LabelReader({ open, onClose, onParsed }) {
       }
       const isEmpty = Object.values(parsed).every((v) => !v)
       if (isEmpty) {
-        alert(`読み取れませんでした。もう一度試してみてね`)
+        setErrorMsg('読み取れませんでした。写真を変えて再度試してみてね')
         return
       }
       onParsed(parsed)
       handleClose()
     } catch (err) {
-      alert(`読み取りに失敗したよ😢\n${err.message || 'もう一度試してみてね'}`)
+      setErrorMsg(`エラー: ${err.message || 'もう一度試してみてね'}`)
     } finally {
       setReading(false)
     }
@@ -119,6 +122,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
       <input ref={inputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
 
       {reading && <div className="ai-reading">AIが読み取り中... ✦</div>}
+      {errorMsg && <div style={{ fontSize: '12px', color: '#c0392b', background: '#fdf0f0', border: '1px solid #f5c6c6', borderRadius: '8px', padding: '8px 12px', marginTop: '8px' }}>{errorMsg}</div>}
 
       <div className="modal-actions">
         <button className="btn" onClick={handleClose}>キャンセル</button>
