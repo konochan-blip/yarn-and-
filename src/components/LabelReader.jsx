@@ -52,6 +52,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
 
   async function readLabel() {
     if (!images.length) return
+    if (!GEMINI_KEY) { setErrorMsg('APIキーが未設定です（VITE_GEMINI_API_KEY）'); return }
     setReading(true)
     setErrorMsg('')
     try {
