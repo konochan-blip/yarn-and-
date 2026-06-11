@@ -52,7 +52,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
 
   async function readLabel() {
     if (!images.length) return
-    if (!GEMINI_KEY) { setErrorMsg('APIキーが未設定です（VITE_GEMINI_API_KEY）'); return }
+
     setReading(true)
     setErrorMsg('')
     try {
@@ -78,7 +78,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
         }
       )
       const data = await res.json()
-      if (data.error) throw new Error(JSON.stringify(data.error))
+      if (data.error) throw new Error(`${data.error.code}: ${data.error.message}`)
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
       const clean = text.replace(/```json|```/g, '').trim()
       let parsed = {}
