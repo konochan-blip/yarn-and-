@@ -78,7 +78,7 @@ export default function LabelReader({ open, onClose, onParsed }) {
         }
       )
       const data = await res.json()
-      if (data.error) throw new Error(`${data.error.code} ${data.error.status || ''}: ${data.error.message}`)
+      if (data.error) throw new Error(JSON.stringify(data.error))
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
       const clean = text.replace(/```json|```/g, '').trim()
       let parsed = {}
