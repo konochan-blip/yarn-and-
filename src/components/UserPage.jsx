@@ -85,7 +85,7 @@ export default function UserPage({ username }) {
           supabase.from('purchases').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
         ])
         const v = (i) => results[i].status === 'fulfilled' ? results[i].value : {}
-        setWorks(v(0).data || [])
+        setWorks((v(0).data || []).filter((w) => w.status !== '制作中'))
         setYarns(v(1).data || [])
         setTools(v(2).data || [])
         setBooks(v(3).data || [])
