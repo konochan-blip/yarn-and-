@@ -41,6 +41,7 @@ export default function App() {
   const [urlHandle] = useState(() => window.location.pathname.match(/^\/user\/([^/]+)$/)?.[1] || null)
   const [urlProfile, setUrlProfile] = useState(null)
   const [urlProfileLoading, setUrlProfileLoading] = useState(!!window.location.pathname.match(/^\/user\/([^/]+)$/))
+  const [guestProfileClosed, setGuestProfileClosed] = useState(false)
   useEffect(() => {
     if (!urlHandle) return
     supabase.from('profiles').select('*').eq('is_public', true)
@@ -673,6 +674,18 @@ export default function App() {
   }
 
   if (!user) {
+    if (urlProfile && !guestProfileClosed) {
+      return <PublicProfile
+        profile={urlProfile}
+        currentUserId={null}
+        isFollowing={false}
+        onFollow={null}
+        onUnfollow={null}
+        onClose={() => setGuestProfileClosed(true)}
+        onLoginClick={() => { setAuthMode('signup'); setShowAuth(true) }}
+        onOpenProfile={null}
+      />
+    }
     if (showAuth) return <AuthPage initialMode={authMode} onBack={() => setShowAuth(false)} />
     return <LandingPage onLogin={() => { setAuthMode('login'); setShowAuth(true) }} onSignup={() => { setAuthMode('signup'); setShowAuth(true) }} />
   }
