@@ -116,7 +116,9 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
       setProfileYarns(v(2).data || [])
       setProfileTools(v(3).data || [])
       setProfileBooks(v(4).data || [])
-      setProfileWorks((v(5).data || []).filter((w) => !w.status || w.status === '完成'))
+      const rawWorks = v(5).data || []
+      console.log('works from DB:', rawWorks.map((w) => ({ id: w.id, status: w.status })))
+      setProfileWorks(rawWorks.filter((w) => w.status !== '制作中'))
       setProfilePurchases(v(6).data || [])
       setProfileLabels(v(7).data || [])
       setDataLoading(false)
