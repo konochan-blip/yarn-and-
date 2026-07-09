@@ -12,7 +12,7 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
   const [material, setMaterial] = useState('')
   const [lot, setLot] = useState('')
   const [count, setCount] = useState('')
-  const [countUnit, setCountUnit] = useState('本')
+  const [countUnit, setCountUnit] = useState('玉')
   const [price, setPrice] = useState('')
   const [needle, setNeedle] = useState('')
   const [weightG, setWeightG] = useState('')
@@ -39,7 +39,7 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
       setMaterial(editingYarn.material || '')
       setLot(editingYarn.lot || '')
       setCount(String(editingYarn.count || ''))
-      setCountUnit(editingYarn.count_unit || '本')
+      setCountUnit(editingYarn.count_unit || '玉')
       setPrice(editingYarn.price || '')
       setNeedle(editingYarn.needle || '')
       setWeightG(String(editingYarn.weight_g || ''))
@@ -51,7 +51,7 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
       setImgPreview(editingYarn.img_url || null)
     } else {
       setName(''); setMaker(''); setProductNumber(''); setColor(''); setColorname(''); setMaterial(''); setLot('')
-      setCount(''); setCountUnit('本'); setPrice(''); setNeedle(''); setWeightG(''); setLengthM(''); setLabel(''); setMemo(''); setSelectedShops([])
+      setCount(''); setCountUnit('玉'); setPrice(''); setNeedle(''); setWeightG(''); setLengthM(''); setLabel(''); setMemo(''); setSelectedShops([])
       setImgFile(null); setImgPreview(null)
     }
     setSimilar([])
@@ -213,10 +213,10 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
         <div className="field"><label>素材</label><input type="text" value={material} placeholder="例：ウール50% コットン50%" onChange={(e) => setMaterial(e.target.value)} /></div>
         <div className="field"><label>ロット番号</label><input type="text" value={lot} placeholder="例：L204" onChange={(e) => setLot(e.target.value)} /></div>
         <div className="field">
-          <label>本数・玉数</label>
+          <label>玉数・本数</label>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <input type="number" value={count} placeholder="例：5" min="0" step="any" onChange={(e) => setCount(e.target.value)} style={{ flex: 1 }} />
-            {['本', '玉'].map((u) => (
+            {['玉', '本'].map((u) => (
               <button key={u} type="button" onClick={() => setCountUnit(u)}
                 style={{ padding: '7px 16px', borderRadius: '99px', border: countUnit === u ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: countUnit === u ? 'var(--accent)' : 'var(--surface)', color: countUnit === u ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', fontWeight: countUnit === u ? 600 : 400 }}>
                 {u}
@@ -225,8 +225,8 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
           </div>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <div className="field" style={{ flex: 1 }}><label>グラム (g)</label><input type="number" value={weightG} placeholder="例：40" min="0" onChange={(e) => setWeightG(e.target.value)} /></div>
-          <div className="field" style={{ flex: 1 }}><label>長さ (m)</label><input type="number" value={lengthM} placeholder="例：80" min="0" onChange={(e) => setLengthM(e.target.value)} /></div>
+          <div className="field" style={{ flex: 1 }}><label>グラム (g)</label><input type="number" value={weightG} placeholder="例：40" min="0" step="any" onChange={(e) => setWeightG(e.target.value)} /></div>
+          <div className="field" style={{ flex: 1 }}><label>長さ (m)</label><input type="number" value={lengthM} placeholder="例：80" min="0" step="any" onChange={(e) => setLengthM(e.target.value)} /></div>
         </div>
         <div className="field"><label>定価</label><input type="text" value={price} placeholder="例：550円" onChange={(e) => setPrice(e.target.value)} /></div>
         <div className="field"><label>適合針サイズ</label><input type="text" value={needle} placeholder="例：5/0号、8号棒針" onChange={(e) => setNeedle(e.target.value)} /></div>
