@@ -55,14 +55,14 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
     const bookIds = work.book_ids || []
     if (author) {
       Promise.all([
-        yarnIds.length > 0 ? supabase.from('yarns').select('*').in('id', yarnIds) : Promise.resolve({ data: [] }),
+        yarnIds.length > 0 ? supabase.from('yarns').select('*').in('id', yarnIds).order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
         bookIds.length > 0 ? supabase.from('books').select('*').in('id', bookIds) : Promise.resolve({ data: [] }),
       ]).then(([{ data: y }, { data: b }]) => {
         setLinkedYarns(y || [])
         setLinkedBooks(b || [])
       })
     } else {
-      setLinkedYarns(yarnIds.map((id) => yarns.find((y) => y.id === id)).filter(Boolean))
+      setLinkedYarns(yarnIds.map((id) => yarns.find((y) => y.id === id)).filter(Boolean).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)))
       setLinkedBooks(bookIds.map((id) => books.find((b) => b.id === id)).filter(Boolean))
     }
   }, [work?.id, author])
