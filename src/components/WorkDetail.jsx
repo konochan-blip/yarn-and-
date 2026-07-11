@@ -178,6 +178,19 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
         </div>
       ) : null}
 
+      {work.pattern_imgs?.length > 0 && (
+        <div className="detail-row" style={{ flexDirection: 'column', gap: '6px' }}>
+          <span className="dl">編み図・参考写真</span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '6px', marginTop: '2px' }}>
+            {work.pattern_imgs.map((url, idx) => (
+              <div key={idx} style={{ aspectRatio: '1', borderRadius: '10px', overflow: 'hidden', background: 'var(--surface-2)' }}>
+                <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {refHtml ? (
         <div className="detail-row" style={{ flexDirection: 'column', gap: '4px' }}>
           <span className="dl">編み図・参考URL</span>
