@@ -93,17 +93,14 @@ export default function ToolForm({ open, editingTool, makers = [], onSave, onClo
             </button>
           )}
         </div>
-        {makers.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
-            {makers.map((m) => (
-              <button key={m} type="button" onClick={() => setName(name === m ? '' : m)}
-                style={{ padding: '7px 14px', borderRadius: '99px', border: name === m ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: name === m ? 'var(--accent)' : 'var(--surface)', color: name === m ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', transition: 'all 0.15s', fontWeight: name === m ? 600 : 400 }}>
-                {m}
-              </button>
-            ))}
-          </div>
-        )}
-        <input type="text" value={name} placeholder="例：クロバー" onChange={(e) => setName(e.target.value)} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {[...(makers || []), 'その他'].map((m) => (
+            <button key={m} type="button" onClick={() => setName(name === m ? '' : m)}
+              style={{ padding: '7px 14px', borderRadius: '99px', border: name === m ? '1.5px solid var(--accent)' : '1.5px solid var(--border)', background: name === m ? 'var(--accent)' : 'var(--surface)', color: name === m ? '#fff' : 'var(--text-secondary)', fontSize: '13px', fontFamily: 'inherit', cursor: 'pointer', transition: 'all 0.15s', fontWeight: name === m ? 600 : 400 }}>
+              {m}
+            </button>
+          ))}
+        </div>
       </div>
       <div style={{ display: 'flex', gap: '12px' }}>
         <div className="field" style={{ flex: 1 }}><label>号数</label><input type="text" value={needleSize} placeholder="例：3号" onChange={(e) => setNeedleSize(e.target.value)} /></div>
