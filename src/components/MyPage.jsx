@@ -347,8 +347,6 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
                   }} />
                   <input type="text" value={labelBrand} placeholder="ブランド名（例：ダルマ、ハマナカ）" onChange={(e) => setLabelBrand(e.target.value)}
                     style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
-                  <input type="text" value={labelColor} placeholder="色名・品番" onChange={(e) => setLabelColor(e.target.value)}
-                    style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
                   <textarea value={labelMemo} placeholder="メモ" rows={2} onChange={(e) => setLabelMemo(e.target.value)}
                     style={{ fontFamily: 'inherit', fontSize: '13px', padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-primary)', outline: 'none', width: '100%', boxSizing: 'border-box', resize: 'none' }} />
                   <div style={{ display: 'flex', gap: '8px' }}>
@@ -626,10 +624,9 @@ export default function MyPage({ open, profile, yarns, tools, books, works, purc
         <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.88)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setViewingLabel(null)}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
             {viewingLabel.img_url && <img src={viewingLabel.img_url} style={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '10px' }} alt="" />}
-            {(viewingLabel.brand || viewingLabel.color || viewingLabel.memo) && (
+            {(viewingLabel.brand || viewingLabel.memo) && (
               <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '10px', padding: '12px 16px', width: '100%' }}>
                 {viewingLabel.brand && <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600 }}>{viewingLabel.brand}</div>}
-                {viewingLabel.color && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{viewingLabel.color}</div>}
                 {viewingLabel.memo && <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '6px' }}>{viewingLabel.memo}</div>}
               </div>
             )}
