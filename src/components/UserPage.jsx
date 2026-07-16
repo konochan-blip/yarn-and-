@@ -54,6 +54,7 @@ export default function UserPage({ username }) {
   const [tools, setTools] = useState([])
   const [books, setBooks] = useState([])
   const [purchases, setPurchases] = useState([])
+  const [labels, setLabels] = useState([])
   const [counts, setCounts] = useState({ followers: null, following: null })
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
@@ -83,6 +84,7 @@ export default function UserPage({ username }) {
           supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', p.user_id),
           supabase.from('follows').select('id', { count: 'exact', head: true }).eq('follower_id', p.user_id),
           supabase.from('purchases').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
+          supabase.from('label_collections').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
         ])
         const v = (i) => results[i].status === 'fulfilled' ? results[i].value : {}
         setWorks((v(0).data || []).filter((w) => w.status !== '制作中'))
@@ -91,6 +93,7 @@ export default function UserPage({ username }) {
         setBooks(v(3).data || [])
         setCounts({ followers: v(4).count ?? 0, following: v(5).count ?? 0 })
         setPurchases(v(6).data || [])
+        setLabels(v(7).data || [])
       } catch {
         setNotFound(true)
       } finally {
@@ -143,6 +146,7 @@ export default function UserPage({ username }) {
     { key: 'book',     label: '書籍',   count: books.length },
     { key: 'work',     label: '作品',   count: works.length },
     { key: 'purchase', label: '購入品', count: purchases.length },
+    { key: 'label',    label: 'ラベル', count: labels.length },
   ]
 
   return (
@@ -318,6 +322,26 @@ export default function UserPage({ username }) {
                         ? <img src={p.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                         : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🛍️</div>
                       }
+                    </div>
+                  ))}
+                </div>
+          )}
+
+          {activeTab === 'label' && (
+            labels.length === 0
+              ? <div style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-tertiary)', padding: '28px 0' }}>まだラベルが登録されていません</div>
+              : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '3px', borderRadius: '14px', overflow: 'hidden' }}>
+                  {labels.map((lbl) => (
+                    <div key={lbl.id} style={{ aspectRatio: '1', overflow: 'hidden', background: '#EDE0E5', position: 'relative' }}>
+                      {lbl.img_url
+                        ? <img src={lbl.img_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>🏷️</div>
+                      }
+                      {lbl.brand && (
+                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', padding: '2px 5px' }}>
+                          <span style={{ fontSize: '9px', color: '#fff', fontWeight: 500 }}>{lbl.brand}</span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
