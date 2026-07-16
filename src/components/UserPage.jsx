@@ -77,9 +77,9 @@ export default function UserPage({ username }) {
         setProfile(p)
         const results = await Promise.allSettled([
           supabase.from('works').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
-          supabase.from('yarns').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
-          supabase.from('tools').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
-          supabase.from('books').select('*').eq('user_id', p.user_id).order('created_at', { ascending: true }),
+          supabase.from('yarns').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
+          supabase.from('tools').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
+          supabase.from('books').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
           supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', p.user_id),
           supabase.from('follows').select('id', { count: 'exact', head: true }).eq('follower_id', p.user_id),
           supabase.from('purchases').select('*').eq('user_id', p.user_id).order('created_at', { ascending: false }),
