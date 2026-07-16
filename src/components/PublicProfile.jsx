@@ -103,10 +103,10 @@ export default function PublicProfile({ profile, currentUserId, isFollowing, onF
     Promise.allSettled([
       supabase.from('follows').select('id', { count: 'exact', head: true }).eq('following_id', profile.user_id),
       supabase.from('follows').select('id', { count: 'exact', head: true }).eq('follower_id', profile.user_id),
-      supabase.from('yarns').select('*').eq('user_id', profile.user_id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
-      supabase.from('tools').select('*').eq('user_id', profile.user_id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
-      supabase.from('books').select('*').eq('user_id', profile.user_id).order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
-      supabase.from('works').select('*').eq('user_id', profile.user_id).or('status.eq.完成,status.is.null').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
+      supabase.from('yarns').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
+      supabase.from('tools').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
+      supabase.from('books').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
+      supabase.from('works').select('*').eq('user_id', profile.user_id).or('status.eq.完成,status.is.null').order('created_at', { ascending: false }),
       supabase.from('purchases').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
       supabase.from('label_collections').select('*').eq('user_id', profile.user_id).order('created_at', { ascending: false }),
     ]).then((results) => {
