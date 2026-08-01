@@ -169,7 +169,7 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
         <div className="yarn-select-list">
           {yarns.length === 0 ? (
             <div style={{ fontSize: '13px', color: 'var(--text-tertiary)', padding: '8px' }}>先に毛糸を登録してね</div>
-          ) : yarns.map((yarn) => (
+          ) : [...yarns].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map((yarn) => (
             <div key={yarn.id}>
               <div className={`yarn-select-item${selectedYarnIds.includes(yarn.id) ? ' selected' : ''}`} onClick={() => toggleYarn(yarn.id)}>
                 <div className="yarn-select-thumb">{yarn.img_url ? <img src={yarn.img_url} alt="" /> : <YarnSvgSm />}</div>
