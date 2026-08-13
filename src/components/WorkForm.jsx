@@ -176,12 +176,20 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
                 <span>{yarn.name || '名前なし'}{yarn.colorname ? ` · ${yarn.colorname}` : ''}</span>
               </div>
               {selectedYarnIds.includes(yarn.id) && (
-                <input type="text"
-                  value={yarnUsages[yarn.id] || ''}
-                  placeholder="使用量（例：1玉、50g）"
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => setYarnUsages((prev) => ({ ...prev, [yarn.id]: e.target.value }))}
-                  style={{ margin: '4px 0 6px 0', fontSize: '13px', padding: '6px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', width: '100%', boxSizing: 'border-box', fontFamily: 'inherit', outline: 'none' }} />
+                <div style={{ margin: '4px 0 6px 0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <input type="number" min="0" step="any"
+                      value={yarnUsages[yarn.id] || ''}
+                      placeholder="使用量"
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => setYarnUsages((prev) => ({ ...prev, [yarn.id]: e.target.value }))}
+                      style={{ fontSize: '13px', padding: '6px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', flex: 1, boxSizing: 'border-box', fontFamily: 'inherit', outline: 'none' }} />
+                    <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>{yarn.count_unit || '玉'}</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '3px' }}>
+                    現在の在庫：{yarn.count || 0}{yarn.count_unit || '玉'}（保存すると使用量ぶん自動で減るよ）
+                  </div>
+                </div>
               )}
             </div>
           ))}

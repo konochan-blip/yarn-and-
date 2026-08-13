@@ -424,6 +424,18 @@ export default function App() {
     setYarns((prev) => prev.map((y) => y.id === id ? { ...y, count: newCount } : y))
   }
 
+  // delta > 0 means "used more" (stock decreases), delta < 0 means "used less / restored" (stock increases)
+  async function applyYarnUsageDelta(deltaByYarnId) {
+    const entries = Object.entries(deltaByYarnId).filter(([, delta]) => delta)
+    await Promise.all(entries.map(async ([yarnId, delta]) => {
+      const yarn = yarns.find((y) => y.id === yarnId)
+      if (!yarn) return
+      const newCount = Math.max(0, (parseFloat(yarn.count) || 0) - delta)
+      await supabase.from('yarns').update({ count: newCount }).eq('id', yarnId)
+      setYarns((prev) => prev.map((y) => y.id === yarnId ? { ...y, count: newCount } : y))
+    }))
+  }
+
   // ────────── Tool CRUD ──────────────────────────
   async function saveTool(data, imgFile) {
     const img_url = await resolveImgUrl(data, imgFile)
@@ -476,7 +488,16 @@ export default function App() {
         item.file ? uploadImage(item.file).catch(() => item.preview) : Promise.resolve(item.preview)
       )
     )
-    const record = { user_id: user.id, name: data.name, needle: data.needle, memo: data.memo, private_memo: data.private_memo, ref: data.ref, categories: data.categories || [], yarn_ids: data.yarn_ids, book_ids: data.book_ids, img_url, pattern_imgs, status: data.status || '完成', start_date: data.start_date || null, end_date: data.end_date || null, yarn_usages: data.yarn_usages || {} }
+    const prevWork = data.id ? works.find((w) => w.id === data.id) : null
+    const oldUsages = prevWork?.yarn_usages || {}
+    const newUsages = data.yarn_usages || {}
+    const deltaMap = {}
+    new Set([...Object.keys(oldUsages), ...Object.keys(newUsages)]).forEach((yarnId) => {
+      const delta = (parseFloat(newUsages[yarnId]) || 0) - (parseFloat(oldUsages[yarnId]) || 0)
+      if (delta) deltaMap[yarnId] = delta
+    })
+
+    const record = { user_id: user.id, name: data.name, needle: data.needle, memo: data.memo, private_memo: data.private_memo, ref: data.ref, categories: data.categories || [], yarn_ids: data.yarn_ids, book_ids: data.book_ids, img_url, pattern_imgs, status: data.status || '完成', start_date: data.start_date || null, end_date: data.end_date || null, yarn_usages: newUsages }
     if (data.id) {
       const { data: updated } = await supabase.from('works').update(record).eq('id', data.id).select().single()
       setWorks((prev) => prev.map((w) => w.id === data.id ? updated : w))
@@ -485,11 +506,21 @@ export default function App() {
       const { data: inserted } = await supabase.from('works').insert([{ ...record, sort_order: maxOrder + 1 }]).select().single()
       if (inserted) setWorks((prev) => [...prev, inserted])
     }
+
+    if (Object.keys(deltaMap).length) await applyYarnUsageDelta(deltaMap)
   }
 
   async function deleteWork(id) {
+    const work = works.find((w) => w.id === id)
     await supabase.from('works').delete().eq('id', id)
     setWorks((prev) => prev.filter((w) => w.id !== id))
+
+    const deltaMap = {}
+    Object.entries(work?.yarn_usages || {}).forEach(([yarnId, amount]) => {
+      const used = parseFloat(amount) || 0
+      if (used) deltaMap[yarnId] = -used
+    })
+    if (Object.keys(deltaMap).length) await applyYarnUsageDelta(deltaMap)
   }
 
   // ────────── Sort order ────────────────────────

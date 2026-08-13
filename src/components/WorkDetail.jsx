@@ -211,7 +211,9 @@ export default function WorkDetail({ work, yarns, books, currentUserId, author, 
                 <div className="linked-name">{yarn.name || '名前なし'}</div>
                 <div className="linked-sub">{yarn.colorname || ''}{yarn.material ? ` · ${yarn.material}` : ''}</div>
                 {work.yarn_usages?.[yarn.id] && (
-                  <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 500, marginTop: '2px' }}>使用量：{work.yarn_usages[yarn.id]}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 500, marginTop: '2px' }}>
+                    使用量：{work.yarn_usages[yarn.id]}{/^\d+(\.\d+)?$/.test(String(work.yarn_usages[yarn.id])) ? (yarn.count_unit || '玉') : ''}
+                  </div>
                 )}
               </div>
             </div>
