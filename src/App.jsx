@@ -134,6 +134,7 @@ export default function App() {
   // Modals
   const [yarnFormOpen,  setYarnFormOpen]  = useState(false)
   const [editingYarn,   setEditingYarn]   = useState(null)
+  const [copyFromYarn,  setCopyFromYarn]  = useState(null)
   const [toolFormOpen,  setToolFormOpen]  = useState(false)
   const [editingTool,   setEditingTool]   = useState(null)
   const [bookFormOpen,  setBookFormOpen]  = useState(false)
@@ -655,7 +656,7 @@ export default function App() {
 
   // ────────── Modal helpers ──────────────────────
   function handleAdd() {
-    if      (tab === 'yarn')  { setEditingYarn(null);  setYarnFormOpen(true)  }
+    if      (tab === 'yarn')  { setEditingYarn(null);  setCopyFromYarn(null);  setYarnFormOpen(true)  }
     else if (tab === 'tools') { setEditingTool(null);  setToolFormOpen(true)  }
     else if (tab === 'books') { setEditingBook(null);  setBookFormOpen(true)  }
     else if (tab === 'works') { setEditingWork(null);  setWorkFormOpen(true)  }
@@ -731,8 +732,8 @@ export default function App() {
       </main>
 
       {/* Forms */}
-      <YarnForm open={yarnFormOpen} editingYarn={editingYarn} shops={shops} yarnMakers={yarnMakers} yarns={yarns}
-        onSave={saveYarn} onClose={() => setYarnFormOpen(false)} onMergeCount={mergeYarnCount}
+      <YarnForm open={yarnFormOpen} editingYarn={editingYarn} copyFromYarn={copyFromYarn} shops={shops} yarnMakers={yarnMakers} yarns={yarns}
+        onSave={saveYarn} onClose={() => { setYarnFormOpen(false); setCopyFromYarn(null) }} onMergeCount={mergeYarnCount}
         onOpenShopSettings={() => setSettingsOpen(true)}
         onOpenYarnMakerSettings={() => setYarnMakerSettingsOpen(true)} />
       <ToolForm open={toolFormOpen} editingTool={editingTool} makers={makers}
@@ -748,7 +749,8 @@ export default function App() {
       {/* Details */}
       <YarnDetail yarn={detailYarn} works={works}
         onClose={() => { setDetailYarn(null); if (returnToMyPage) { setMyPageOpen(true); setReturnToMyPage(false) } }}
-        onEdit={detailYarn?.user_id === user?.id ? (yarn) => { setDetailYarn(null); setEditingYarn(yarn); setYarnFormOpen(true) } : undefined}
+        onEdit={detailYarn?.user_id === user?.id ? (yarn) => { setDetailYarn(null); setCopyFromYarn(null); setEditingYarn(yarn); setYarnFormOpen(true) } : undefined}
+        onCopy={detailYarn?.user_id === user?.id ? (yarn) => { setDetailYarn(null); setEditingYarn(null); setCopyFromYarn(yarn); setYarnFormOpen(true) } : undefined}
         onDelete={detailYarn?.user_id === user?.id ? deleteYarn : undefined}
         onOpenWorkDetail={setDetailWork}
         onAddToWishList={(yarn) => addWishItem('', yarn.id, null, null)} />

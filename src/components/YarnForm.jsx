@@ -3,7 +3,7 @@ import Modal from './Modal'
 import LabelReader from './LabelReader'
 import { YarnSvgSm } from '../lib/svgs'
 
-export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, onSave, onClose, onMergeCount, onOpenShopSettings, onOpenYarnMakerSettings }) {
+export default function YarnForm({ open, editingYarn, copyFromYarn, shops, yarnMakers, yarns, onSave, onClose, onMergeCount, onOpenShopSettings, onOpenYarnMakerSettings }) {
   const [name, setName] = useState('')
   const [maker, setMaker] = useState('')
   const [productNumber, setProductNumber] = useState('')
@@ -49,6 +49,25 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
       setSelectedShops(editingYarn.shops || [])
       setImgFile(null)
       setImgPreview(editingYarn.img_url || null)
+    } else if (copyFromYarn) {
+      setName(copyFromYarn.name || '')
+      setMaker(copyFromYarn.maker || '')
+      setProductNumber(copyFromYarn.product_number || '')
+      setColor('')
+      setColorname(copyFromYarn.colorname || '')
+      setMaterial(copyFromYarn.material || '')
+      setLot('')
+      setCount(String(copyFromYarn.count || ''))
+      setCountUnit(copyFromYarn.count_unit || '玉')
+      setPrice(copyFromYarn.price || '')
+      setNeedle(copyFromYarn.needle || '')
+      setWeightG(String(copyFromYarn.weight_g || ''))
+      setLengthM(String(copyFromYarn.length_m || ''))
+      setLabel('')
+      setMemo(copyFromYarn.memo || '')
+      setSelectedShops(copyFromYarn.shops || [])
+      setImgFile(null)
+      setImgPreview(null)
     } else {
       setName(''); setMaker(''); setProductNumber(''); setColor(''); setColorname(''); setMaterial(''); setLot('')
       setCount(''); setCountUnit('玉'); setPrice(''); setNeedle(''); setWeightG(''); setLengthM(''); setLabel(''); setMemo(''); setSelectedShops([])
@@ -56,7 +75,7 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
     }
     setSimilar([])
     setMergeInputs({})
-  }, [open, editingYarn])
+  }, [open, editingYarn, copyFromYarn])
 
   function handleImgChange(e) {
     const file = e.target.files[0]
@@ -142,7 +161,12 @@ export default function YarnForm({ open, editingYarn, shops, yarnMakers, yarns, 
   return (
     <>
       <Modal open={open} onClose={onClose}>
-        <div className="modal-title">{editingYarn ? '毛糸を編集' : '毛糸追加'}</div>
+        <div className="modal-title">{editingYarn ? '毛糸を編集' : copyFromYarn ? '毛糸をコピーして追加' : '毛糸追加'}</div>
+        {copyFromYarn && !editingYarn && (
+          <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginTop: '-8px', marginBottom: '12px' }}>
+            「{copyFromYarn.name || '登録済みの毛糸'}」の内容をコピーしたよ。内容を確認して保存してね
+          </div>
+        )}
 
         <div className="img-preview" onClick={() => imgInputRef.current?.click()}>
           {imgPreview ? <img src={imgPreview} alt="" /> : <div className="img-placeholder-text">タップして写真を選択</div>}

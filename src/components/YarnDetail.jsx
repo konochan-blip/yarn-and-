@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Modal from './Modal'
 import { YarnSvgLg, WorkSvgSm } from '../lib/svgs'
 
-export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onOpenWorkDetail, onAddToWishList }) {
+export default function YarnDetail({ yarn, works, onClose, onEdit, onCopy, onDelete, onOpenWorkDetail, onAddToWishList }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [wishAdded, setWishAdded] = useState(false)
@@ -97,6 +97,12 @@ export default function YarnDetail({ yarn, works, onClose, onEdit, onDelete, onO
         <button onClick={async () => { await onAddToWishList(yarn); setWishAdded(true); setTimeout(() => setWishAdded(false), 2000) }}
           style={{ width: '100%', fontFamily: 'inherit', fontSize: '13px', padding: '10px', marginBottom: '10px', borderRadius: '10px', border: '1px solid var(--accent)', background: wishAdded ? 'var(--accent)' : 'transparent', color: wishAdded ? '#fff' : 'var(--accent)', cursor: 'pointer' }}>
           {wishAdded ? '✓ 買う物リストに追加しました' : '買う物リストに追加'}
+        </button>
+      )}
+      {onCopy && (
+        <button onClick={() => { onClose(); onCopy(yarn) }}
+          style={{ width: '100%', fontFamily: 'inherit', fontSize: '13px', padding: '10px', marginBottom: '10px', borderRadius: '10px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+          ⧉ コピーして新規登録
         </button>
       )}
       <div className="modal-actions">
