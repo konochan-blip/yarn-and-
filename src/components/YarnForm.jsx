@@ -54,7 +54,7 @@ export default function YarnForm({ open, editingYarn, copyFromYarn, shops, yarnM
       setMaker(copyFromYarn.maker || '')
       setProductNumber(copyFromYarn.product_number || '')
       setColor('')
-      setColorname(copyFromYarn.colorname || '')
+      setColorname('')
       setMaterial(copyFromYarn.material || '')
       setLot('')
       setCount(String(copyFromYarn.count || ''))
