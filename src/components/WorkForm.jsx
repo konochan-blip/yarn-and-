@@ -178,9 +178,9 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
               {selectedYarnIds.includes(yarn.id) && (
                 <div style={{ margin: '4px 0 6px 0' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <input type="number" min="0" step="any"
+                    <input type="text" inputMode="decimal"
                       value={yarnUsages[yarn.id] || ''}
-                      placeholder="使用量"
+                      placeholder="使用量（例：1.5）"
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => setYarnUsages((prev) => ({ ...prev, [yarn.id]: e.target.value }))}
                       style={{ fontSize: '13px', padding: '6px 10px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg)', flex: 1, boxSizing: 'border-box', fontFamily: 'inherit', outline: 'none' }} />
