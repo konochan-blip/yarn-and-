@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Modal from './Modal'
 
-export default function BookForm({ open, editingBook, onSave, onClose }) {
+export default function BookForm({ open, editingBook, imageUsage, onSave, onClose }) {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [publisher, setPublisher] = useState('')
@@ -60,6 +60,11 @@ export default function BookForm({ open, editingBook, onSave, onClose }) {
         {imgPreview ? <img src={imgPreview} alt="" /> : <div className="img-placeholder-text">タップして表紙写真を選択</div>}
       </div>
       <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
+      {imageUsage && (
+        <div style={{ fontSize: '11px', color: imageUsage.used >= imageUsage.limit ? 'var(--danger, #c0392b)' : 'var(--text-tertiary)', marginTop: '-8px', marginBottom: '14px' }}>
+          画像 {imageUsage.used}/{imageUsage.limit}枚（無料プラン）
+        </div>
+      )}
 
       <div className="field"><label>タイトル</label><input type="text" value={title} placeholder="例：かぎ針で編むあみぐるみ" onChange={(e) => setTitle(e.target.value)} /></div>
       <div className="field"><label>著者</label><input type="text" value={author} placeholder="例：山田 花子" onChange={(e) => setAuthor(e.target.value)} /></div>

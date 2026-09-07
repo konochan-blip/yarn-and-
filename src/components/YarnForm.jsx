@@ -3,7 +3,7 @@ import Modal from './Modal'
 import LabelReader from './LabelReader'
 import { YarnSvgSm } from '../lib/svgs'
 
-export default function YarnForm({ open, editingYarn, copyFromYarn, shops, yarnMakers, yarns, onSave, onClose, onMergeCount, onOpenShopSettings, onOpenYarnMakerSettings }) {
+export default function YarnForm({ open, editingYarn, copyFromYarn, shops, yarnMakers, yarns, imageUsage, onSave, onClose, onMergeCount, onOpenShopSettings, onOpenYarnMakerSettings }) {
   const [name, setName] = useState('')
   const [maker, setMaker] = useState('')
   const [productNumber, setProductNumber] = useState('')
@@ -172,6 +172,11 @@ export default function YarnForm({ open, editingYarn, copyFromYarn, shops, yarnM
           {imgPreview ? <img src={imgPreview} alt="" /> : <div className="img-placeholder-text">タップして写真を選択</div>}
         </div>
         <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
+        {imageUsage && (
+          <div style={{ fontSize: '11px', color: imageUsage.used >= imageUsage.limit ? 'var(--danger, #c0392b)' : 'var(--text-tertiary)', marginTop: '-8px', marginBottom: '14px' }}>
+            画像 {imageUsage.used}/{imageUsage.limit}枚（無料プラン）
+          </div>
+        )}
 
         <div className="ai-btn-row">
           <button className="btn ai" onClick={() => setLabelReaderOpen(true)}>✦ ラベル写真から自動入力</button>

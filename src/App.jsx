@@ -354,6 +354,28 @@ export default function App() {
     try { return await uploadImage(imgFile) } catch { return data.img_url || '' }
   }
 
+  // ────────── Free plan image limit ─────────────
+  const FREE_IMAGE_LIMIT = 100
+  const isPremium = profile?.plan === 'premium'
+
+  function countStoredImages() {
+    const yarnCount = yarns.filter((y) => y.img_url).length
+    const toolCount = tools.filter((t) => t.img_url).length
+    const bookCount = books.filter((b) => b.img_url).length
+    const workCount = works.reduce((sum, w) => sum + (w.img_url ? 1 : 0) + (w.pattern_imgs?.length || 0), 0)
+    return yarnCount + toolCount + bookCount + workCount
+  }
+
+  // Throws if adding `delta` more images would push a free account over the limit.
+  function assertWithinImageLimit(delta) {
+    if (isPremium || delta <= 0) return
+    const current = countStoredImages()
+    if (current + delta > FREE_IMAGE_LIMIT) {
+      window.alert(`無料プランは画像を合計${FREE_IMAGE_LIMIT}枚まで登録できます（現在${current}枚）。\n新しい写真を追加するには、既存の写真を減らしてね。`)
+      throw new Error('image_limit_exceeded')
+    }
+  }
+
   // ────────── Profile CRUD ──────────────────────
   async function saveProfile(data, imgFile) {
     const avatar_url = await resolveImgUrl({ img_url: data.avatar_url }, imgFile)
@@ -394,6 +416,8 @@ export default function App() {
 
   // ────────── Yarn CRUD ──────────────────────────
   async function saveYarn(data, imgFile) {
+    const existing = data.id ? yarns.find((y) => y.id === data.id) : null
+    if (imgFile && !existing?.img_url) assertWithinImageLimit(1)
     const img_url = await resolveImgUrl(data, imgFile)
     const record = { user_id: user.id, name: data.name, maker: data.maker || '', product_number: data.product_number, color: data.color, colorname: data.colorname, material: data.material, lot: data.lot, count: data.count, count_unit: data.count_unit || '本', price: data.price, needle: data.needle, weight_g: data.weight_g, length_m: data.length_m, label: data.label, memo: data.memo, shops: data.shops, img_url }
     if (data.id) {
@@ -438,6 +462,8 @@ export default function App() {
 
   // ────────── Tool CRUD ──────────────────────────
   async function saveTool(data, imgFile) {
+    const existing = data.id ? tools.find((t) => t.id === data.id) : null
+    if (imgFile && !existing?.img_url) assertWithinImageLimit(1)
     const img_url = await resolveImgUrl(data, imgFile)
     const record = { user_id: user.id, name: data.name, type: data.type, needle_size: data.needle_size, size: data.size, price: data.price, memo: data.memo, img_url }
     if (data.id) {
@@ -457,6 +483,8 @@ export default function App() {
 
   // ────────── Book CRUD ──────────────────────────
   async function saveBook(data, imgFile) {
+    const existing = data.id ? books.find((b) => b.id === data.id) : null
+    if (imgFile && !existing?.img_url) assertWithinImageLimit(1)
     const img_url = await resolveImgUrl(data, imgFile)
     const record = { user_id: user.id, title: data.title, author: data.author, publisher: data.publisher, price: data.price, memo: data.memo, link: data.link, img_url }
     if (data.id) {
@@ -482,6 +510,11 @@ export default function App() {
 
   // ────────── Work CRUD ──────────────────────────
   async function saveWork(data, imgFile) {
+    const existingWork = data.id ? works.find((w) => w.id === data.id) : null
+    const mainImageDelta = (imgFile && !existingWork?.img_url) ? 1 : 0
+    const patternImageDelta = (data.patternItems || []).length - (existingWork?.pattern_imgs?.length || 0)
+    assertWithinImageLimit(mainImageDelta + patternImageDelta)
+
     const img_url = await resolveImgUrl(data, imgFile)
     const pattern_imgs = await Promise.all(
       (data.patternItems || []).map((item) =>
@@ -764,15 +797,19 @@ export default function App() {
 
       {/* Forms */}
       <YarnForm open={yarnFormOpen} editingYarn={editingYarn} copyFromYarn={copyFromYarn} shops={shops} yarnMakers={yarnMakers} yarns={yarns}
+        imageUsage={isPremium ? null : { used: countStoredImages(), limit: FREE_IMAGE_LIMIT }}
         onSave={saveYarn} onClose={() => { setYarnFormOpen(false); setCopyFromYarn(null) }} onMergeCount={mergeYarnCount}
         onOpenShopSettings={() => setSettingsOpen(true)}
         onOpenYarnMakerSettings={() => setYarnMakerSettingsOpen(true)} />
       <ToolForm open={toolFormOpen} editingTool={editingTool} makers={makers}
+        imageUsage={isPremium ? null : { used: countStoredImages(), limit: FREE_IMAGE_LIMIT }}
         onSave={saveTool} onClose={() => setToolFormOpen(false)}
         onOpenMakerSettings={() => setMakerSettingsOpen(true)} />
       <BookForm open={bookFormOpen} editingBook={editingBook}
+        imageUsage={isPremium ? null : { used: countStoredImages(), limit: FREE_IMAGE_LIMIT }}
         onSave={saveBook} onClose={() => setBookFormOpen(false)} />
       <WorkForm open={workFormOpen} editingWork={editingWork} yarns={yarns} books={books}
+        imageUsage={isPremium ? null : { used: countStoredImages(), limit: FREE_IMAGE_LIMIT }}
         workCategories={workCategories}
         onSave={saveWork} onClose={() => setWorkFormOpen(false)}
         onOpenCategorySettings={() => setCategorySettingsOpen(true)} />

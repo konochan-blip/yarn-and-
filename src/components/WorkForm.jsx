@@ -4,7 +4,7 @@ import { YarnSvgSm, BookSvgSm } from '../lib/svgs'
 
 const NEEDLES = ['かぎ針', '棒針', '輪針', 'その他']
 
-export default function WorkForm({ open, editingWork, yarns, books, workCategories, onSave, onClose, onOpenCategorySettings }) {
+export default function WorkForm({ open, editingWork, yarns, books, workCategories, imageUsage, onSave, onClose, onOpenCategorySettings }) {
   const [name, setName] = useState('')
   const [needle, setNeedle] = useState('')
   const [memo, setMemo] = useState('')
@@ -109,6 +109,11 @@ export default function WorkForm({ open, editingWork, yarns, books, workCategori
         {imgPreview ? <img src={imgPreview} alt="" /> : <div className="img-placeholder-text">タップして写真を選択</div>}
       </div>
       <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
+      {imageUsage && (
+        <div style={{ fontSize: '11px', color: imageUsage.used >= imageUsage.limit ? 'var(--danger, #c0392b)' : 'var(--text-tertiary)', marginTop: '-8px', marginBottom: '14px' }}>
+          画像 {imageUsage.used}/{imageUsage.limit}枚（無料プラン、編み図・参考写真も含む）
+        </div>
+      )}
 
       <div className="field">
         <label>ステータス</label>

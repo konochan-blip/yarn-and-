@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Modal from './Modal'
 
-export default function ToolForm({ open, editingTool, makers = [], onSave, onClose, onOpenMakerSettings }) {
+export default function ToolForm({ open, editingTool, makers = [], imageUsage, onSave, onClose, onOpenMakerSettings }) {
   const [name, setName] = useState('')
   const [type, setType] = useState('')
   const [typeCustom, setTypeCustom] = useState('')
@@ -71,6 +71,11 @@ export default function ToolForm({ open, editingTool, makers = [], onSave, onClo
         {imgPreview ? <img src={imgPreview} alt="" /> : <div className="img-placeholder-text">タップして写真を選択</div>}
       </div>
       <input ref={imgInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImgChange} />
+      {imageUsage && (
+        <div style={{ fontSize: '11px', color: imageUsage.used >= imageUsage.limit ? 'var(--danger, #c0392b)' : 'var(--text-tertiary)', marginTop: '-8px', marginBottom: '14px' }}>
+          画像 {imageUsage.used}/{imageUsage.limit}枚（無料プラン）
+        </div>
+      )}
 
       <div className="field">
         <label>種類</label>
