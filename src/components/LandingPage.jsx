@@ -164,6 +164,7 @@ export default function LandingPage({ onLogin, onSignup }) {
         </div>
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '16px' }}>
           <a href="https://x.com/YARNand__" target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#A89298', textDecoration: 'none' }}>𝕏 公式アカウント</a>
+          <a href="https://www.instagram.com/yarnand__" target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#A89298', textDecoration: 'none' }}>Instagram 公式アカウント</a>
           <button onClick={onLogin} style={{ background: 'none', border: 'none', fontSize: '12px', color: '#A89298', cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>ログイン</button>
         </div>
         <div style={{ fontSize: '11px', color: '#6B5560' }}>© 2026 YARN&amp; All rights reserved.</div>

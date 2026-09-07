@@ -906,6 +906,7 @@ export default function App() {
       <footer className="app-footer">
         <div className="footer-links">
           <a href="https://x.com/YARNand__" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ textDecoration: 'none' }}>𝕏 公式アカウント</a>
+          <a href="https://www.instagram.com/yarnand__" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ textDecoration: 'none' }}>Instagram 公式アカウント</a>
         </div>
         <div className="footer-links">
           <button onClick={() => setTermsOpen(true)} className="footer-link">利用規約</button>
