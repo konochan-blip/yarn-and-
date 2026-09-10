@@ -355,7 +355,7 @@ export default function App() {
   }
 
   // ────────── Free plan image limit ─────────────
-  const FREE_IMAGE_LIMIT = 100
+  const FREE_IMAGE_LIMIT = 150
   const isPremium = profile?.plan === 'premium'
 
   function countStoredImages() {
